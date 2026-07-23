@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://miinfotech.netlify.app/sitemap.xml
