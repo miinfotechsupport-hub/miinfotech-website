@@ -17,9 +17,9 @@ export default function ErrorBoundary({ children }: Props) {
     };
 
     const unhandledRejectionHandler = (event: PromiseRejectionEvent) => {
-      console.error("Caught rejection:", event.reason);
-      setError(event.reason instanceof Error ? event.reason : new Error(String(event.reason)));
-      setHasError(true);
+      // Log unhandled rejections for monitoring without breaking UI rendering
+      console.warn("Unhandled promise rejection intercepted:", event.reason);
+      // Prevent browser's default ugly red console popup if desired or allow standard logging
     };
 
     window.addEventListener("error", errorHandler);

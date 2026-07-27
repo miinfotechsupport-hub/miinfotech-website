@@ -215,32 +215,32 @@ export default function App() {
         title = "IT Services & CCTV Setup Catalog in Hassan | MIInfotech";
         description = "Browse our full catalog of onsite IT and security services in Hassan, Karnataka: Laptop repairs, WiFi setup, desktop formatting, network cabling, and biometric installations.";
         keywords = "Onsite IT services Hassan, computer service catalog, CCTV services Hassan, laptop repairs";
-        canonicalUrl = `${SITE_URL}/#services`;
+        canonicalUrl = `${SITE_URL}/services`;
       } else if (activeTab === "projects") {
         title = "Real Completed Works & CCTV Projects in Hassan | MIInfotech";
         description = "Browse our portfolio of real completed onsite IT support, network cabling, and Hikvision CCTV camera installations in Hassan city and surrounding areas.";
         keywords = "completed projects, CCTV portfolio Hassan, IT case studies Hassan, real onsite work";
-        canonicalUrl = `${SITE_URL}/#projects`;
+        canonicalUrl = `${SITE_URL}/projects`;
       } else if (activeTab === "blog") {
         title = "MIInfotech Knowledge Hub | IT Diagnostics & Tech Guides";
         description = "Expert guides, local SEO tech resources, and computer diagnostics written by founder Mohammed Ishtiaqh for businesses and residents in Hassan, Karnataka.";
         keywords = "tech blog Hassan, computer repair tips, IT guide Hassan, diagnostic tips";
-        canonicalUrl = `${SITE_URL}/#blog`;
+        canonicalUrl = `${SITE_URL}/blog`;
       } else if (activeTab === "faqs") {
         title = "Help & Frequently Asked Questions | MIInfotech Hassan";
         description = "Find answers to frequently asked questions about doorstep PC repair pricing, service locations, turnaround time, and warranties in Hassan, Karnataka.";
         keywords = "IT FAQs Hassan, computer repair pricing Hassan, CCTV warranty";
-        canonicalUrl = `${SITE_URL}/#faqs`;
+        canonicalUrl = `${SITE_URL}/faqs`;
       } else if (activeTab === "contact") {
         title = "Get a Free Onsite Estimate & Callout | MIInfotech Hassan";
         description = "Book a doorstep diagnostics visit or CCTV quote in Hassan, Karnataka. Call +91 99647 61624 or fill out our quick estimate calculator.";
         keywords = "contact MIInfotech, book computer repair Hassan, request CCTV quote";
-        canonicalUrl = `${SITE_URL}/#contact`;
+        canonicalUrl = `${SITE_URL}/contact`;
       } else if (activeTab === "terms") {
         title = "Terms of Service & Onsite Warranty Policy | MIInfotech";
         description = "Read the Terms and Conditions and warranty service guidelines for doorstep repairs and CCTV installation services provided by MIInfotech in Hassan.";
         keywords = "terms and conditions, MIInfotech warranty, service agreement";
-        canonicalUrl = `${SITE_URL}/#terms`;
+        canonicalUrl = `${SITE_URL}/terms`;
       }
     }
 
@@ -295,61 +295,7 @@ export default function App() {
 
     let schemaObject: any = null;
 
-    if (selectedServiceId) {
-      const serviceObj = SERVICES_DATA.find(s => s.id === selectedServiceId);
-      if (serviceObj) {
-        schemaObject = {
-          "@context": "https://schema.org",
-          "@type": "Service",
-          "name": serviceObj.name,
-          "description": `Same-day doorstep ${serviceObj.name.toLowerCase()} in Hassan, Karnataka. Sourced genuine warrantied spares and component replacements.`,
-          "provider": {
-            "@type": "LocalBusiness",
-            "name": "MIInfotech",
-            "telephone": "+91-9964761624",
-            "url": SITE_URL,
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": "Hassan",
-              "addressRegion": "Karnataka",
-              "postalCode": "573201",
-              "addressCountry": "IN"
-            }
-          },
-          "areaServed": {
-            "@type": "AdministrativeArea",
-            "name": "Hassan, Karnataka, India"
-          }
-        };
-      }
-    } else if (selectedBlogSlug) {
-      const activeBlog = blogsList.find(b => b.slug === selectedBlogSlug);
-      if (activeBlog) {
-        schemaObject = {
-          "@context": "https://schema.org",
-          "@type": "Article",
-          "headline": activeBlog.title,
-          "description": activeBlog.excerpt,
-          "datePublished": "2026-07-20",
-          "author": {
-            "@type": "Person",
-            "name": "Mohammed Ishtiaqh"
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": "MIInfotech",
-            "logo": {
-              "@type": "ImageObject",
-              "url": imageUrl
-            }
-          },
-          "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": canonicalUrl
-          }
-        };
-      }
-    } else if (selectedProjectSlug) {
+    if (selectedProjectSlug) {
       const activeProject = projectsList.find(p => p.seoSlug === selectedProjectSlug || (p.id && p.id.toString() === selectedProjectSlug));
       if (activeProject && activeProject.schema) {
         try {
@@ -407,6 +353,11 @@ export default function App() {
 
   return (
     <div className="bg-slate-950 min-h-screen text-slate-100 font-sans flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+      <SEOPanel
+        activeTab={activeTab}
+        selectedServiceId={selectedServiceId}
+        selectedBlogSlug={selectedBlogSlug}
+      />
       {/* Sticky responsive Navbar */}
       <Navbar activeTab={activeTab} setActiveTab={(tab) => {
         setActiveTab(tab);

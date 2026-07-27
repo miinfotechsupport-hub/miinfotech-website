@@ -525,45 +525,8 @@ export const PROJECTS_DATA: ProjectItem[] = [
   }
 ];
 
-// 3. Local Customer Reviews Data
-export const REVIEWS_DATA: ReviewItem[] = [
-  {
-    name: "Kiran Gowda",
-    role: "Proprietor, Gowda Retail Enterprises",
-    location: "Channapatna, Hassan",
-    rating: 5,
-    date: "June 14, 2026",
-    comment: "Mohammed Ishtiaqh and his team at MIInfotech did an outstanding job setting up our retail store's CCTV and billing system. Their onsite repair is super fast. Had a motherboard issue on our billing computer last week, they came onsite within 2 hours and replaced the power supply. Excellent computer repair in Hassan!",
-    verified: true
-  },
-  {
-    name: "Dr. Sumitha Hegde",
-    role: "Administrator, Hegde PolyClinic",
-    location: "Kuvempu Nagar, Hassan",
-    rating: 5,
-    date: "May 08, 2026",
-    comment: "We signed an IT AMC with MIInfotech for our clinic's computers, printer, and Wi-Fi networks. Sourcing genuine parts and maintaining them is no longer our headache. They are highly professional, very cost-effective, and provide detailed diagnostic logs. Best onsite IT support in Hassan.",
-    verified: true
-  },
-  {
-    name: "Naveen Prasad",
-    role: "Homeowner",
-    location: "Hemavathi Nagar, Hassan",
-    rating: 5,
-    date: "July 02, 2026",
-    comment: "My home HP laptop keyboard and screen were completely broken. I contacted MIInfotech, and they came directly to my home in Hemavathi Nagar. Sourced the original screen and keyboard, replaced it right in front of me in about an hour. Excellent price and very polite service. Highly recommended!",
-    verified: true
-  },
-  {
-    name: "Sister Mary D'Souza",
-    role: "Principal, St. Joseph's Higher Primary School",
-    location: "Belur Road, Hassan",
-    rating: 5,
-    date: "April 29, 2026",
-    comment: "Excellent intercom installation and computer lab servicing. Mohammed Ishtiaqh personally oversaw the structured cabling and intercom setup. They are extremely punctual and maintain strict discipline on the premises. We highly recommend them for any school IT needs.",
-    verified: true
-  }
-];
+// 3. Local Customer Reviews Data (Real customer reviews are managed dynamically via Supabase testimonials table)
+export const REVIEWS_DATA: ReviewItem[] = [];
 
 // 4. FAQs Data
 export const FAQS_DATA: FAQItem[] = [

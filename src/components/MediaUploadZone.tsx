@@ -136,6 +136,7 @@ export default function MediaUploadZone({
           className="hidden"
           multiple={multiple}
           accept="image/*"
+          aria-label={label || "Choose image file"}
           onChange={handleChange}
         />
 
@@ -146,6 +147,7 @@ export default function MediaUploadZone({
           className="hidden"
           accept="image/*"
           capture="environment"
+          aria-label="Take picture with camera"
           onChange={handleChange}
         />
 
@@ -211,6 +213,7 @@ export default function MediaUploadZone({
                 <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
                 <button
                   type="button"
+                  aria-label={`Remove image ${index + 1}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     removeImage(index);

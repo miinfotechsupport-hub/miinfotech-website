@@ -65,20 +65,20 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
           const sum = mapped.reduce((acc, cur) => acc + cur.rating, 0);
           setAvgRating(sum / mapped.length);
         } else {
-          setReviews(REVIEWS_DATA);
-          setTotalReviews(REVIEWS_DATA.length);
-          setAvgRating(5.0);
+          setReviews([]);
+          setTotalReviews(0);
+          setAvgRating(0);
         }
       } else {
-        setReviews(REVIEWS_DATA);
-        setTotalReviews(REVIEWS_DATA.length);
-        setAvgRating(5.0);
+        setReviews([]);
+        setTotalReviews(0);
+        setAvgRating(0);
       }
     } catch (err) {
       console.error("Failed to load customer reviews from Supabase:", err);
-      setReviews(REVIEWS_DATA);
-      setTotalReviews(REVIEWS_DATA.length);
-      setAvgRating(5.0);
+      setReviews([]);
+      setTotalReviews(0);
+      setAvgRating(0);
     } finally {
       setIsLoading(false);
     }
@@ -123,76 +123,95 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
             </div>
 
             {/* Overall Rating Indicator */}
-            <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex items-center gap-4">
-              <div className="text-center border-r border-slate-800 pr-4">
-                <span className="text-2xl font-black text-white block">{avgRating.toFixed(1)}</span>
-                <span className="text-[10px] text-slate-500 font-mono">OUT OF 5</span>
-              </div>
-              <div>
-                <div className="flex gap-0.5 text-amber-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
-                  ))}
+            {totalReviews > 0 ? (
+              <div className="bg-slate-950 border border-slate-800 p-4 rounded-2xl flex items-center gap-4">
+                <div className="text-center border-r border-slate-800 pr-4">
+                  <span className="text-2xl font-black text-white block">{avgRating.toFixed(1)}</span>
+                  <span className="text-[10px] text-slate-500 font-mono">OUT OF 5</span>
                 </div>
-                <span className="text-xs text-slate-400 font-medium block mt-1">Based on {totalReviews} verified reviews</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fadeIn">
-            {reviews.map((review, idx) => (
-              <div 
-                key={idx}
-                className="bg-slate-950 border border-slate-850 p-6 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all shadow-lg relative"
-              >
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-1.5 text-blue-400 font-bold text-[9px] uppercase tracking-wider font-mono bg-blue-500/10 border border-blue-500/10 px-2.5 py-0.5 rounded-full">
-                      <UserCheck className="w-3 h-3" />
-                      <span>Verified Client</span>
-                    </div>
-                    <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {review.date.includes(",") ? review.date.split(",")[1]?.trim() : review.date}
-                    </span>
-                  </div>
-
-                  <div className="flex gap-1 mb-3.5">
-                    {[...Array(review.rating)].map((_, sidx) => (
-                      <Star key={sidx} className="w-4.5 h-4.5 text-amber-400 fill-amber-400" />
+                  <div className="flex gap-0.5 text-amber-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
                     ))}
                   </div>
-
-                  <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6 italic">
-                    "{review.comment}"
-                  </p>
+                  <span className="text-xs text-slate-400 font-medium block mt-1">Based on {totalReviews} verified reviews</span>
                 </div>
+              </div>
+            ) : (
+              <div className="bg-slate-950/80 border border-slate-800/80 px-4 py-3 rounded-2xl text-xs font-mono text-slate-400 flex items-center gap-2">
+                <Globe className="w-4 h-4 text-blue-400" />
+                <span>Verified Google Business Profile Sync</span>
+              </div>
+            )}
+          </div>
 
-                <div className="border-t border-slate-900 pt-4 text-left flex items-center gap-3">
-                  {review.profilePhoto ? (
-                    <img 
-                      src={review.profilePhoto} 
-                      alt={review.name}
-                      referrerPolicy="no-referrer"
-                      loading="lazy"
-                      className="w-10 h-10 rounded-full object-cover border border-slate-800"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm font-mono uppercase">
-                      {review.name.charAt(0)}
-                    </div>
-                  )}
+          {reviews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fadeIn">
+              {reviews.map((review, idx) => (
+                <div 
+                  key={idx}
+                  className="bg-slate-950 border border-slate-850 p-6 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all shadow-lg relative"
+                >
                   <div>
-                    <h4 className="text-white font-bold text-sm leading-tight">{review.name}</h4>
-                    <div className="flex flex-col text-[10px] text-slate-400 mt-0.5 font-mono">
-                      <span className="text-slate-300 font-semibold">{review.role}</span>
-                      <span className="text-blue-500 mt-0.5">📍 {review.location}</span>
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="flex items-center gap-1.5 text-blue-400 font-bold text-[9px] uppercase tracking-wider font-mono bg-blue-500/10 border border-blue-500/10 px-2.5 py-0.5 rounded-full">
+                        <UserCheck className="w-3 h-3" />
+                        <span>Verified Client</span>
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {review.date.includes(",") ? review.date.split(",")[1]?.trim() : review.date}
+                      </span>
+                    </div>
+
+                    <div className="flex gap-1 mb-3.5">
+                      {[...Array(review.rating)].map((_, sidx) => (
+                        <Star key={sidx} className="w-4.5 h-4.5 text-amber-400 fill-amber-400" />
+                      ))}
+                    </div>
+
+                    <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6 italic">
+                      "{review.comment}"
+                    </p>
+                  </div>
+
+                  <div className="border-t border-slate-900 pt-4 text-left flex items-center gap-3">
+                    {review.profilePhoto ? (
+                      <img 
+                        src={review.profilePhoto} 
+                        alt={review.name}
+                        referrerPolicy="no-referrer"
+                        loading="lazy"
+                        className="w-10 h-10 rounded-full object-cover border border-slate-800"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm font-mono uppercase">
+                        {review.name.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <h4 className="text-white font-bold text-sm leading-tight">{review.name}</h4>
+                      <div className="flex flex-col text-[10px] text-slate-400 mt-0.5 font-mono">
+                        <span className="text-slate-300 font-semibold">{review.role}</span>
+                        <span className="text-blue-500 mt-0.5">📍 {review.location}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-slate-950 border border-slate-800 p-8 rounded-3xl text-center max-w-xl mx-auto my-4 space-y-3">
+              <div className="w-12 h-12 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto">
+                <Star className="w-6 h-6 text-amber-400 fill-amber-400/20" />
               </div>
-            ))}
-          </div>
+              <h3 className="text-lg font-bold text-white">Genuine Google Customer Reviews</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                All client reviews are directly synced from our verified Google Business Profile in Hassan, Karnataka.
+              </p>
+            </div>
+          )}
 
           <div className="mt-8 text-center flex flex-col items-center justify-center gap-4 animate-fadeIn">
             <a 
