@@ -1,0 +1,5 @@
+name = "miinfotech"
+pages_build_output_dir = "dist"
+
+[vars]
+SITE_URL = "https://miinfotech.netlify.app"

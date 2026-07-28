@@ -322,6 +322,30 @@ const STATIC_ROUTES = [
     keywords: "contact miinfotech, book pc repair hassan, cctv estimate hassan"
   },
   {
+    path: "/gallery",
+    title: "Onsite Project Gallery | MIInfotech Hassan",
+    desc: "Visual gallery of verified doorstep IT support, server rack installations, and CCTV projects completed in Hassan.",
+    keywords: "it project gallery hassan, cctv installation photos"
+  },
+  {
+    path: "/products",
+    title: "IT Hardware & CCTV Products Catalog | MIInfotech Hassan",
+    desc: "Browse CCTV cameras, routers, SSDs, and IT hardware available for doorstep installation in Hassan.",
+    keywords: "cctv camera price hassan, wifi router hassan, ssd upgrade price"
+  },
+  {
+    path: "/blogs",
+    title: "MIInfotech Knowledge Hub | Tech Guides & Articles",
+    desc: "Expert guides, local SEO tech resources, and computer diagnostics written by founder Mohammed Ishtiaqh for businesses in Hassan.",
+    keywords: "tech blog hassan, computer repair guide, cctv installation tips hassan"
+  },
+  {
+    path: "/admin",
+    title: "Admin Panel Management Dashboard | MIInfotech",
+    desc: "Secure management dashboard for MIInfotech services, blog posts, projects, products, and customer enquiries.",
+    keywords: "admin dashboard, miinfotech management"
+  },
+  {
     path: "/terms",
     title: "Terms of Service & Onsite Warranty Policy | MIInfotech",
     desc: "Read the Terms and Conditions and warranty service guidelines for doorstep repairs and CCTV installation services provided by MIInfotech in Hassan.",
@@ -804,6 +828,15 @@ async function runBuildSEO() {
   fs.writeFileSync(distRobotsPath, robotsTxt, "utf-8");
 
   console.log(`✅ Successfully updated robots.txt in public/ and dist/ using SITE_URL: ${SITE_URL}`);
+
+  // Generate 404.html for Cloudflare Pages SPA fallback routing
+  const public404Path = path.join(process.cwd(), "public", "404.html");
+  const dist404Path = path.join(distDir, "404.html");
+
+  fs.writeFileSync(public404Path, templateHtml, "utf-8");
+  fs.writeFileSync(dist404Path, templateHtml, "utf-8");
+
+  console.log("✅ Successfully generated 404.html in public/ and dist/ for Cloudflare Pages SPA fallback");
 }
 
 runBuildSEO();
