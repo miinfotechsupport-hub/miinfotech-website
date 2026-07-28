@@ -829,14 +829,14 @@ async function runBuildSEO() {
 
   console.log(`✅ Successfully updated robots.txt in public/ and dist/ using SITE_URL: ${SITE_URL}`);
 
-  // Generate 404.html for Cloudflare Pages SPA fallback routing
+  // Generate 404.html for Netlify & static host SPA fallback routing
   const public404Path = path.join(process.cwd(), "public", "404.html");
   const dist404Path = path.join(distDir, "404.html");
 
   fs.writeFileSync(public404Path, templateHtml, "utf-8");
   fs.writeFileSync(dist404Path, templateHtml, "utf-8");
 
-  console.log("✅ Successfully generated 404.html in public/ and dist/ for Cloudflare Pages SPA fallback");
+  console.log("✅ Successfully generated 404.html in public/ and dist/ for static host SPA fallback");
 }
 
 runBuildSEO();
