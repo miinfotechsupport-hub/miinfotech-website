@@ -553,6 +553,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     setAuthLoading(true);
     setAuthError(null);
 
+    if (!isRealSupabase && !isLocalhost) {
+      setAuthError("Admin functions are disabled because Supabase credentials are missing in production. Public pages continue operating normally.");
+      addToast("Admin functions disabled: Supabase credentials missing in production", "error");
+      setAuthLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -583,6 +590,9 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     localStorage.removeItem("mi_admin_session");
     localStorage.removeItem("mi_admin_session_expires");
     localStorage.removeItem("mi_admin_last_active");
+
+    setEmail("");
+    setPassword("");
 
     triggerAuthChange();
     setSession(null);
@@ -1246,6 +1256,15 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             </div>
           )}
 
+          {!isRealSupabase && !isLocalhost && (
+            <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs rounded-2xl flex items-center gap-2 mb-4 text-left">
+              <LucideIcons.AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <span className="flex-1 leading-snug">
+                Supabase credentials are not configured in this production environment. Admin features are disabled. The public website remains fully operational.
+              </span>
+            </div>
+          )}
+
           <form onSubmit={handleLogin} className="space-y-4">
             {authError && (
               <div className="p-3.5 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center gap-2">
@@ -1255,12 +1274,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             )}
 
             <div>
-              <label className="block text-[11px] font-mono uppercase text-slate-400 font-bold tracking-wider mb-1.5">
+              <label htmlFor="admin-login-email" className="block text-[11px] font-mono uppercase text-slate-400 font-bold tracking-wider mb-1.5">
                 Admin Username / Email
               </label>
               <div className="relative">
                 <LucideIcons.Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
+                  id="admin-login-email"
                   type="email"
                   required
                   value={email}
@@ -1272,12 +1292,13 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono uppercase text-slate-400 font-bold tracking-wider mb-1.5">
+              <label htmlFor="admin-login-password" className="block text-[11px] font-mono uppercase text-slate-400 font-bold tracking-wider mb-1.5">
                 Security Password
               </label>
               <div className="relative">
                 <LucideIcons.Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
+                  id="admin-login-password"
                   type="password"
                   required
                   value={password}
@@ -1622,12 +1643,14 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openEditModal("service", srv)}
+                          aria-label={`Edit ${srv.name || "service"}`}
                           className="p-2 bg-slate-950 border border-slate-850 hover:border-slate-700 text-blue-400 hover:text-blue-300 rounded-xl cursor-pointer transition-colors"
                         >
                           <LucideIcons.Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteItem("services", srv.id)}
+                          aria-label={`Delete ${srv.name || "service"}`}
                           className="p-2 bg-slate-950 border border-slate-850 hover:border-red-900/30 text-red-400 hover:text-red-300 rounded-xl cursor-pointer transition-colors"
                         >
                           <LucideIcons.Trash2 className="w-3.5 h-3.5" />
@@ -1687,12 +1710,14 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => openEditModal("blog", b)}
+                                aria-label={`Edit ${b.title || "blog post"}`}
                                 className="p-1.5 bg-slate-950 border border-slate-850 hover:border-slate-750 text-blue-400 hover:text-blue-300 rounded-lg cursor-pointer transition-colors"
                               >
                                 <LucideIcons.Edit2 className="w-3.5 h-3.5" />
                               </button>
                               <button
                                 onClick={() => handleDeleteItem("blogs", b.id)}
+                                aria-label={`Delete ${b.title || "blog post"}`}
                                 className="p-1.5 bg-slate-950 border border-slate-850 hover:border-red-900/30 text-red-400 hover:text-red-300 rounded-lg cursor-pointer transition-colors"
                               >
                                 <LucideIcons.Trash2 className="w-3.5 h-3.5" />
@@ -1750,12 +1775,14 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => openEditModal("product", p)}
+                            aria-label={`Edit ${p.name || "product"}`}
                             className="p-1.5 bg-slate-950 border border-slate-850 hover:border-slate-750 text-blue-400 hover:text-blue-300 rounded-lg cursor-pointer transition-colors"
                           >
                             <LucideIcons.Edit2 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDeleteItem("products", p.id)}
+                            aria-label={`Delete ${p.name || "product"}`}
                             className="p-1.5 bg-slate-950 border border-slate-850 hover:border-red-900/30 text-red-400 hover:text-red-300 rounded-lg cursor-pointer transition-colors"
                           >
                             <LucideIcons.Trash2 className="w-3.5 h-3.5" />
@@ -1882,6 +1909,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => openEditModal("project", proj)}
+                              aria-label={`Edit ${proj.title || "project"}`}
                               className="p-2 bg-slate-950 border border-slate-850 hover:border-slate-700 text-blue-400 hover:text-white rounded-xl cursor-pointer transition-colors"
                               title="Edit Project"
                             >
@@ -1889,6 +1917,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                             </button>
                             <button
                               onClick={() => handleDeleteItem("projects", proj.id)}
+                              aria-label={`Delete ${proj.title || "project"}`}
                               className="p-2 bg-slate-950 border border-slate-850 hover:border-red-900/30 text-red-400 hover:text-white rounded-xl cursor-pointer transition-colors"
                               title="Delete Project"
                             >
@@ -1956,12 +1985,14 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => openEditModal("testimonial", t)}
+                          aria-label={`Edit ${t.name || "testimonial"}`}
                           className="p-1.5 bg-slate-950 border border-slate-850 text-blue-400 rounded-lg cursor-pointer hover:border-slate-700 transition-colors"
                         >
                           <LucideIcons.Edit2 className="w-3 h-3" />
                         </button>
                         <button
                           onClick={() => handleDeleteItem("testimonials", t.id)}
+                          aria-label={`Delete ${t.name || "testimonial"}`}
                           className="p-1.5 bg-slate-950 border border-slate-850 text-red-400 rounded-lg cursor-pointer hover:border-slate-700 transition-colors"
                         >
                           <LucideIcons.Trash2 className="w-3 h-3" />
@@ -2114,12 +2145,14 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => openEditModal("faq", f)}
+                          aria-label={`Edit FAQ ${f.question || ""}`}
                           className="p-1.5 bg-slate-950 border border-slate-850 hover:border-slate-750 text-blue-400 hover:text-blue-300 rounded-lg cursor-pointer transition-colors"
                         >
                           <LucideIcons.Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteItem("faqs", f.id)}
+                          aria-label={`Delete FAQ ${f.question || ""}`}
                           className="p-1.5 bg-slate-950 border border-slate-850 hover:border-red-900/30 text-red-400 hover:text-red-300 rounded-lg cursor-pointer transition-colors"
                         >
                           <LucideIcons.Trash2 className="w-3.5 h-3.5" />
