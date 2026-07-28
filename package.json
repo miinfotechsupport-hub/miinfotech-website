@@ -7,9 +7,6 @@
     "dev": "tsx server.ts",
     "build": "vite build && node scripts/build-seo.js && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "build:cloudflare": "npm run build",
-    "deploy": "wrangler pages deploy dist",
-    "deploy:pages": "wrangler pages deploy dist",
-    "preview:pages": "wrangler pages dev dist",
     "start": "node dist/server.cjs",
     "lint": "tsc --noEmit"
   },
