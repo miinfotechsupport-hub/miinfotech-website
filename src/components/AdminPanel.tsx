@@ -1115,6 +1115,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
           <button
             onClick={() => setShowForgotPassword(false)}
+            aria-label="Close modal"
             className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
           >
             <LucideIcons.X className="w-5 h-5" />
@@ -1188,6 +1189,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl relative animate-fadeIn">
           <button
             onClick={onClose}
+            aria-label="Close modal"
             className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
           >
             <LucideIcons.X className="w-5 h-5" />
@@ -1364,6 +1366,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           <button
             onClick={onClose}
             title="Return to Website"
+            aria-label="Return to Website"
             className="md:hidden text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 cursor-pointer"
           >
             <LucideIcons.X className="w-5 h-5" />
@@ -2552,6 +2555,7 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                   setModalType(null);
                   setEditingItem(null);
                 }}
+                aria-label="Close modal"
                 className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
               >
                 <LucideIcons.X className="w-5 h-5" />

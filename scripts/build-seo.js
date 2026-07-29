@@ -334,18 +334,6 @@ const STATIC_ROUTES = [
     keywords: "cctv camera price hassan, wifi router hassan, ssd upgrade price"
   },
   {
-    path: "/blogs",
-    title: "MIInfotech Knowledge Hub | Tech Guides & Articles",
-    desc: "Expert guides, local SEO tech resources, and computer diagnostics written by founder Mohammed Ishtiaqh for businesses in Hassan.",
-    keywords: "tech blog hassan, computer repair guide, cctv installation tips hassan"
-  },
-  {
-    path: "/admin",
-    title: "Admin Panel Management Dashboard | MIInfotech",
-    desc: "Secure management dashboard for MIInfotech services, blog posts, projects, products, and customer enquiries.",
-    keywords: "admin dashboard, miinfotech management"
-  },
-  {
     path: "/terms",
     title: "Terms of Service & Onsite Warranty Policy | MIInfotech",
     desc: "Read the Terms and Conditions and warranty service guidelines for doorstep repairs and CCTV installation services provided by MIInfotech in Hassan.",
@@ -473,7 +461,12 @@ function generatePageHtml(templateHtml, routeInfo) {
     "url": SITE_URL,
     "priceRange": "₹₹",
     "hasMap": "https://www.google.com/maps?cid=e21256333bf9e86c",
-    "sameAs": ["https://share.google/hnUk6Bt7LUOFrdL2g"],
+    "sameAs": [
+      "https://www.instagram.com/miinfotech.in",
+      "https://www.facebook.com/share/18nFLrKJ1a/",
+      "https://share.google/26j3KMLobkBNnH89a",
+      "https://wa.me/919964761624"
+    ],
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Onsite Doorstep Services",
@@ -820,7 +813,7 @@ async function runBuildSEO() {
   console.log("✅ Successfully generated dynamic sitemap.xml in public/ and dist/");
 
   // Generate & Write robots.txt using dynamic SITE_URL
-  const robotsTxt = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
+  const robotsTxt = `User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
   const publicRobotsPath = path.join(process.cwd(), "public", "robots.txt");
   const distRobotsPath = path.join(distDir, "robots.txt");
 

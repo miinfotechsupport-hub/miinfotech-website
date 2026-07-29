@@ -279,7 +279,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
                 <span className="text-slate-500 font-mono text-[10px] uppercase tracking-wider block">Follow Our Work On Social Media:</span>
                 <div className="flex gap-2">
                   <a 
-                    href="https://www.facebook.com/share/1BV2GpPber/" 
+                    href="https://www.facebook.com/share/18nFLrKJ1a/" 
                     target="_blank" 
                     rel="noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 border border-slate-800 hover:border-blue-500 text-slate-300 hover:text-white px-4 py-3 rounded-xl text-xs font-semibold transition-all cursor-pointer"
@@ -288,7 +288,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
                     <span>Facebook</span>
                   </a>
                   <a 
-                    href="https://www.instagram.com/miinfotech27" 
+                    href="https://www.instagram.com/miinfotech.in" 
                     target="_blank" 
                     rel="noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 border border-slate-800 hover:border-purple-500 text-slate-300 hover:text-white px-4 py-3 rounded-xl text-xs font-semibold transition-all cursor-pointer"

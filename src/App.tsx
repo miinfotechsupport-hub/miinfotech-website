@@ -884,7 +884,7 @@ export default function App() {
                   💬 Chat on WhatsApp
                 </a>
                 <a 
-                  href="https://share.google/hnUk6Bt7LUOFrdL2g" 
+                  href="https://share.google/26j3KMLobkBNnH89a" 
                   target="_blank" 
                   rel="noreferrer" 
                   className="bg-slate-900 border border-slate-800 text-[10px] text-slate-300 font-mono py-1.5 px-3 rounded hover:border-blue-500 transition-all flex items-center gap-1 cursor-pointer"
@@ -892,12 +892,20 @@ export default function App() {
                   🌐 Google Business Profile
                 </a>
                 <a 
-                  href="https://www.instagram.com/miinfotech27" 
+                  href="https://www.instagram.com/miinfotech.in" 
                   target="_blank" 
                   rel="noreferrer" 
                   className="bg-slate-900 border border-slate-800 text-[10px] text-slate-300 font-mono py-1.5 px-3 rounded hover:border-purple-500 transition-all flex items-center gap-1 cursor-pointer"
                 >
                   📷 Instagram
+                </a>
+                <a 
+                  href="https://www.facebook.com/share/18nFLrKJ1a/" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="bg-slate-900 border border-slate-800 text-[10px] text-slate-300 font-mono py-1.5 px-3 rounded hover:border-blue-600 transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  👍 Facebook
                 </a>
               </div>
             </div>
