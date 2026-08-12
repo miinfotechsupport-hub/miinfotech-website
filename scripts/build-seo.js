@@ -26,7 +26,7 @@ const SERVICES_DATA_SEO = [
     faqs: [
       {
         q: "How do I book Onsite Computer Repair in Hassan for doorstep service?",
-        a: "Call or WhatsApp +91 9964761624. As an Onsite Service-Area Business, our certified technician will visit your home, office, or shop in Hassan with diagnostic equipment and spare parts."
+        a: "Call or WhatsApp +91 9964761624. As an Onsite Service-Area Business, our experienced technician will visit your home, office, or shop in Hassan with diagnostic equipment and spare parts."
       },
       {
         q: "What are your visiting charges for Computer Repair in Hassan?",
@@ -44,7 +44,7 @@ const SERVICES_DATA_SEO = [
     faqs: [
       {
         q: "How long does a typical Laptop Screen Replacement in Hassan take?",
-        a: "Laptop Screen Replacement in Hassan and keyboard replacements are typically completed onsite within 1 to 2 hours using genuine OEM-grade screens with warranty."
+        a: "Laptop Screen Replacement in Hassan and keyboard replacements are typically completed onsite within 1 to 2 hours using quality replacement screens with warranty."
       }
     ]
   },
@@ -163,7 +163,7 @@ const SERVICES_DATA_SEO = [
     faqs: [
       {
         q: "What is included in an Annual Maintenance Contract (AMC) for Office IT Support in Hassan?",
-        a: "Monthly preventive maintenance, unlimited emergency breakdown visits within 2-4 hours, antivirus protection, database backups, and standby hardware replacements."
+        a: "Monthly preventive maintenance, priority emergency breakdown visits within 2-4 hours, antivirus protection, database backups, and standby hardware replacements."
       }
     ]
   }
@@ -245,7 +245,7 @@ const PROJECTS_DATA_SEO = [
     seoSlug: "commercial-cat6-cabling-server-rack-installation-hassan",
     path: "/project/commercial-cat6-cabling-server-rack-installation-hassan",
     title: "Structured LAN Cabling & Server Rack Setup Hassan | MIInfotech",
-    desc: "Structured office network cabling and server rack installation completed in Hassan Industrial Area by MIInfotech. 100% gigabit performance guaranteed.",
+    desc: "Structured office network cabling and server rack installation completed in Hassan Industrial Area by MIInfotech. Tested gigabit network performance verified.",
     keywords: "structured cabling hassan, server rack installation hassan, cat6 networking hassan",
     location: "Hassan Industrial Area, Hassan",
     dateCreated: "2026-06-15",
@@ -345,7 +345,7 @@ const STATIC_ROUTES = [
 const SITE_WIDE_FAQS = [
   {
     q: "How do I book Computer Repair in Hassan or Laptop Repair Near Me for doorstep service?",
-    a: "Booking Computer Repair in Hassan or Laptop Repair Near Me with MIInfotech is fast and simple! Simply call or WhatsApp us at +91 9964761624. As an Onsite Service-Area Business, our certified technician will visit your home, office, or shop in Hassan with diagnostic equipment and spare parts to fix your computer or laptop on the spot."
+    a: "Booking Computer Repair in Hassan or Laptop Repair Near Me with MIInfotech is fast and simple! Simply call or WhatsApp us at +91 9964761624. As an Onsite Service-Area Business, our experienced technician will visit your home, office, or shop in Hassan with diagnostic equipment and spare parts to fix your computer or laptop on the spot."
   },
   {
     q: "Which locations in and around Hassan do you cover for doorstep CCTV and IT service?",
@@ -365,7 +365,7 @@ const SITE_WIDE_FAQS = [
   },
   {
     q: "How long does a typical Laptop Screen Replacement in Hassan take?",
-    a: "Laptop Screen Replacement in Hassan and keyboard replacements are typically completed onsite within 1 to 2 hours using genuine OEM-grade screens with warranty. We service Dell, HP, Lenovo, ASUS, and Acer laptops directly at your table."
+    a: "Laptop Screen Replacement in Hassan and keyboard replacements are typically completed onsite within 1 to 2 hours using quality replacement screens with warranty. We service Dell, HP, Lenovo, ASUS, and Acer laptops directly at your table."
   }
 ];
 

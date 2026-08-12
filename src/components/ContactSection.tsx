@@ -25,7 +25,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
       case "Urgent":
         return {
           callback: "within 10 - 15 minutes",
-          onsite: "Onsite dispatch guaranteed within 2 - 4 hours",
+          onsite: "Onsite dispatch typically within 2 - 4 hours",
           badgeColor: "bg-red-500/10 text-red-400 border-red-500/20",
           status: "⚡ Urgent Emergency Priority"
         };
@@ -527,7 +527,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
               </span>
               <span className="flex items-center gap-1">
                 <HeartHandshake className="w-3.5 h-3.5 text-emerald-500" />
-                100% Doorstep Satisfaction
+                Doorstep Customer Support
               </span>
             </div>
 

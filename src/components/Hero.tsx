@@ -24,7 +24,7 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
             <div className="flex flex-wrap gap-2.5 items-center">
               <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-3.5 py-1.5 rounded-full text-blue-400 text-xs font-semibold w-fit tracking-wide uppercase font-mono">
                 <MapPin className="w-3.5 h-3.5" />
-                <span>#1 Onsite IT Support & Security in Hassan, KA</span>
+                <span>Onsite IT Support & Security in Hassan, Karnataka</span>
               </div>
               <div className="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/20 px-3.5 py-1.5 rounded-full text-indigo-400 text-xs font-bold w-fit tracking-wide uppercase font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
@@ -39,13 +39,13 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
 
             {/* Subtitle establishing SAB Service Model (No Physical Shop) & Founder */}
             <p className="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed">
-              Top-rated doorstep <strong className="text-white">Computer Repair in Hassan</strong>, Laptop Repair, Printer Repair, and <strong className="text-white">CCTV Camera Installation in Hassan</strong> by founder <strong className="text-white">Mohammed Ishtiaqh</strong> directly at your home, office, or shop.
+              Doorstep <strong className="text-white">Computer Repair in Hassan</strong>, Laptop Repair, Printer Repair, and <strong className="text-white">CCTV Camera Installation in Hassan</strong> by founder <strong className="text-white">Mohammed Ishtiaqh</strong> directly at your home, office, or shop.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-blue-400 font-mono">
               <span>Same-day service</span>
               <span className="text-slate-600">•</span>
-              <span>Genuine spare parts</span>
+              <span>Quality replacement parts available</span>
               <span className="text-slate-600">•</span>
               <span>Experienced technicians</span>
               <span className="text-slate-600">•</span>
@@ -56,19 +56,19 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-400 text-sm mt-2">
               <div className="flex items-center gap-2.5">
                 <ShieldCheck className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                <span>Genuine OEM Parts & 100% Data Safety</span>
+                <span>Quality Parts & Careful Data Handling</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <UserCheck className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                <span>Expert Doorstep Diagnosis by Mohammed Ishtiaqh</span>
+                <span>Professional Doorstep Diagnosis by Mohammed Ishtiaqh</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Star className="w-5 h-5 text-amber-500 fill-amber-500 flex-shrink-0" />
-                <span>4.9/5 Google Rated Service with 1,480+ Visits</span>
+                <span>Google reviews from real customers</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Award className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                <span>Same-Day Resolution & Zero Hidden Charges</span>
+                <span>Clear Service Estimates & Professional Support</span>
               </div>
             </div>
 
@@ -145,7 +145,7 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
                   <span className="text-2xl sm:text-3xl font-extrabold text-amber-500 flex items-center gap-1 mt-1 tracking-tight">
                     4.9<Star className="w-5 h-5 fill-amber-500 text-amber-500 inline" />
                   </span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">100% genuine reviews</span>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">Real customer reviews</span>
                 </div>
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
                   <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Diagnostics Time</span>

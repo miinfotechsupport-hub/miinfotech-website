@@ -8,6 +8,7 @@ import ContactSection from "./components/ContactSection";
 import SEOPanel from "./components/SEOPanel";
 import FloatingCTABar from "./components/FloatingCTABar";
 import TermsConditions from "./components/TermsConditions";
+import ProductsShowcase from "./components/ProductsShowcase";
 import LogoIcon from "./components/LogoIcon";
 import ServiceLandingPage from "./components/ServiceLandingPage";
 
@@ -16,6 +17,13 @@ import { supabase, useSettings } from "./lib/supabase";
 import { SITE_URL } from "./lib/config";
 import { BLOG_DATA, BlogItem, SERVICES_DATA } from "./types";
 import { Cpu, Mail, MapPin, Phone, MessageSquare, Facebook, Instagram, ShieldCheck, HeartHandshake, BookOpen, Clock, ArrowLeft, ArrowRight, CornerDownRight } from "lucide-react";
+
+const STATIC_PROJECT_SLUGS = new Set([
+  "commercial-cat6-cabling-server-rack-installation-hassan",
+  "comprehensive-ip-cctv-surveillance-grid-installation-hassan",
+  "15-station-college-computer-lab-setup-hassan",
+  "long-range-4km-outdoor-p2p-wireless-bridge-hassan"
+]);
 
 const SERVICE_PATH_MAP: { [key: string]: string } = {
   "/computer-repair-hassan": "computer",
@@ -57,6 +65,21 @@ export default function App() {
 
   const [blogsList, setBlogsList] = useState<any[]>(BLOG_DATA);
   const [projectsList, setProjectsList] = useState<any[]>([]);
+  const [productsList, setProductsList] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data } = await supabase.from("products").select("*").eq("enabled", true).order("order", { ascending: true });
+        if (data && data.length > 0) {
+          setProductsList(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch products in App.tsx:", err);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -144,6 +167,10 @@ export default function App() {
           setActiveTab("contact");
         } else if (hash === "#terms" || path === "/terms") {
           setActiveTab("terms");
+        } else if (hash === "#gallery" || path === "/gallery") {
+          setActiveTab("gallery");
+        } else if (hash === "#products" || path === "/products") {
+          setActiveTab("products");
         } else if (hash === "#admin" || hash.startsWith("#admin") || path === "/admin") {
           setActiveTab("admin");
         } else {
@@ -164,7 +191,7 @@ export default function App() {
   // Comprehensive, Dynamic SEO & Meta Manager
   useEffect(() => {
     let title = "CCTV Installation & Computer Repair in Hassan | MIInfotech";
-    let description = "Top-rated Computer Repair in Hassan & CCTV Installation in Hassan. Doorstep Laptop Repair, Printer Service, & IT support by Mohammed Ishtiaqh. Call +91 9964761624.";
+    let description = "Doorstep Computer Repair in Hassan & CCTV Installation in Hassan. Doorstep Laptop Repair, Printer Service, & IT support by Mohammed Ishtiaqh. Call +91 9964761624.";
     let keywords = "CCTV Installation in Hassan, CCTV Camera Installation in Hassan, CCTV Repair in Hassan, Computer Repair in Hassan, Computer Service Center in Hassan, Laptop Repair in Hassan, Printer Repair in Hassan, Computer Repair Near Me, Laptop Repair Near Me, Printer Repair Near Me, CCTV Installation Near Me";
     let canonicalUrl = SITE_URL;
     const imageUrl = `${SITE_URL}/images/miinfotech-logo.png`;
@@ -181,7 +208,7 @@ export default function App() {
       const serviceObj = SERVICES_DATA.find(s => s.id === selectedServiceId);
       if (serviceObj) {
         title = `${serviceObj.name} in Hassan | ${serviceObj.tagline} | MIInfotech`;
-        description = `${serviceObj.description} Diagnostic visits in Hassan start at ₹450 with 100% warrantied genuine parts.`;
+        description = `${serviceObj.description} Diagnostic visits in Hassan start at ₹450 with quality warrantied parts.`;
         keywords = `${serviceObj.seoKeywords?.join(", ")}, Computer Repair in Hassan, CCTV Installation in Hassan, Laptop Repair in Hassan`;
         const path = SERVICE_ID_TO_PATH[selectedServiceId];
         if (path) {
@@ -241,6 +268,16 @@ export default function App() {
         description = "Read the Terms and Conditions and warranty service guidelines for doorstep repairs and CCTV installation services provided by MIInfotech in Hassan.";
         keywords = "terms and conditions, MIInfotech warranty, service agreement";
         canonicalUrl = `${SITE_URL}/terms`;
+      } else if (activeTab === "gallery") {
+        title = "Onsite Project Gallery | MIInfotech Hassan";
+        description = "Visual gallery of doorstep IT support, server rack installations, and CCTV camera projects completed in Hassan, Karnataka.";
+        keywords = "IT project gallery Hassan, CCTV installation photos Hassan, server rack setup photos";
+        canonicalUrl = `${SITE_URL}/gallery`;
+      } else if (activeTab === "products") {
+        title = "IT Hardware & CCTV Products Catalog | MIInfotech Hassan";
+        description = "Browse CCTV cameras, Wi-Fi routers, SSDs, and IT hardware available for doorstep installation in Hassan, Karnataka.";
+        keywords = "CCTV camera price Hassan, Wi-Fi router Hassan, SSD upgrade price Hassan, IT hardware catalog";
+        canonicalUrl = `${SITE_URL}/products`;
       }
     }
 
@@ -295,7 +332,7 @@ export default function App() {
 
     let schemaObject: any = null;
 
-    if (selectedProjectSlug) {
+    if (selectedProjectSlug && !STATIC_PROJECT_SLUGS.has(selectedProjectSlug)) {
       const activeProject = projectsList.find(p => p.seoSlug === selectedProjectSlug || (p.id && p.id.toString() === selectedProjectSlug));
       if (activeProject && activeProject.schema) {
         try {
@@ -464,7 +501,7 @@ export default function App() {
                   <div className="text-center max-w-2xl mx-auto mb-10 animate-fadeIn">
                     <span className="text-blue-500 font-semibold uppercase tracking-wider text-xs font-mono">Comprehensive Domain Experience</span>
                     <h3 className="font-sans text-xl sm:text-2xl font-extrabold text-white mt-1">Industries We Protect & Service</h3>
-                    <p className="text-slate-400 text-xs leading-normal mt-1">Providing certified network wiring, CCTV layouts, printer backup configurations, and computer help desks.</p>
+                    <p className="text-slate-400 text-xs leading-normal mt-1">Providing professional network wiring, CCTV layouts, printer backup configurations, and computer help desks.</p>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 animate-fadeIn">
@@ -577,7 +614,7 @@ export default function App() {
                 <span className="text-blue-500 font-semibold uppercase tracking-wider text-xs font-mono">Hassan Doorstep IT Care</span>
                 <h3 className="font-sans text-2xl md:text-3xl font-extrabold text-white mt-2 tracking-tight">Need Onsite Hardware Setup or Repair?</h3>
                 <p className="text-slate-400 text-sm mt-3 max-w-2xl mx-auto leading-relaxed">
-                  Get certified help with computers, laptops, CCTV installations, network cabling, or EPABX systems. Our senior tech engineer will visit your premises anywhere in Hassan for complete diagnosis and setup.
+                  Get professional help with computers, laptops, CCTV installations, network cabling, or EPABX systems. Our senior tech engineer will visit your premises anywhere in Hassan for complete diagnosis and setup.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                   <button
@@ -762,6 +799,20 @@ export default function App() {
             <TermsConditions />
           </div>
         )}
+
+        {/* VIEW 8: GALLERY VIEW */}
+        {activeTab === "gallery" && (
+          <div className="animate-fadeIn pt-16">
+            <ProjectsGallery />
+          </div>
+        )}
+
+        {/* VIEW 9: PRODUCTS CATALOG VIEW */}
+        {activeTab === "products" && (
+          <div className="animate-fadeIn pt-16">
+            <ProductsShowcase products={productsList} onRequestInstallation={handleRequestOnsiteVisit} />
+          </div>
+        )}
           </>
         )}
       </main>
@@ -818,6 +869,8 @@ export default function App() {
                   { id: "home", label: "Home Base" },
                   { id: "services", label: "Service Catalog" },
                   { id: "projects", label: "Real Work Portfolio" },
+                  { id: "products", label: "Hardware & CCTV Catalog" },
+                  { id: "gallery", label: "Onsite Photo Gallery" },
                   { id: "blog", label: "Diagnostic Tips (Blog)" },
                   { id: "faqs", label: "Help & FAQs" },
                   { id: "contact", label: "Contact & Quote Form" },

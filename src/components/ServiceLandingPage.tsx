@@ -133,9 +133,9 @@ export default function ServiceLandingPage({
               For businesses, schools, and offices in Hassan, computer failure means downtime. Our computer Annual Maintenance Contracts (AMC) offer proactive maintenance, dust cleaning, software auditing, and local network diagnostics to prevent failures before they occur. We ensure that your computer lab, classroom systems, or office computers run smoothly with priority support dispatch.
             </p>
 
-            <h3 className="text-base sm:text-lg font-bold text-white">5. Local Expertise & Google EEAT Standards</h3>
+            <h3 className="text-base sm:text-lg font-bold text-white">5. Local Expertise & High Service Standards</h3>
             <p>
-              MIInfotech is built on trust, transparency, and certified experience. By performing all diagnoses and repairs right in front of you, we guarantee 100% data safety and eliminate any parts-swap concerns. We are dedicated to providing the highest quality <strong>doorstep computer repair service in Hassan</strong>.
+              MIInfotech is built on trust, transparency, and hands-on technical experience. By performing all diagnoses and repairs right in front of you, we ensure careful data handling and eliminate any parts-swap concerns. We are dedicated to providing the highest quality <strong>doorstep computer repair service in Hassan</strong>.
             </p>
           </div>
         );
@@ -147,7 +147,7 @@ export default function ServiceLandingPage({
               Premium Doorstep Laptop Repair & Screen Replacement in Hassan
             </h2>
             <p>
-              Laptops are complex, tightly-packed machines that require precision handling. A single drop can crack a delicate LED display, tear a keyboard ribbon, or damage a charging socket. At MIInfotech, we offer comprehensive <strong>Laptop Repair in Hassan, Karnataka</strong>. Our certified engineer, <strong>Mohammed Ishtiaqh</strong>, brings specialized tools and ESD-safe workspaces directly to your home or office.
+              Laptops are complex, tightly-packed machines that require precision handling. A single drop can crack a delicate LED display, tear a keyboard ribbon, or damage a charging socket. At MIInfotech, we offer comprehensive <strong>Laptop Repair in Hassan, Karnataka</strong>. Our experienced service engineer, <strong>Mohammed Ishtiaqh</strong>, brings specialized tools and ESD-safe workspaces directly to your home or office.
             </p>
 
             <h3 className="text-base sm:text-lg font-bold text-white">1. Expert Laptop Screen Replacement Solutions</h3>
@@ -165,9 +165,9 @@ export default function ServiceLandingPage({
               Laptops suck in dust over time, causing cooling fans to clog. This results in extreme heat, loud fan noise, and performance throttling. We disassemble the cooling assembly, clean out the dust, replace dry thermal paste with premium compound, and test thermal stability under heavy workloads.
             </p>
 
-            <h3 className="text-base sm:text-lg font-bold text-white">4. OEM-Grade Battery & Performance Hardware Upgrades</h3>
+            <h3 className="text-base sm:text-lg font-bold text-white">4. Quality Battery & Performance Hardware Upgrades</h3>
             <p>
-              If your laptop drains quickly, a certified battery replacement is necessary. We source OEM batteries with solid replacement warranties. Additionally, we upgrade legacy mechanical hard drives to ultra-fast NVMe/SATA SSDs and double your RAM capacity, giving your older laptop a massive speed boost that outperforms many newer models.
+              If your laptop drains quickly, a quality battery replacement is necessary. We source reliable replacement batteries with solid replacement warranties. Additionally, we upgrade legacy mechanical hard drives to ultra-fast NVMe/SATA SSDs and double your RAM capacity, giving your older laptop a massive speed boost that outperforms many newer models.
             </p>
 
             <h3 className="text-base sm:text-lg font-bold text-white">5. Why Choose Our Safe Doorstep Model?</h3>
@@ -291,7 +291,7 @@ export default function ServiceLandingPage({
               Onsite IT Infrastructure & Electronic Security Support in Hassan
             </h2>
             <p>
-              MIInfotech is dedicated to providing high-quality technical support, security systems, and infrastructure maintenance in Hassan, Karnataka. Founded and managed by <strong>Mohammed Ishtiaqh</strong>, we deliver certified doorstep diagnostics, hardware repairs, and complete IT setups.
+              MIInfotech is dedicated to providing high-quality technical support, security systems, and infrastructure maintenance in Hassan, Karnataka. Founded and managed by <strong>Mohammed Ishtiaqh</strong>, we deliver professional doorstep diagnostics, hardware repairs, and complete IT setups.
             </p>
 
             <h3 className="text-base sm:text-lg font-bold text-white">1. Expert Biometric Attendance & Access Control Installations</h3>
@@ -544,11 +544,6 @@ export default function ServiceLandingPage({
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen text-left pb-12 animate-fadeIn">
       
-      {/* Schema Injection */}
-      <script type="application/ld+json">
-        {JSON.stringify(jsonLdSchema)}
-      </script>
-
       {/* Hero Header Area */}
       <div className="relative bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-850 pt-28 pb-12">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent opacity-75 pointer-events-none" />
@@ -577,7 +572,7 @@ export default function ServiceLandingPage({
             <div className="lg:col-span-8 space-y-4">
               <div className="inline-flex items-center gap-2.5 bg-blue-600/10 border border-blue-500/20 px-3.5 py-1.5 rounded-full text-blue-400 font-mono text-[10px] uppercase font-bold tracking-wider">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
-                Certified Onsite Care • Hassan Area
+                Professional Onsite Care • Hassan Area
               </div>
               
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
@@ -595,7 +590,7 @@ export default function ServiceLandingPage({
               {/* Bullet Quick Trust Icons */}
               <div className="flex flex-wrap gap-4 text-xs font-mono text-slate-400 pt-3">
                 <span className="flex items-center gap-1.5 bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-800">
-                  🛡️ 100% Genuine Components
+                  🛡️ Quality Replacement Components
                 </span>
                 <span className="flex items-center gap-1.5 bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-800">
                   ⚙️ Onsite Repair Verification
@@ -735,12 +730,12 @@ export default function ServiceLandingPage({
                 Brands & hardware Vendors We Support
               </h3>
               <p className="text-xs text-slate-500 leading-normal">
-                Sourcing original equipment, firmware configurations, and authorized spares for all major hardware brands:
+                Sourcing quality equipment, firmware configurations, and tested spares for all major hardware brands:
               </p>
               <div className="flex flex-wrap gap-2.5">
                 {SUPPORTED_BRANDS.map((brand, idx) => (
                   <span key={idx} className="bg-slate-900 text-slate-300 border border-slate-850 px-3.5 py-1.5 rounded-xl text-xs font-bold font-sans">
-                    {brand.name} Authorized Support
+                    {brand.name} Hardware Support
                   </span>
                 ))}
               </div>

@@ -77,7 +77,7 @@ export default function ServiceExplorer({ onBookClick, onViewFullPage }: Service
             Professional Onsite IT & Security Services
           </h2>
           <p className="text-slate-400 mt-2 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            MIInfotech provides a complete catalog of certified technical services delivered directly at your doorstep in Hassan.
+            MIInfotech provides a complete catalog of professional technical services delivered directly at your doorstep in Hassan.
           </p>
         </div>
 

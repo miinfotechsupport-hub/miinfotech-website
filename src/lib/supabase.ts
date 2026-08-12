@@ -74,11 +74,7 @@ const DEFAULT_FAQS = [
   { id: "faq-4", question: "Can I view my security cameras on my phone when away?", answer: "Absolutely. We configure high-security mobile applications (like Hik-Connect or gDMSS) on your smartphone with proper cloud network port configurations, enabling 100% remote monitoring from anywhere in the world.", category: "CCTV Surveillance" }
 ];
 
-const DEFAULT_TESTIMONIALS = [
-  { id: "rev-1", name: "Kiran Kumar", role: "Business Owner", location: "Hassan", rating: 5, date: "2 weeks ago", comment: "Outstanding computer repair service! Mohammed Ishtiaqh came directly to our office in Hassan and upgraded our slow billing laptops with SSDs. They now boot up in under 15 seconds. Extremely professional and fair pricing.", verified: true, approved: true, featured: true },
-  { id: "rev-2", name: "Ananya Gowda", role: "Residential Customer", location: "Hassan", rating: 5, date: "1 month ago", comment: "We had four CCTV security cameras installed at our home. The cabling job was incredibly neat, and they set up the mobile app so I can view the live feed of my front gate. Very polite and knowledgeable service.", verified: true, approved: true, featured: true },
-  { id: "rev-3", name: "Ramesh Hegde", role: "School Principal", location: "Hassan Outskirts", rating: 5, date: "2 months ago", comment: "Highly reliable IT partner. MIInfotech handles our school computer lab networking AMC. Their emergency support response time is fantastic. Highly recommend their annual maintenance plans.", verified: true, approved: true, featured: true }
-];
+const DEFAULT_TESTIMONIALS: any[] = [];
 
 const DEFAULT_GALLERY = [
   { id: "gal-1", title: "Corporate Networking Rack Setup", url: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=600", album: "Projects", isProject: true },
@@ -109,7 +105,7 @@ const DEFAULT_SETTINGS = {
 
 const DEFAULT_SEO = {
   homepage_title: "CCTV Installation & Computer Repair in Hassan | MIInfotech",
-  homepage_description: "Top-rated Computer Repair in Hassan & CCTV Installation in Hassan. Fast doorstep Laptop Repair, Printer Repair, & IT support by Mohammed Ishtiaqh. Call +91 9964761624.",
+  homepage_description: "Doorstep Computer Repair in Hassan & CCTV Installation in Hassan. Fast doorstep Laptop Repair, Printer Repair, & IT support by Mohammed Ishtiaqh. Call +91 9964761624.",
   homepage_keywords: "Computer Repair in Hassan, CCTV Installation in Hassan, CCTV Camera Installation in Hassan, Laptop Repair in Hassan, Printer Repair in Hassan, Computer Repair Near Me, Laptop Repair Near Me, CCTV Repair in Hassan, Computer Service Center in Hassan",
   og_image: `${SITE_URL}/images/miinfotech-logo.png`,
   twitter_card: "summary_large_image"

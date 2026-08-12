@@ -132,7 +132,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       // AI Search entity optimization
       const entityKeywords = `MIInfotech, Mohammed Ishtiaqh, ${category}, ${brand}, Hassan, Karnataka, Onsite IT Support`;
       const semanticKeywords = `doorstep repair, diagnostic scanning, network optimization, hardware swap-outs, AMC contracts`;
-      const nlSearchPhrases = `Who is the best technician for ${category.toLowerCase()} in ${location.split(",")[0]}? Where can I get same-day ${category.toLowerCase()} near me?`;
+      const nlSearchPhrases = `Who provides doorstep service for ${category.toLowerCase()} in ${location.split(",")[0]}? Where can I get same-day ${category.toLowerCase()} near me?`;
       const faqKeywords = `visiting charges, warranty on repairs, component replacement cost, CCTV mobile view setup`;
       const localSearchKeywords = `IT technician Hassan, CCTV setup Kuvempu Nagar, computer repair Vidya Nagar`;
 

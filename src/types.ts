@@ -74,7 +74,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
     name: "Computer Repair & Desktop Service",
     iconName: "Monitor",
     tagline: "Expert Computer Repair in Hassan & Onsite Desktop Service Near Me",
-    description: "Certified Computer Repair in Hassan, Karnataka. We offer doorstep desktop diagnosis, SMPS power supply repairs, motherboard troubleshooting, high-speed SSD upgrades, and custom PC builds for homes and offices.",
+    description: "Professional Computer Repair in Hassan, Karnataka. We offer doorstep desktop diagnosis, SMPS power supply repairs, motherboard troubleshooting, high-speed SSD upgrades, and custom PC builds for homes and offices.",
     seoKeywords: ["Computer Repair in Hassan", "Computer Service Center in Hassan", "Desktop Repair in Hassan", "Computer Repair Near Me", "Custom PC Build Hassan"],
     features: [
       "Onsite Computer Repair in Hassan & Computer Service Center diagnostics",
@@ -103,7 +103,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
     description: "Doorstep Laptop Repair in Hassan, Karnataka. Specialized screen replacement, OEM battery replacement, keyboard repair, thermal servicing, and power jack fixes for Dell, HP, Lenovo, ASUS, Acer, and Apple laptops.",
     seoKeywords: ["Laptop Repair in Hassan", "Laptop Repair Near Me", "Laptop Service Center in Hassan", "Laptop Screen Replacement in Hassan", "Laptop Battery Replacement in Hassan"],
     features: [
-      "Doorstep Laptop Repair in Hassan with 100% data safety",
+      "Doorstep Laptop Repair in Hassan with careful data handling",
       "Laptop Screen Replacement in Hassan (FHD, IPS, LED panels with warranty)",
       "OEM-Grade Laptop Battery Replacement in Hassan with manufacturer warranty",
       "Laptop Keyboard and Trackpad replacement",
@@ -257,7 +257,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
     name: "Fire Alarm Systems",
     iconName: "ShieldAlert",
     tagline: "Fire Alarm System Installation in Hassan & Safety Panels",
-    description: "Certified Fire Alarm System Installation in Hassan, Karnataka. Conventional and addressable fire alarm panels, optical smoke detectors, thermal heat sensors, and FRLS cabling for commercial buildings.",
+    description: "Professional Fire Alarm System Installation in Hassan, Karnataka. Conventional and addressable fire alarm panels, optical smoke detectors, thermal heat sensors, and FRLS cabling for commercial buildings.",
     seoKeywords: ["Fire Alarm System Installation in Hassan", "Smoke Detector Setup Hassan", "Fire Alarm Panel Installation Hassan"],
     features: [
       "Fire Alarm System Installation in Hassan compliant with standard safety codes",
@@ -309,17 +309,17 @@ export const SERVICES_DATA: ServiceDetail[] = [
     name: "Office IT Support & AMC",
     iconName: "Briefcase",
     tagline: "Office IT Support in Hassan & Annual Maintenance Contracts",
-    description: "Comprehensive Office IT Support in Hassan, Karnataka. Custom IT and CCTV AMCs covering unlimited breakdown visits, preventive computer cleanups, backup audits, and priority emergency response.",
+    description: "Comprehensive Office IT Support in Hassan, Karnataka. Custom IT and CCTV AMCs covering breakdown visits, preventive computer cleanups, backup audits, and priority emergency response.",
     seoKeywords: ["Office IT Support in Hassan", "CCTV AMC in Hassan", "Annual Maintenance Contract Hassan", "Computer AMC Service Hassan"],
     features: [
       "Office IT Support in Hassan & custom IT AMC packages for businesses",
       "CCTV AMC in Hassan for regular camera health checks and recording audits",
       "Scheduled monthly preventive maintenance visits (deep dusting, OS cleaning)",
-      "Unlimited breakdown emergency visits within 2-4 hours response guarantee",
+      "Breakdown emergency visits within 2-4 hours response priority",
       "Complete inventory asset tracking and health logging of all IT hardware",
       "Proactive software updates, backup verifications, and antivirus management",
       "Standby hardware replacements (desktops, printers, switches)",
-      "Transparent flat-rate pricing with zero hidden charges"
+      "Transparent flat-rate pricing with clear upfront quotes"
     ],
     symptoms: [
       "Frequent hardware failures causing costly employee downtime and lost sales",
@@ -361,7 +361,7 @@ export const SERVICES_DATA: ServiceDetail[] = [
     name: "Windows Installation & OS Licensing",
     iconName: "Monitor",
     tagline: "Windows Installation in Hassan & Genuine OS License Activation",
-    description: "Professional Windows Installation in Hassan, Karnataka. Genuine Windows 10 and Windows 11 installation, license activation, system optimization, and boot error fixes with 100% data preservation.",
+    description: "Professional Windows Installation in Hassan, Karnataka. Genuine Windows 10 and Windows 11 installation, license activation, system optimization, and boot error fixes with careful data preservation.",
     seoKeywords: ["Windows Installation in Hassan", "Windows 11 Upgrade Hassan", "Genuine Windows License Hassan", "OS Installation Hassan"],
     features: [
       "Windows Installation in Hassan (Genuine Windows 10 & Windows 11)",
@@ -432,11 +432,11 @@ export const PROJECTS_DATA: ProjectItem[] = [
     date: "2026-06-15",
     equipmentUsed: "TP-Link 24-Port Gigabit Switch, D-Link 9U Server Rack, CAT6 Structured Cabling, Patch Panel",
     brand: "TP-Link",
-    technicianNotes: "Structured office network cabling and server rack installation completed in Hassan Industrial Area. 100% gigabit performance verified.",
+    technicianNotes: "Structured office network cabling and server rack installation completed in Hassan Industrial Area. Tested gigabit performance verified.",
     featured: true,
     seoSlug: "commercial-cat6-cabling-server-rack-installation-hassan",
     metaTitle: "Structured LAN Cabling & Server Rack Setup Hassan | MIInfotech",
-    metaDescription: "Structured office network cabling and server rack installation completed in Hassan Industrial Area by MIInfotech. 100% gigabit performance guaranteed.",
+    metaDescription: "Structured office network cabling and server rack installation completed in Hassan Industrial Area by MIInfotech. Tested gigabit performance verified.",
     schema: "{}",
     status: "published"
   },
@@ -532,7 +532,7 @@ export const REVIEWS_DATA: ReviewItem[] = [];
 export const FAQS_DATA: FAQItem[] = [
   {
     question: "How do I book Computer Repair in Hassan or Laptop Repair Near Me for doorstep service?",
-    answer: "Booking Computer Repair in Hassan or Laptop Repair Near Me with MIInfotech is fast and simple! Simply call or WhatsApp us at +91 9964761624. As an Onsite Service-Area Business, our certified technician will visit your home, office, or shop in Hassan with diagnostic equipment and spare parts to fix your computer or laptop on the spot.",
+    answer: "Booking Computer Repair in Hassan or Laptop Repair Near Me with MIInfotech is fast and simple! Simply call or WhatsApp us at +91 9964761624. As an Onsite Service-Area Business, our experienced technician will visit your home, office, or shop in Hassan with diagnostic equipment and spare parts to fix your computer or laptop on the spot.",
     category: "General"
   },
   {
@@ -557,7 +557,7 @@ export const FAQS_DATA: FAQItem[] = [
   },
   {
     question: "How long does a typical Laptop Screen Replacement in Hassan take?",
-    answer: "Laptop Screen Replacement in Hassan and keyboard replacements are typically completed onsite within 1 to 2 hours using genuine OEM-grade screens with warranty. We service Dell, HP, Lenovo, ASUS, and Acer laptops directly at your table.",
+    answer: "Laptop Screen Replacement in Hassan and keyboard replacements are typically completed onsite within 1 to 2 hours using quality replacement screens with warranty. We service Dell, HP, Lenovo, ASUS, and Acer laptops directly at your table.",
     category: "Laptop"
   },
   {

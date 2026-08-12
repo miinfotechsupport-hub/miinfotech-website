@@ -725,44 +725,7 @@ export default function ProjectsGallery({ limit, onViewAllClick }: ProjectsGalle
 
           </div>
 
-          {/* Injected Schemas */}
-          {selectedProject.schema && (
-            <script 
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: selectedProject.schema }}
-            />
-          )}
 
-          {/* Fallback Breadcrumb Schema */}
-          <script 
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                  {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": SITE_URL
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "Completed Projects",
-                    "item": `${SITE_URL}/#projects`
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 3,
-                    "name": selectedProject.title,
-                    "item": `${SITE_URL}/project/${selectedProject.seoSlug || selectedProject.id}`
-                  }
-                ]
-              })
-            }}
-          />
 
           {/* Full Screen Lightbox in Single Page view */}
           {isLightboxOpen && (
@@ -858,7 +821,7 @@ export default function ProjectsGallery({ limit, onViewAllClick }: ProjectsGalle
               {limit ? "Latest Completed Projects" : "Recent Work & Portfolio"}
             </h2>
             <p className="text-slate-400 mt-2 max-w-2xl text-sm sm:text-base leading-relaxed">
-              100% real onsite installation, network wiring, and system diagnostic repair work completed by Mohammed Ishtiaqh across Hassan, Karnataka.
+              Real onsite installation, network wiring, and system diagnostic repair work completed by Mohammed Ishtiaqh across Hassan, Karnataka.
             </p>
           </div>
 

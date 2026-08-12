@@ -119,7 +119,7 @@ export default function TermsConditions() {
     {
       id: 23,
       title: "23. Third-Party Products & Manufacturer Liability",
-      content: "MIInfotech acts strictly as a certified service integrator and retail service vendor. We do not manufacture any hardware components. We carry zero product liability for inherent manufacturing design flaws, brand-side security vulnerabilities, firmware bugs, software-side device updates, or direct physical recalls announced by original equipment manufacturers (OEMs)."
+      content: "MIInfotech acts strictly as an independent service integrator and retail service vendor. We do not manufacture any hardware components. We carry zero product liability for inherent manufacturing design flaws, brand-side security vulnerabilities, firmware bugs, software-side device updates, or direct physical recalls announced by original equipment manufacturers (OEMs)."
     },
     {
       id: 24,

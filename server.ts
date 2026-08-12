@@ -180,7 +180,7 @@ For quick delivery of brand-new, genuine batteries with manufacturer warranties,
 MIInfotech provides expert, highly reliable AMC support for residences, retail showrooms, schools, hospitals, and SME offices in Hassan:
 
 1. **Preventive Auditing**: We perform monthly/quarterly hardware dust blowouts, thermal condition testing, registry cleaning, and virus scans to stop issues before they occur.
-2. **Unlimited Onsite Visits**: AMC clients enjoy **100% free onsite diagnostic check-ups** with zero visit fees during the active contract term.
+2. **Priority Onsite Visits**: AMC clients enjoy **onsite diagnostic check-ups** with zero visit fees during the active contract term.
 3. **Priority Support**: 2-hour response windows for major office breakdowns to keep your business running smoothly.
 
 Would you like to discuss a customized AMC draft for your inventory? Contact Mohammed Ishtiaqh at **+91 9964761624** for a site visit!`;
@@ -230,19 +230,19 @@ app.post("/api/project/generate-ai-fields", async (req, res) => {
         .trim()
         .replace(/\s+/g, "-");
 
-      const fallbackDescription = `Successfully completed a professional, high-quality ${category.toLowerCase()} project in ${location}, Hassan. The client required reliable, doorstep onsite service to resolve their requirements. Mohammed Ishtiaqh and the MIInfotech team completed the onsite job efficiently, deploying high-standard materials and configuring settings for optimal performance. The setup was thoroughly tested to ensure 100% satisfaction and hassle-free operation.`;
+      const fallbackDescription = `Successfully completed a professional, high-quality ${category.toLowerCase()} project in ${location}, Hassan. The client required reliable, doorstep onsite service to resolve their requirements. Mohammed Ishtiaqh and the MIInfotech team completed the onsite job efficiently, deploying high-standard materials and configuring settings for optimal performance. The setup was thoroughly tested to ensure complete satisfaction and hassle-free operation.`;
 
       const fallbackEquipment = `Premium ${category} materials, connection cables, structural accessories, and hardware mounts configured for optimal durability and safety.`;
       const fallbackBrand = brand || "Hikvision, TP-Link, D-Link, HP, Dell, Zebronics";
       const metaTitle = `${title} | Onsite ${category} Hassan | MIInfotech`;
-      const metaDescription = `Professional doorstep ${category.toLowerCase()} for ${title} in ${location}, Hassan by Mohammed Ishtiaqh. Safe installations & certified repairs. Call +91 9964761624.`;
+      const metaDescription = `Professional doorstep ${category.toLowerCase()} for ${title} in ${location}, Hassan by Mohammed Ishtiaqh. Safe installations & professional repairs. Call +91 9964761624.`;
 
       const focusKeyword = `${category} in Hassan`;
       const secondaryKeywords = `${fallbackBrand} service, doorstep ${category.toLowerCase()} repair, computer technician Hassan, Ishtiaqh`;
       const entityKeywords = `MIInfotech, Mohammed Ishtiaqh, ${category}, ${fallbackBrand}, Hassan, Karnataka`;
       const semanticKeywords = `onsite deployment, structural wiring, remote mobile configuration, AMC maintenance`;
       const faqKeywords = `visiting charges Hassan, CCTV camera price, desktop repair doorstep warranty`;
-      const nlSearchPhrases = `Who is the best technician for ${category.toLowerCase()} in ${location.split(",")[0]}? Where can I get same-day ${category.toLowerCase()} in Hassan?`;
+      const nlSearchPhrases = `Who provides doorstep service for ${category.toLowerCase()} in ${location.split(",")[0]}? Where can I get same-day ${category.toLowerCase()} in Hassan?`;
       const localSearchKeywords = `${location.split(",")[0]} computer service, Hassan doorstep CCTV repair, ${category.toLowerCase()} shop near me`;
 
       const ogTitle = `Onsite ${category} - ${title} in Hassan`;

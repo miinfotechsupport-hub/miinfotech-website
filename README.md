@@ -9,7 +9,7 @@
 
 **MIINFOTECH** is a high-performance, SEO-optimized, and GEO-enhanced web application for Onsite IT Infrastructure, Laptop/Computer Repairs, CCTV Camera Installation, Networking, and AMC Services based in **Hassan, Karnataka, India**.
 
-Founded and managed by **Mohammed Ishtiaqh**, MIINFOTECH provides doorstep technical diagnostics, genuine OEM component replacement, and high-clarity CCTV installations across Hassan, Belur, Sakleshpur, Holenarasipura, Channarayapatna, and nearby regions.
+Founded and managed by **Mohammed Ishtiaqh**, MIINFOTECH provides doorstep technical diagnostics, quality replacement components, and high-clarity CCTV installations across Hassan, Belur, Sakleshpur, Holenarasipura, Channarayapatna, and nearby regions.
 
 ---
 
@@ -17,7 +17,7 @@ Founded and managed by **Mohammed Ishtiaqh**, MIINFOTECH provides doorstep techn
 
 - ⚡ **Lightning Fast Performance**: Built on React 19 + Vite 6 with server-side rendering support for fast initial load and interactive UI.
 - 🎯 **Deep Local & Technical SEO**: Comprehensive Schema.org JSON-LD structured data (`LocalBusiness`, `Service`, `FAQPage`, `BreadcrumbList`, `Review`), OpenGraph tags, canonical deep links, and dynamic meta management.
-- 🤖 **GEO (Generative Engine Optimization)**: Structured semantic markup, entity recognition, and conversational Q&A layouts optimized for Google AI Overviews, ChatGPT, Gemini, and Claude.
+- 🤖 **Structured Machine Readability**: Structured semantic markup, entity recognition, and Q&A layouts organized for search engines and generative AI search systems.
 - 🛡️ **Comprehensive Security & Robustness**: Global React Error Boundary fallback, sanitized user inputs, secure Express API server proxying, and optional Supabase backend sync.
 - 📱 **Mobile & Desktop Adaptive**: 100% fluid, responsive layout built with Tailwind CSS v4 and smooth Motion transitions.
 - 🛠️ **Full Administrative Control**: Feature-rich built-in Admin Panel for managing services, gallery projects, blogs, testimonials, SEO meta tags, and site settings.
