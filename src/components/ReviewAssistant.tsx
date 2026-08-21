@@ -43,13 +43,14 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     shortName: "Computer",
     icon: Monitor,
     works: [
-      "Desktop Computer Repair",
-      "Windows Installation / Upgrade",
-      "Software & Driver Setup",
+      "Computer Repair",
+      "Computer Service",
+      "Windows Installation",
+      "Software Installation",
       "Hardware Troubleshooting",
+      "Computer Technical Support",
       "Slow PC & SSD Upgrade",
-      "Virus & Malware Cleanup",
-      "General Computer Maintenance"
+      "Virus & Malware Cleanup"
     ]
   },
   {
@@ -58,13 +59,16 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     shortName: "Laptop",
     icon: Laptop,
     works: [
-      "Laptop Repair & Diagnostics",
+      "Laptop Repair",
+      "Laptop Service",
+      "Windows Installation",
+      "Software Installation",
+      "Hardware Troubleshooting",
+      "Laptop Technical Support",
       "Screen / Display Replacement",
       "Battery Replacement",
       "Keyboard / Trackpad Repair",
-      "Windows OS Installation",
-      "Laptop Hinges / Body Repair",
-      "Hardware Performance Upgrade"
+      "Laptop Hinges / Body Repair"
     ]
   },
   {
@@ -73,14 +77,24 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     shortName: "CCTV",
     icon: Video,
     works: [
-      "New CCTV Camera Installation",
-      "CCTV Repair & Maintenance",
+      "CCTV Installation",
+      "CCTV Repair",
+      "CCTV Service",
+      "New CCTV Setup",
       "Camera Replacement",
-      "DVR / NVR Installation",
-      "DVR / NVR Configuration",
-      "Mobile App Remote Viewing Setup",
-      "IP CCTV / Wi-Fi Camera Setup",
-      "CCTV Cabling & Troubleshooting"
+      "DVR Installation",
+      "NVR Installation",
+      "DVR/NVR Configuration",
+      "CCTV Troubleshooting",
+      "CCTV Maintenance",
+      "AHD CCTV",
+      "IP CCTV",
+      "WiFi CCTV",
+      "4G CCTV",
+      "Solar CCTV",
+      "PTZ Camera",
+      "360 Camera",
+      "Mobile App Remote Viewing Setup"
     ]
   },
   {
@@ -89,12 +103,13 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     shortName: "Printer",
     icon: Printer,
     works: [
-      "Printer Repair & Diagnostics",
-      "New Printer Installation",
-      "Network / Wi-Fi Printer Configuration",
-      "Ink Tank / LaserJet Maintenance",
-      "Paper Jam / Roller Troubleshooting",
-      "Cartridge / Toner Service"
+      "Printer Repair",
+      "Printer Service",
+      "Printer Installation",
+      "Printer Configuration",
+      "Ink Tank Printer Service",
+      "Laser Printer Service",
+      "Printer Troubleshooting"
     ]
   },
   {
@@ -103,11 +118,13 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     shortName: "Networking",
     icon: Network,
     works: [
-      "Office LAN Cabling (CAT6)",
-      "Server Rack & Patch Panel Setup",
-      "Wi-Fi Router & Access Point Setup",
-      "Network Switch Configuration",
-      "Network Troubleshooting & Speed Fix"
+      "LAN Networking",
+      "CAT6 Networking",
+      "Office Networking",
+      "Network Rack Setup",
+      "Network Installation",
+      "Network Troubleshooting",
+      "WiFi/Network Support"
     ]
   },
   {
@@ -116,10 +133,10 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     shortName: "UPS",
     icon: BatteryCharging,
     works: [
+      "UPS Service",
       "UPS Installation",
-      "Commercial Inverter Servicing",
-      "UPS Battery Replacement",
-      "Backup Power Troubleshooting"
+      "UPS Battery Setup/Replacement",
+      "UPS Troubleshooting"
     ]
   },
   {
@@ -128,9 +145,9 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     shortName: "Biometric",
     icon: Fingerprint,
     works: [
-      "Biometric Attendance System Setup",
-      "Access Control Lock Installation",
-      "Attendance Software Configuration"
+      "Biometric Installation",
+      "Biometric Configuration",
+      "Attendance System Support"
     ]
   },
   {
@@ -139,11 +156,11 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     shortName: "School / Other IT",
     icon: Building2,
     works: [
-      "School / College Computer Lab Setup",
-      "Intercom / EPABX System Setup",
-      "Fire Alarm Device Support",
-      "Long-Range P2P Wireless Bridge",
-      "General Onsite IT Support"
+      "School Computer Lab Setup",
+      "Intercom Installation",
+      "Fire Alarm Support",
+      "P2P Device Installation",
+      "General IT Technical Support"
     ]
   },
   {
@@ -181,25 +198,39 @@ export function generateOfflineReviewDraft(
   customNote: string,
   variationIndex: number = 0
 ): string {
-  const serviceName = service ? service.name.replace(/ & .*/, "") : "technical service";
-  const worksStr = selectedWorks.length > 0 ? selectedWorks.join(" and ") : "technical service";
+  // Format clean service name without redundant categories or awkward brackets
+  let worksStr = "";
+  if (selectedWorks.length > 0) {
+    if (selectedWorks.length === 1) {
+      worksStr = selectedWorks[0];
+    } else if (selectedWorks.length === 2) {
+      worksStr = `${selectedWorks[0]} and ${selectedWorks[1].toLowerCase()}`;
+    } else {
+      const items = [...selectedWorks];
+      const last = items.pop();
+      worksStr = `${items.join(", ")} and ${last?.toLowerCase()}`;
+    }
+  } else {
+    worksStr = service?.shortName ? `${service.shortName} service` : "technical service";
+  }
+
   const locStr = location.trim() ? ` in ${location.trim()}` : "";
   
-  // Format experiences naturally
+  // Format experiences strictly from customer selection
   const positiveExp = selectedExperiences.filter(e => e !== "Needs improvement");
   const hasNegative = selectedExperiences.includes("Needs improvement");
   
   const formatExp = (exp: string) => {
     switch (exp) {
-      case "Professional service": return "professional service";
-      case "Clear explanation": return "clear explanation of the issue";
-      case "Neat installation / wiring": return "clean and tidy wiring";
-      case "Problem identified & resolved": return "quick troubleshooting and resolution";
-      case "Helpful technical support": return "helpful technical guidance";
-      case "Prompt response": return "prompt doorstep response";
-      case "Good communication": return "good communication throughout";
-      case "Tested everything before leaving": return "proper testing before leaving";
-      case "Reasonable upfront charges": return "transparent and reasonable charges";
+      case "Professional service": return "the service was professional";
+      case "Clear explanation": return "everything was clearly explained";
+      case "Neat installation / wiring": return "the installation and wiring was done neatly";
+      case "Problem identified & resolved": return "the issue was identified and resolved properly";
+      case "Helpful technical support": return "the technical support was helpful";
+      case "Prompt response": return "the response was prompt";
+      case "Good communication": return "the communication was clear and responsive";
+      case "Tested everything before leaving": return "the system was tested before leaving";
+      case "Reasonable upfront charges": return "the charges were reasonable and upfront";
       default: return exp.toLowerCase();
     }
   };
@@ -207,27 +238,28 @@ export function generateOfflineReviewDraft(
   let expSentence = "";
   if (positiveExp.length > 0) {
     if (positiveExp.length === 1) {
-      expSentence = `The service was completed with ${formatExp(positiveExp[0])}.`;
+      expSentence = ` ${formatExp(positiveExp[0]).charAt(0).toUpperCase() + formatExp(positiveExp[0]).slice(1)}.`;
     } else if (positiveExp.length === 2) {
-      expSentence = `I appreciated the ${formatExp(positiveExp[0])} and ${formatExp(positiveExp[1])}.`;
+      expSentence = ` ${formatExp(positiveExp[0]).charAt(0).toUpperCase() + formatExp(positiveExp[0]).slice(1)}, and ${formatExp(positiveExp[1])}.`;
     } else {
-      expSentence = `The technician provided ${formatExp(positiveExp[0])}, ${formatExp(positiveExp[1])}, and ${formatExp(positiveExp[2])}.`;
+      const expList = positiveExp.slice(0, 3).map(formatExp);
+      expSentence = ` ${expList[0].charAt(0).toUpperCase() + expList[0].slice(1)}, ${expList[1]}, and ${expList[2]}.`;
     }
   }
 
   if (hasNegative) {
-    expSentence += (expSentence ? " " : "") + "While the core work was completed, there was some scope for improvement in follow-up.";
+    expSentence += " While the service was completed, there is some room for improvement in follow-up.";
   }
 
   const noteSentence = customNote.trim() ? ` ${customNote.trim()}` : "";
 
-  // 5 Natural variations using strictly the customer's selected facts
+  // 5 Natural, customer-written phrasing variations using strictly the customer's selected facts
   const variations = [
-    `I recently contacted MIInfotech${locStr} for ${serviceName.toLowerCase()} (${worksStr}). ${expSentence} Everything was tested and working properly.${noteSentence}`,
-    `Had MIInfotech handle our ${worksStr.toLowerCase()}${locStr}. ${expSentence} Good doorstep service and straightforward technical support.${noteSentence}`,
-    `Called MIInfotech for ${worksStr.toLowerCase()}${locStr}. ${expSentence} Professional onsite work and everything was explained clearly.${noteSentence}`,
-    `Used MIInfotech for ${serviceName.toLowerCase()} (${worksStr})${locStr}. ${expSentence} Satisfied with the prompt resolution and overall assistance.${noteSentence}`,
-    `MIInfotech assisted us with ${worksStr.toLowerCase()}${locStr}. ${expSentence} Thorough work done right at our doorstep.${noteSentence}`
+    `I recently contacted MIInfotech${locStr} for ${worksStr.toLowerCase()}.${expSentence}${noteSentence} Overall, I had a good experience with MIInfotech.`,
+    `Got our ${worksStr.toLowerCase()} done by MIInfotech${locStr}.${expSentence}${noteSentence} Satisfied with the service provided.`,
+    `MIInfotech assisted us with ${worksStr.toLowerCase()}${locStr}.${expSentence}${noteSentence} Glad with the overall support.`,
+    `Called MIInfotech${locStr} for ${worksStr.toLowerCase()}.${expSentence}${noteSentence} Appreciate the assistance.`,
+    `Used MIInfotech${locStr} for ${worksStr.toLowerCase()}.${expSentence}${noteSentence} Good experience overall.`
   ];
 
   return variations[variationIndex % variations.length].trim();
@@ -685,25 +717,25 @@ export default function ReviewAssistant() {
         {step === 3 && (
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-5 animate-fadeIn text-left">
             
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-mono uppercase text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
                   Draft Created from Your Answers
                 </span>
                 <button
                   onClick={handleRegenerate}
-                  className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 cursor-pointer"
+                  className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 cursor-pointer font-medium"
                   title="Generate alternative natural wording with same facts"
                 >
                   <RotateCw className="w-3.5 h-3.5" />
-                  <span>Reword</span>
+                  <span>Try Another Style</span>
                 </button>
               </div>
               <h2 className="text-xl font-extrabold text-white tracking-tight">
                 Your Review Suggestion
               </h2>
-              <p className="text-xs text-slate-400">
-                Please check this carefully. You can edit any sentence before sharing.
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Please check this carefully and edit anything that does not accurately describe your experience.
               </p>
             </div>
 
@@ -727,10 +759,10 @@ export default function ReviewAssistant() {
               <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-900 text-xs">
                 <button
                   onClick={() => setIsEditing(!isEditing)}
-                  className="text-slate-400 hover:text-white flex items-center gap-1.5 cursor-pointer font-medium"
+                  className="text-slate-300 hover:text-white flex items-center gap-1.5 cursor-pointer font-medium bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-lg"
                 >
                   <Edit3 className="w-3.5 h-3.5 text-blue-400" />
-                  <span>{isEditing ? "Save Edits" : "Edit Text"}</span>
+                  <span>{isEditing ? "Save Edits" : "Edit Review"}</span>
                 </button>
 
                 <button
@@ -738,7 +770,7 @@ export default function ReviewAssistant() {
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     copied 
                       ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" 
-                      : "bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700"
+                      : "bg-slate-800 text-slate-200 hover:text-white hover:bg-slate-700"
                   }`}
                 >
                   {copied ? (
@@ -756,14 +788,35 @@ export default function ReviewAssistant() {
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-3 pt-2">
+            {/* Quick Action Grid */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={handleRegenerate}
+                className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <RotateCw className="w-3.5 h-3.5 text-blue-400" />
+                <span>Try Another Style</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleCopyReview}
+                className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Copy className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Copy Review</span>
+              </button>
+            </div>
+
+            {/* Main Action Buttons */}
+            <div className="space-y-2.5 pt-1">
               <button
                 onClick={handleContinueToGoogle}
                 className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm sm:text-base py-3.5 px-6 rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
               >
                 <Star className="w-4 h-4 fill-white text-white" />
-                <span>Continue to Google</span>
+                <span>⭐ Continue to Google</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -771,7 +824,7 @@ export default function ReviewAssistant() {
                 onClick={openGoogleDirectly}
                 className="w-full bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-400 hover:text-white text-xs font-medium py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
-                <span>I'll write my own review on Google</span>
+                <span>Write My Own Review</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </button>
             </div>

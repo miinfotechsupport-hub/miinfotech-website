@@ -954,6 +954,19 @@ export default function App() {
                   💬 Chat on WhatsApp
                 </a>
                 <a 
+                  href="/review"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setActiveTab("review");
+                    window.history.pushState(null, "", "/review");
+                    window.dispatchEvent(new Event("popstate"));
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="bg-blue-950/40 border border-blue-850 text-[10px] text-blue-400 font-mono py-1.5 px-3 rounded hover:border-blue-500 hover:text-white transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  ⭐ Share Service Review
+                </a>
+                <a 
                   href="https://share.google/26j3KMLobkBNnH89a" 
                   target="_blank" 
                   rel="noreferrer" 
