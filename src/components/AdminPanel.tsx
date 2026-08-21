@@ -4,6 +4,7 @@ import { SITE_URL } from "../lib/config";
 import * as LucideIcons from "lucide-react";
 import MediaUploadZone from "./MediaUploadZone";
 import MediaGridSection from "./MediaGridSection";
+import QRCodeDisplay from "./QRCodeDisplay";
 
 interface AdminPanelProps {
   onClose: () => void;
@@ -1382,6 +1383,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             { id: "projects", label: "Projects Manager", icon: "Image" },
             { id: "media", label: "Media Library", icon: "FolderOpen" },
             { id: "testimonials", label: "Testimonials", icon: "Star" },
+            { id: "review-assistant", label: "Review Assistant QR", icon: "QrCode" },
             { id: "enquiries", label: "Contact Manager", icon: "MessageSquare", badge: filteredEnquiries.filter(e => e.status === "pending").length },
             { id: "faqs", label: "AI & FAQ CMS", icon: "HelpCircle" },
             { id: "settings", label: "Website Settings", icon: "Settings" },
@@ -2532,6 +2534,120 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                   </div>
                 </div>
 
+              </div>
+            </div>
+          )}
+
+          {/* TAB 12: REVIEW ASSISTANT QR & COMPLIANCE MANAGER */}
+          {activeTab === "review-assistant" && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                    <LucideIcons.QrCode className="w-5 h-5 text-blue-500" />
+                    <span>Customer Google Review Assistant</span>
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Mobile-first review helper designed to assist genuine customers in structuring factual reviews without policy violations.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="/review"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 px-4 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/10 cursor-pointer transition-all"
+                  >
+                    <LucideIcons.ExternalLink className="w-3.5 h-3.5" />
+                    <span>Test Mobile Flow (/review)</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Left Col: Live QR Generator */}
+                <div className="lg:col-span-5">
+                  <QRCodeDisplay
+                    url={`${SITE_URL}/review`}
+                    title="MIInfotech Review Assistant QR"
+                    size={180}
+                  />
+                </div>
+
+                {/* Right Col: Operations & Policy Guide */}
+                <div className="lg:col-span-7 space-y-4 text-left">
+                  
+                  {/* How it Works Card */}
+                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3">
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                      <LucideIcons.Sparkles className="w-4 h-4 text-blue-400" />
+                      <span>The 5-Step Customer Workflow</span>
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
+                      {[
+                        { step: "1", title: "Scan QR", desc: "Doorstep scan" },
+                        { step: "2", title: "Select Work", desc: "Computer/CCTV/etc" },
+                        { step: "3", title: "Quick Facts", desc: "2-3 checkboxes" },
+                        { step: "4", title: "Review Draft", desc: "Zero invented facts" },
+                        { step: "5", title: "Post to Google", desc: "Customer's account" },
+                      ].map((s) => (
+                        <div key={s.step} className="bg-slate-950/80 border border-slate-850 p-2.5 rounded-xl text-center">
+                          <span className="w-5 h-5 rounded-full bg-blue-600 text-white font-bold text-[10px] inline-flex items-center justify-center mb-1">
+                            {s.step}
+                          </span>
+                          <span className="font-bold text-white block text-[11px]">{s.title}</span>
+                          <span className="text-[10px] text-slate-400 block">{s.desc}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Google Policy Guardrails */}
+                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3">
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                      <LucideIcons.ShieldCheck className="w-4 h-4 text-emerald-400" />
+                      <span>Google Policy Compliance Guardrails</span>
+                    </h3>
+                    <div className="space-y-2 text-xs text-slate-300">
+                      <div className="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-850">
+                        <LucideIcons.Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="text-white block text-[11px]">No Review Gating or Filtering:</strong>
+                          <span className="text-slate-400 text-[10px]">All customers receive direct, unhindered access to the official Google review page regardless of their feedback or rating.</span>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-850">
+                        <LucideIcons.Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="text-white block text-[11px]">No Invented Facts or Fake Praise:</strong>
+                          <span className="text-slate-400 text-[10px]">The draft generator strictly uses only facts explicitly chosen by the customer (camera counts, dates, prices, or names are never fabricated).</span>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-850">
+                        <LucideIcons.Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <div>
+                          <strong className="text-white block text-[11px]">Full Customer Agency & Control:</strong>
+                          <span className="text-slate-400 text-[10px]">The customer can edit, rewrite, or discard the draft at any time before posting directly from their own authenticated Google account.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Technician Instructions */}
+                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-2">
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                      <LucideIcons.Users className="w-4 h-4 text-amber-400" />
+                      <span>Instructions for Doorstep Engineers</span>
+                    </h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">
+                      After completing an onsite diagnosis, hardware installation, or repair in Hassan, present the QR code card or share the link via WhatsApp:
+                    </p>
+                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-850 text-slate-300 text-xs italic">
+                      &quot;Thank you for choosing MIInfotech! If you have a minute, please scan this code to share your genuine feedback with us on Google. It takes less than 30 seconds.&quot;
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
           )}

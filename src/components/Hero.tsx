@@ -128,29 +128,35 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
                 </span>
               </div>
 
-              {/* Grid of Key Local Stats */}
+              {/* Grid of Key Local Facts */}
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Total Resolutions</span>
-                  <span className="text-2xl sm:text-3xl font-extrabold text-white block mt-1 tracking-tight">1,480+</span>
-                  <span className="text-[10px] text-blue-400 font-medium mt-0.5 block">Completed Onsite</span>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Service Delivery</span>
+                  <span className="text-xl sm:text-2xl font-extrabold text-white block mt-1 tracking-tight">Doorstep / Onsite</span>
+                  <span className="text-[10px] text-blue-400 font-medium mt-0.5 block">Hassan City & Outskirts</span>
                 </div>
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Active AMCs</span>
-                  <span className="text-2xl sm:text-3xl font-extrabold text-white block mt-1 tracking-tight">42+</span>
-                  <span className="text-[10px] text-emerald-400 font-medium mt-0.5 block">Corporate contracts</span>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Operating Hours</span>
+                  <span className="text-xl sm:text-2xl font-extrabold text-white block mt-1 tracking-tight">9 AM – 9 PM</span>
+                  <span className="text-[10px] text-emerald-400 font-medium mt-0.5 block">Monday – Sunday</span>
                 </div>
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Google Rating</span>
-                  <span className="text-2xl sm:text-3xl font-extrabold text-amber-500 flex items-center gap-1 mt-1 tracking-tight">
-                    4.9<Star className="w-5 h-5 fill-amber-500 text-amber-500 inline" />
-                  </span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">Real customer reviews</span>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Direct Assistance</span>
+                  <span className="text-xl sm:text-2xl font-extrabold text-white block mt-1 tracking-tight">+91 9964761624</span>
+                  <span className="text-[10px] text-blue-400 font-medium mt-0.5 block">Direct Call & WhatsApp</span>
                 </div>
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Diagnostics Time</span>
-                  <span className="text-2xl sm:text-3xl font-extrabold text-white block mt-1 tracking-tight">Under 2h</span>
-                  <span className="text-[10px] text-blue-400 font-medium mt-0.5 block">Hassan city limit</span>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Google Profile</span>
+                  <a 
+                    href="https://share.google/hnUk6Bt7LUOFrdL2g"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-base sm:text-lg font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 mt-1 tracking-tight"
+                  >
+                    <span>View Reviews</span>
+                    <span className="text-xs">↗</span>
+                  </a>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">Google Business Profile</span>
                 </div>
               </div>
 

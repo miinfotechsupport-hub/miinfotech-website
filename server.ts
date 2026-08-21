@@ -573,6 +573,81 @@ Customer Type: ${customerType || "Home/Office"}`;
   }
 });
 
+// Server-side AI Review Assistant endpoint (Converts genuine customer facts into a clean draft)
+app.post("/api/review/generate-draft", async (req, res) => {
+  try {
+    const { serviceCategory, works, experiences, location, notes, variationIndex = 0 } = req.body;
+
+    if (!serviceCategory && (!works || works.length === 0)) {
+      return res.status(400).json({ error: "Service category or work description is required." });
+    }
+
+    const ai = getGoogleGenAI();
+
+    const selectedWorks = Array.isArray(works) ? works.join(", ") : (works || "");
+    const selectedExp = Array.isArray(experiences) ? experiences.join(", ") : (experiences || "");
+    const loc = (location && typeof location === "string") ? location.trim() : "";
+    const note = (notes && typeof notes === "string") ? notes.trim() : "";
+
+    // If Gemini AI is not configured or unavailable, use deterministic fallback
+    if (!ai) {
+      const locStr = loc ? ` in ${loc}` : "";
+      const expStr = selectedExp ? ` The team provided ${selectedExp.toLowerCase()}.` : "";
+      const noteStr = note ? ` ${note}` : "";
+      const fallback = `I recently used MIInfotech${locStr} for ${serviceCategory || "IT service"} (${selectedWorks}).${expStr} The service was completed professionally and tested properly.${noteStr}`;
+      return res.json({ draft: fallback });
+    }
+
+    const systemInstruction = `You are a helpful assistant for MIInfotech customers writing a genuine Google review.
+Your sole job is to take the customer-provided facts and format them into a natural, honest review of 40 to 90 words.
+
+STRICT POLICY RULES:
+1. Use ONLY facts supplied by the customer.
+2. NEVER invent details, quantities, camera counts, model numbers, hardware brands, prices, warranty periods, response times, or technician names.
+3. NEVER force keywords or generate fake praise.
+4. NEVER claim "5 stars" or mention ratings.
+5. If the customer provided a location (e.g. Hassan), you may naturally include it. If no location was given, do NOT invent one.
+6. Write in natural first-person customer language. Avoid sounding like marketing copy.
+7. Return ONLY the plain text of the review without quotation marks, markdown headings, or introductory notes.`;
+
+    const prompt = `Customer-Provided Facts:
+- Service Received: ${serviceCategory}
+- Specific Work Done: ${selectedWorks}
+- Customer Experience: ${selectedExp}
+- Location: ${loc || "Not specified"}
+- Additional Notes: ${note || "None"}
+- Variation Style: ${variationIndex}
+
+Write a natural customer review based strictly on these facts:`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: prompt,
+      config: {
+        systemInstruction,
+        temperature: 0.7,
+      },
+    });
+
+    const draftText = response.text ? response.text.trim().replace(/^["']|["']$/g, "") : "";
+    
+    if (!draftText) {
+      throw new Error("Empty response from AI");
+    }
+
+    res.json({ draft: draftText });
+  } catch (err: any) {
+    console.warn("AI review draft error, returning graceful fallback:", err.message);
+    const { serviceCategory, works, experiences, location, notes } = req.body;
+    const selectedWorks = Array.isArray(works) ? works.join(", ") : (works || "technical work");
+    const locStr = location ? ` in ${location}` : "";
+    const expStr = Array.isArray(experiences) && experiences.length > 0 ? ` ${experiences.join(" and ").toLowerCase()}.` : "";
+    const noteStr = notes ? ` ${notes}` : "";
+    const fallback = `I contacted MIInfotech${locStr} for ${serviceCategory || "service"} (${selectedWorks}).${expStr} Helpful technical support and smooth doorstep service.${noteStr}`;
+    res.json({ draft: fallback });
+  }
+});
+
 // Server-side AI IT Consultant endpoint
 app.post("/api/chat", async (req, res) => {
   try {

@@ -11,6 +11,7 @@ import TermsConditions from "./components/TermsConditions";
 import ProductsShowcase from "./components/ProductsShowcase";
 import LogoIcon from "./components/LogoIcon";
 import ServiceLandingPage from "./components/ServiceLandingPage";
+import ReviewAssistant from "./components/ReviewAssistant";
 
 const AdminPanel = lazy(() => import("./components/AdminPanel"));
 import { supabase, useSettings } from "./lib/supabase";
@@ -171,6 +172,8 @@ export default function App() {
           setActiveTab("gallery");
         } else if (hash === "#products" || path === "/products") {
           setActiveTab("products");
+        } else if (hash === "#review" || path === "/review") {
+          setActiveTab("review");
         } else if (hash === "#admin" || hash.startsWith("#admin") || path === "/admin") {
           setActiveTab("admin");
         } else {
@@ -278,6 +281,11 @@ export default function App() {
         description = "Browse CCTV cameras, Wi-Fi routers, SSDs, and IT hardware available for doorstep installation in Hassan, Karnataka.";
         keywords = "CCTV camera price Hassan, Wi-Fi router Hassan, SSD upgrade price Hassan, IT hardware catalog";
         canonicalUrl = `${SITE_URL}/products`;
+      } else if (activeTab === "review") {
+        title = "Share Your Service Experience | MIInfotech Google Review Assistant";
+        description = "Share your genuine technical service experience with MIInfotech on Google.";
+        keywords = "MIInfotech review, customer feedback, Google review";
+        canonicalUrl = `${SITE_URL}/review`;
       }
     }
 
@@ -299,7 +307,7 @@ export default function App() {
     // Set Meta Description, Keywords, Robots, Author
     setMetaTag("name", "description", description);
     setMetaTag("name", "keywords", keywords);
-    setMetaTag("name", "robots", "index, follow");
+    setMetaTag("name", "robots", activeTab === "review" ? "noindex, follow" : "index, follow");
     setMetaTag("name", "author", "Mohammed Ishtiaqh (MIInfotech)");
 
     // Set Open Graph tags
@@ -385,6 +393,14 @@ export default function App() {
       }>
         <AdminPanel onClose={() => { setActiveTab("home"); window.location.hash = ""; }} />
       </Suspense>
+    );
+  }
+
+  if (activeTab === "review") {
+    return (
+      <div className="bg-slate-950 min-h-screen text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
+        <ReviewAssistant />
+      </div>
     );
   }
 
@@ -873,6 +889,7 @@ export default function App() {
                   { id: "gallery", label: "Onsite Photo Gallery" },
                   { id: "blog", label: "Diagnostic Tips (Blog)" },
                   { id: "faqs", label: "Help & FAQs" },
+                  { id: "review", label: "⭐ Share Service Review" },
                   { id: "contact", label: "Contact & Quote Form" },
                   { id: "terms", label: "Terms & Conditions" }
                 ].map((l) => (

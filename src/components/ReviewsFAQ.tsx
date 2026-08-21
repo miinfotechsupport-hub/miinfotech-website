@@ -464,15 +464,22 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
             ))}
           </div>
 
-          <div className="mt-8 text-center flex flex-col items-center justify-center gap-4">
+          <div className="mt-8 text-center flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a 
+              href="/review"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-lg shadow-blue-500/10"
+            >
+              <span>⭐ Share Your Genuine Service Review</span>
+              <span>→</span>
+            </a>
             <a 
               href="https://share.google/hnUk6Bt7LUOFrdL2g"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 hover:text-white px-5 py-3 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
             >
-              <span>Verify & Read All Reviews on Google Business Profile</span>
-              <span className="text-blue-500">→</span>
+              <span>Read Reviews on Google Business Profile</span>
+              <span className="text-blue-500">↗</span>
             </a>
           </div>
         </div>
