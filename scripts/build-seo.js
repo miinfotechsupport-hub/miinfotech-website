@@ -719,12 +719,18 @@ async function fetchSupabaseDynamicRoutes() {
   }
 
   try {
+    if (!supabaseUrl.startsWith("http")) {
+      return { dynamicBlogs: [], dynamicProjects: [] };
+    }
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const { data: dbBlogs, error: blogErr } = await supabase.from("blogs").select("*");
-    const { data: dbProjects, error: projErr } = await supabase.from("projects").select("*").eq("status", "published");
+    const [blogsRes, projsRes] = await Promise.allSettled([
+      supabase.from("blogs").select("*"),
+      supabase.from("projects").select("*").eq("status", "published")
+    ]);
 
-    if (blogErr) console.warn("Notice: Could not fetch blogs from Supabase at build time:", blogErr.message);
-    if (projErr) console.warn("Notice: Could not fetch projects from Supabase at build time:", projErr.message);
+    const dbBlogs = blogsRes.status === "fulfilled" && !blogsRes.value.error ? blogsRes.value.data : [];
+    const dbProjects = projsRes.status === "fulfilled" && !projsRes.value.error ? projsRes.value.data : [];
+
 
     const dynamicBlogs = (dbBlogs || []).map((b) => ({
       slug: b.slug,

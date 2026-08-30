@@ -1539,6 +1539,37 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 })}
               </div>
 
+              {/* GOOGLE BUSINESS PROFILE REVIEW SYNC DIAGNOSTIC */}
+              <div className="bg-slate-900 border border-slate-800 p-5 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <div className="p-2.5 bg-emerald-950/60 border border-emerald-500/30 rounded-xl text-emerald-400 shrink-0">
+                    <LucideIcons.ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-bold text-sm leading-tight flex items-center gap-2">
+                      <span>Google Business Profile Review Sync</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
+                        Official API Integration
+                      </span>
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Periodic background synchronization keeps customer reviews updated without paid third-party widgets or client tokens.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href="https://search.google.com/local/reviews?placeid=ChIJ4yWvawOvsk8RQZn4nX_0Wz0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors border border-slate-700"
+                  >
+                    <span>Google Business Profile</span>
+                    <LucideIcons.ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+
               {/* CORE METRICS REDESIGN CHART MOCKS (HIGH CONVERSION) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
@@ -2678,8 +2709,8 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                             const catId = e.target.value;
                             setReqServiceId(catId);
                             const cat = REVIEW_SERVICE_CATEGORIES.find(c => c.id === catId);
-                            if (cat && cat.subcategories.length > 0) {
-                              setReqSubservice(cat.subcategories[0]);
+                            if (cat && cat.workOptions.length > 0) {
+                              setReqSubservice(cat.workOptions[0]);
                             }
                             setReqBrand("");
                           }}
@@ -2701,25 +2732,8 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                           onChange={(e) => setReqSubservice(e.target.value)}
                           className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none cursor-pointer"
                         >
-                          {(REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.subcategories || []).map(s => (
+                          {(REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.workOptions || []).map(s => (
                             <option key={s} value={s}>{s}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* Optional Brand */}
-                      <div>
-                        <label className="text-xs font-semibold text-slate-300 block mb-1">
-                          Brand / Hardware (Optional)
-                        </label>
-                        <select
-                          value={reqBrand}
-                          onChange={(e) => setReqBrand(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none cursor-pointer"
-                        >
-                          <option value="">None / Skip</option>
-                          {(REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.brands || []).map(b => (
-                            <option key={b} value={b}>{b}</option>
                           ))}
                         </select>
                       </div>
@@ -2765,8 +2779,7 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                         {generateTruthfulWhatsAppRequest(
                           reqRelationship,
                           REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.name || "Technical Service",
-                          reqSubservice,
-                          reqBrand
+                          reqSubservice
                         )}
                       </pre>
                     </div>
@@ -2779,8 +2792,7 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                           const message = generateTruthfulWhatsAppRequest(
                             reqRelationship,
                             REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.name || "Technical Service",
-                            reqSubservice,
-                            reqBrand
+                            reqSubservice
                           );
                           const cleanPhone = reqCustomerPhone.trim() ? `91${reqCustomerPhone.trim()}` : "";
                           const url = cleanPhone
@@ -2796,7 +2808,7 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                             name: reqCustomerName.trim() || "Customer",
                             phone: reqCustomerPhone.trim() || "Shared via link",
                             service: reqSubservice,
-                            brand: reqBrand || "-",
+                            brand: "-",
                             relationship: reqRelationship
                           };
                           const updated = [newEntry, ...reqHistory].slice(0, 30);
@@ -2816,8 +2828,7 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                           const message = generateTruthfulWhatsAppRequest(
                             reqRelationship,
                             REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.name || "Technical Service",
-                            reqSubservice,
-                            reqBrand
+                            reqSubservice
                           );
                           await navigator.clipboard.writeText(message);
                           addToast("Message text copied to clipboard!", "success");

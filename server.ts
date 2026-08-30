@@ -15,6 +15,228 @@ app.use(express.json());
 
 // Cache file paths
 const BOOKINGS_PATH = path.join(process.cwd(), "onsite-bookings.json");
+const GOOGLE_REVIEWS_CACHE_PATH = path.join(process.cwd(), ".data", "google_reviews_cache.json");
+
+// In-Memory & Disk-Resilient Google Reviews Store
+interface CachedReviewData {
+  lastSyncAttempt?: string;
+  lastSuccessfulSync?: string;
+  totalReviewCount: number;
+  averageRating: number;
+  reviews: any[];
+  error?: string;
+}
+
+let reviewsCache: CachedReviewData = {
+  totalReviewCount: 0,
+  averageRating: 5.0,
+  reviews: [],
+};
+
+// Initialize cache from disk if available
+try {
+  const dataDir = path.dirname(GOOGLE_REVIEWS_CACHE_PATH);
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+  if (fs.existsSync(GOOGLE_REVIEWS_CACHE_PATH)) {
+    const raw = fs.readFileSync(GOOGLE_REVIEWS_CACHE_PATH, "utf-8");
+    reviewsCache = JSON.parse(raw);
+    console.log(`[Google Reviews Cache] Restored ${reviewsCache.reviews.length} genuine reviews from persistent disk cache.`);
+  }
+} catch (cacheErr) {
+  console.warn("[Google Reviews Cache] Warning initializing disk cache:", cacheErr);
+}
+
+// Function to save cache to disk
+function persistReviewsCache() {
+  try {
+    const dataDir = path.dirname(GOOGLE_REVIEWS_CACHE_PATH);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(GOOGLE_REVIEWS_CACHE_PATH, JSON.stringify(reviewsCache, null, 2), "utf-8");
+  } catch (err) {
+    console.error("[Google Reviews Cache] Failed to persist reviews cache to disk:", err);
+  }
+}
+
+// Function to obtain fresh access token from Google OAuth using refresh token
+async function getGoogleBusinessAccessToken(): Promise<string | null> {
+  const clientId = process.env.GOOGLE_BUSINESS_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_BUSINESS_CLIENT_SECRET;
+  const refreshToken = process.env.GOOGLE_BUSINESS_REFRESH_TOKEN;
+
+  if (!clientId || !clientSecret || !refreshToken) {
+    return null;
+  }
+
+  try {
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: "refresh_token",
+      }),
+    });
+
+    if (!tokenRes.ok) {
+      const errText = await tokenRes.text();
+      console.error("[Google Reviews Sync] OAuth Token refresh failed:", tokenRes.status, errText);
+      return null;
+    }
+
+    const tokenData = await tokenRes.json();
+    return tokenData.access_token || null;
+  } catch (err) {
+    console.error("[Google Reviews Sync] Error requesting OAuth access token:", err);
+    return null;
+  }
+}
+
+// Background sync worker for Google Business Profile Reviews
+async function syncGoogleBusinessReviews() {
+  const accountId = process.env.GOOGLE_BUSINESS_ACCOUNT_ID;
+  const locationId = process.env.GOOGLE_BUSINESS_LOCATION_ID;
+
+  reviewsCache.lastSyncAttempt = new Date().toISOString();
+
+  if (!accountId || !locationId) {
+    console.log("[Google Reviews Sync] Business Account ID or Location ID not configured. Operating in graceful standby.");
+    return;
+  }
+
+  const accessToken = await getGoogleBusinessAccessToken();
+  if (!accessToken) {
+    console.log("[Google Reviews Sync] OAuth credentials not active or token refresh pending. Keeping existing cache.");
+    return;
+  }
+
+  try {
+    // Calling official documented reviews list endpoint:
+    // GET https://mybusiness.googleapis.com/v4/accounts/{accountId}/locations/{locationId}/reviews
+    const cleanAccountId = accountId.startsWith("accounts/") ? accountId : `accounts/${accountId}`;
+    const cleanLocationId = locationId.startsWith("locations/") ? locationId : `locations/${locationId}`;
+    const url = `https://mybusiness.googleapis.com/v4/${cleanAccountId}/${cleanLocationId}/reviews?pageSize=50`;
+
+    console.log(`[Google Reviews Sync] Requesting reviews from Google Business Profile API...`);
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error(`[Google Reviews Sync] API Error ${res.status}:`, errText);
+      reviewsCache.error = `API status ${res.status}`;
+      return;
+    }
+
+    const data = await res.json();
+    const rawReviews = data.reviews || [];
+
+    // Map Google API StarRating enum (ONE, TWO, THREE, FOUR, FIVE) to integer
+    const starMap: Record<string, number> = {
+      ONE: 1,
+      TWO: 2,
+      THREE: 3,
+      FOUR: 4,
+      FIVE: 5,
+    };
+
+    // Normalize and preserve genuine review data unaltered
+    const formattedReviews = rawReviews.map((r: any) => {
+      const rawRating = r.starRating;
+      const numRating = typeof rawRating === "number" ? rawRating : (starMap[rawRating] || 5);
+      
+      return {
+        reviewId: r.reviewId || r.name || Math.random().toString(36).substring(2),
+        reviewer: {
+          displayName: r.reviewer?.displayName || "Google Customer",
+          profilePhotoUrl: r.reviewer?.profilePhotoUrl || "",
+          isAnonymous: r.reviewer?.isAnonymous || false,
+        },
+        starRating: numRating,
+        comment: r.comment || "",
+        createTime: r.createTime || new Date().toISOString(),
+        updateTime: r.updateTime,
+        reviewReply: r.reviewReply ? {
+          comment: r.reviewReply.comment,
+          updateTime: r.reviewReply.updateTime,
+        } : undefined,
+        reviewUrl: r.reviewUrl || `https://search.google.com/local/reviews?placeid=ChIJ4yWvawOvsk8RQZn4nX_0Wz0`,
+      };
+    });
+
+    // Calculate rating summary
+    const totalCount = data.totalReviewCount || formattedReviews.length;
+    const avg = data.averageRating || (formattedReviews.length > 0 
+      ? formattedReviews.reduce((acc: number, cur: any) => acc + cur.starRating, 0) / formattedReviews.length 
+      : 5.0);
+
+    reviewsCache = {
+      lastSyncAttempt: new Date().toISOString(),
+      lastSuccessfulSync: new Date().toISOString(),
+      totalReviewCount: totalCount,
+      averageRating: Number(avg.toFixed(1)),
+      reviews: formattedReviews,
+      error: undefined,
+    };
+
+    persistReviewsCache();
+    console.log(`[Google Reviews Sync] Successfully synchronized ${formattedReviews.length} genuine reviews from Google Business Profile.`);
+  } catch (err: any) {
+    console.error("[Google Reviews Sync] Exception during review synchronization:", err);
+    reviewsCache.error = err.message || "Sync failed";
+    // Fallback: Cache is kept completely intact so website continues serving verified data
+  }
+}
+
+// Scheduled Background Sync Interval (Every 1 hour)
+const SYNC_INTERVAL_MS = 60 * 60 * 1000;
+setInterval(() => {
+  syncGoogleBusinessReviews();
+}, SYNC_INTERVAL_MS);
+
+// Initial synchronization on server boot
+syncGoogleBusinessReviews();
+
+// Endpoint for frontend to retrieve cached Google reviews
+app.get("/api/google-reviews", (req, res) => {
+  const isConfigured = Boolean(
+    process.env.GOOGLE_BUSINESS_CLIENT_ID &&
+    process.env.GOOGLE_BUSINESS_REFRESH_TOKEN &&
+    process.env.GOOGLE_BUSINESS_ACCOUNT_ID &&
+    process.env.GOOGLE_BUSINESS_LOCATION_ID
+  );
+
+  res.json({
+    connected: isConfigured && Boolean(reviewsCache.lastSuccessfulSync),
+    configured: isConfigured,
+    totalReviewCount: reviewsCache.totalReviewCount,
+    averageRating: reviewsCache.averageRating,
+    lastSyncedAt: reviewsCache.lastSuccessfulSync,
+    reviews: reviewsCache.reviews,
+    error: reviewsCache.error,
+  });
+});
+
+// Diagnostic endpoint for administrative checks
+app.get("/api/google-reviews/status", (req, res) => {
+  res.json({
+    accountConfigured: Boolean(process.env.GOOGLE_BUSINESS_ACCOUNT_ID),
+    locationConfigured: Boolean(process.env.GOOGLE_BUSINESS_LOCATION_ID),
+    oauthConfigured: Boolean(process.env.GOOGLE_BUSINESS_CLIENT_ID && process.env.GOOGLE_BUSINESS_REFRESH_TOKEN),
+    lastSyncAttempt: reviewsCache.lastSyncAttempt,
+    lastSuccessfulSync: reviewsCache.lastSuccessfulSync,
+    totalReviewsFetched: reviewsCache.reviews.length,
+    lastError: reviewsCache.error,
+  });
+});
 
 // Endpoint to dynamically write and save sitemap.xml changes physically to disk
 app.post("/api/sitemap", (req, res) => {

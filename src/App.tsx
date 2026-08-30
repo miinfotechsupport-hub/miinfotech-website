@@ -12,6 +12,7 @@ import ProductsShowcase from "./components/ProductsShowcase";
 import LogoIcon from "./components/LogoIcon";
 import ServiceLandingPage from "./components/ServiceLandingPage";
 import ReviewAssistant from "./components/ReviewAssistant";
+import { GoogleReviewsSection } from "./components/GoogleReviewsSection";
 
 const AdminPanel = lazy(() => import("./components/AdminPanel"));
 import { supabase, useSettings } from "./lib/supabase";
@@ -550,8 +551,8 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: "smooth" });
             }} />
 
-            {/* 5. Google Reviews */}
-            <ReviewsFAQ showOnly="reviews" />
+            {/* 5. Verified Google Business Profile Reviews */}
+            <GoogleReviewsSection />
 
             {/* 6. Brands We Support */}
             <ContactSection showOnly="brands" />
