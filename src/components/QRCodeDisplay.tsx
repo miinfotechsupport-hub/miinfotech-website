@@ -94,7 +94,7 @@ export default function QRCodeDisplay({
       <div className="bg-white p-4 rounded-2xl shadow-inner inline-block border-2 border-slate-200">
         <img
           src={qrDisplayUrl}
-          alt={title}
+          alt="MIINFOTECH customer review QR code"
           width={size}
           height={size}
           className="mx-auto block"

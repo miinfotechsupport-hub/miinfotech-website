@@ -1,297 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { 
-  Sparkles, 
-  Copy, 
   Check, 
   ExternalLink, 
-  RotateCw, 
-  Edit3, 
   ArrowLeft, 
   ArrowRight, 
-  MapPin, 
   Star, 
   ShieldCheck, 
-  Laptop, 
-  Monitor, 
-  Video, 
-  Printer, 
-  Network, 
-  BatteryCharging, 
-  Fingerprint, 
-  Building2, 
-  Wrench, 
-  MessageSquare,
+  Copy,
   Share2,
-  QrCode
+  Download,
+  QrCode,
+  Sparkles,
+  ChevronRight,
+  UserCheck,
+  UserPlus
 } from "lucide-react";
 import LogoIcon from "./LogoIcon";
+import { 
+  REVIEW_SERVICE_CATEGORIES, 
+  GOOGLE_REVIEW_URL, 
+  REVIEW_PAGE_URL, 
+  ServiceCategoryConfig,
+  CustomerRelationship
+} from "../lib/reviewConfig";
 
-export const GOOGLE_REVIEW_URL = "https://search.google.com/local/writereview?placeid=ChIJ4yWvawOvsk8RQZn4nX_0Wz0&source=g.page.m.ia._&laa=nmx-review-solicitation-ia2";
-
-interface ServiceCategory {
-  id: string;
-  name: string;
-  shortName: string;
-  icon: any;
-  works: string[];
-}
-
-const SERVICE_CATEGORIES: ServiceCategory[] = [
-  {
-    id: "computer",
-    name: "Computer Service & Repair",
-    shortName: "Computer",
-    icon: Monitor,
-    works: [
-      "Computer Repair",
-      "Computer Service",
-      "Windows Installation",
-      "Software Installation",
-      "Hardware Troubleshooting",
-      "Computer Technical Support",
-      "Slow PC & SSD Upgrade",
-      "Virus & Malware Cleanup"
-    ]
-  },
-  {
-    id: "laptop",
-    name: "Laptop Service & Repair",
-    shortName: "Laptop",
-    icon: Laptop,
-    works: [
-      "Laptop Repair",
-      "Laptop Service",
-      "Windows Installation",
-      "Software Installation",
-      "Hardware Troubleshooting",
-      "Laptop Technical Support",
-      "Screen / Display Replacement",
-      "Battery Replacement",
-      "Keyboard / Trackpad Repair",
-      "Laptop Hinges / Body Repair"
-    ]
-  },
-  {
-    id: "cctv",
-    name: "CCTV Camera & Security",
-    shortName: "CCTV",
-    icon: Video,
-    works: [
-      "CCTV Installation",
-      "CCTV Repair",
-      "CCTV Service",
-      "New CCTV Setup",
-      "Camera Replacement",
-      "DVR Installation",
-      "NVR Installation",
-      "DVR/NVR Configuration",
-      "CCTV Troubleshooting",
-      "CCTV Maintenance",
-      "AHD CCTV",
-      "IP CCTV",
-      "WiFi CCTV",
-      "4G CCTV",
-      "Solar CCTV",
-      "PTZ Camera",
-      "360 Camera",
-      "Mobile App Remote Viewing Setup"
-    ]
-  },
-  {
-    id: "printer",
-    name: "Printer Service & Setup",
-    shortName: "Printer",
-    icon: Printer,
-    works: [
-      "Printer Repair",
-      "Printer Service",
-      "Printer Installation",
-      "Printer Configuration",
-      "Ink Tank Printer Service",
-      "Laser Printer Service",
-      "Printer Troubleshooting"
-    ]
-  },
-  {
-    id: "networking",
-    name: "LAN Networking & Wi-Fi",
-    shortName: "Networking",
-    icon: Network,
-    works: [
-      "LAN Networking",
-      "CAT6 Networking",
-      "Office Networking",
-      "Network Rack Setup",
-      "Network Installation",
-      "Network Troubleshooting",
-      "WiFi/Network Support"
-    ]
-  },
-  {
-    id: "ups",
-    name: "UPS & Inverter Power",
-    shortName: "UPS",
-    icon: BatteryCharging,
-    works: [
-      "UPS Service",
-      "UPS Installation",
-      "UPS Battery Setup/Replacement",
-      "UPS Troubleshooting"
-    ]
-  },
-  {
-    id: "biometric",
-    name: "Biometric & Access Control",
-    shortName: "Biometric",
-    icon: Fingerprint,
-    works: [
-      "Biometric Installation",
-      "Biometric Configuration",
-      "Attendance System Support"
-    ]
-  },
-  {
-    id: "other_it",
-    name: "School Lab & Other IT",
-    shortName: "School / Other IT",
-    icon: Building2,
-    works: [
-      "School Computer Lab Setup",
-      "Intercom Installation",
-      "Fire Alarm Support",
-      "P2P Device Installation",
-      "General IT Technical Support"
-    ]
-  },
-  {
-    id: "custom",
-    name: "Other Technical Service",
-    shortName: "Other",
-    icon: Wrench,
-    works: [
-      "Custom Hardware Diagnostic",
-      "Onsite Cable Wiring",
-      "Annual Maintenance Inspection"
-    ]
-  }
-];
-
-const EXPERIENCE_OPTIONS = [
-  "Professional service",
-  "Clear explanation",
-  "Neat installation / wiring",
-  "Problem identified & resolved",
-  "Helpful technical support",
-  "Prompt response",
-  "Good communication",
-  "Tested everything before leaving",
-  "Reasonable upfront charges",
-  "Needs improvement"
-];
-
-// Offline deterministic natural language synthesizer (works with zero API / ₹0 budget)
-export function generateOfflineReviewDraft(
-  service: ServiceCategory | undefined,
-  selectedWorks: string[],
-  selectedExperiences: string[],
-  location: string,
-  customNote: string,
-  variationIndex: number = 0
-): string {
-  // Format clean service name without redundant categories or awkward brackets
-  let worksStr = "";
-  if (selectedWorks.length > 0) {
-    if (selectedWorks.length === 1) {
-      worksStr = selectedWorks[0];
-    } else if (selectedWorks.length === 2) {
-      worksStr = `${selectedWorks[0]} and ${selectedWorks[1].toLowerCase()}`;
-    } else {
-      const items = [...selectedWorks];
-      const last = items.pop();
-      worksStr = `${items.join(", ")} and ${last?.toLowerCase()}`;
-    }
-  } else {
-    worksStr = service?.shortName ? `${service.shortName} service` : "technical service";
-  }
-
-  const locStr = location.trim() ? ` in ${location.trim()}` : "";
-  
-  // Format experiences strictly from customer selection
-  const positiveExp = selectedExperiences.filter(e => e !== "Needs improvement");
-  const hasNegative = selectedExperiences.includes("Needs improvement");
-  
-  const formatExp = (exp: string) => {
-    switch (exp) {
-      case "Professional service": return "the service was professional";
-      case "Clear explanation": return "everything was clearly explained";
-      case "Neat installation / wiring": return "the installation and wiring was done neatly";
-      case "Problem identified & resolved": return "the issue was identified and resolved properly";
-      case "Helpful technical support": return "the technical support was helpful";
-      case "Prompt response": return "the response was prompt";
-      case "Good communication": return "the communication was clear and responsive";
-      case "Tested everything before leaving": return "the system was tested before leaving";
-      case "Reasonable upfront charges": return "the charges were reasonable and upfront";
-      default: return exp.toLowerCase();
-    }
-  };
-
-  let expSentence = "";
-  if (positiveExp.length > 0) {
-    if (positiveExp.length === 1) {
-      expSentence = ` ${formatExp(positiveExp[0]).charAt(0).toUpperCase() + formatExp(positiveExp[0]).slice(1)}.`;
-    } else if (positiveExp.length === 2) {
-      expSentence = ` ${formatExp(positiveExp[0]).charAt(0).toUpperCase() + formatExp(positiveExp[0]).slice(1)}, and ${formatExp(positiveExp[1])}.`;
-    } else {
-      const expList = positiveExp.slice(0, 3).map(formatExp);
-      expSentence = ` ${expList[0].charAt(0).toUpperCase() + expList[0].slice(1)}, ${expList[1]}, and ${expList[2]}.`;
-    }
-  }
-
-  if (hasNegative) {
-    expSentence += " While the service was completed, there is some room for improvement in follow-up.";
-  }
-
-  const noteSentence = customNote.trim() ? ` ${customNote.trim()}` : "";
-
-  // 5 Natural, customer-written phrasing variations using strictly the customer's selected facts
-  const variations = [
-    `I recently contacted MIInfotech${locStr} for ${worksStr.toLowerCase()}.${expSentence}${noteSentence} Overall, I had a good experience with MIInfotech.`,
-    `Got our ${worksStr.toLowerCase()} done by MIInfotech${locStr}.${expSentence}${noteSentence} Satisfied with the service provided.`,
-    `MIInfotech assisted us with ${worksStr.toLowerCase()}${locStr}.${expSentence}${noteSentence} Glad with the overall support.`,
-    `Called MIInfotech${locStr} for ${worksStr.toLowerCase()}.${expSentence}${noteSentence} Appreciate the assistance.`,
-    `Used MIInfotech${locStr} for ${worksStr.toLowerCase()}.${expSentence}${noteSentence} Good experience overall.`
-  ];
-
-  return variations[variationIndex % variations.length].trim();
-}
+export { GOOGLE_REVIEW_URL, REVIEW_PAGE_URL };
+export const SERVICE_CATEGORIES = REVIEW_SERVICE_CATEGORIES;
 
 export default function ReviewAssistant() {
-  const [step, setStep] = useState<number>(0); // 0: Start, 1: Category, 2: Questions, 3: Review Draft, 4: Ready for Google
-  const [selectedServiceId, setSelectedServiceId] = useState<string>("computer");
-  const [selectedWorks, setSelectedWorks] = useState<string[]>([]);
-  const [customWork, setCustomWork] = useState<string>("");
-  const [selectedExperiences, setSelectedExperiences] = useState<string[]>(["Professional service", "Problem identified & resolved"]);
-  const [location, setLocation] = useState<string>("Hassan");
+  // Step 0: Relationship (New vs Existing)
+  // Step 1: Service Category, Subcategory & Optional Brand
+  // Step 2: Final Service Experience Summary & Google Review Destination
+  const [step, setStep] = useState<number>(0);
+  const [relationship, setRelationship] = useState<CustomerRelationship>("new");
+  
+  const [selectedServiceId, setSelectedServiceId] = useState<string>("cctv");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("CCTV Installation");
+  const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [customNotes, setCustomNotes] = useState<string>("");
   
-  const [reviewDraft, setReviewDraft] = useState<string>("");
-  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [variationIndex, setVariationIndex] = useState<number>(0);
 
-  const activeService = SERVICE_CATEGORIES.find(s => s.id === selectedServiceId) || SERVICE_CATEGORIES[0];
+  const activeCategory: ServiceCategoryConfig = 
+    REVIEW_SERVICE_CATEGORIES.find(c => c.id === selectedServiceId) || REVIEW_SERVICE_CATEGORIES[0];
 
-  // Initialize works when category changes
-  useEffect(() => {
-    if (activeService.works.length > 0) {
-      setSelectedWorks([activeService.works[0]]);
-    } else {
-      setSelectedWorks([]);
-    }
-  }, [selectedServiceId]);
-
-  // Analytics event tracker (local privacy-safe)
+  // Track privacy-safe local events
   const trackEvent = (eventName: string) => {
     try {
       const stats = JSON.parse(localStorage.getItem("mi_review_assistant_stats") || "{}");
@@ -299,133 +52,68 @@ export default function ReviewAssistant() {
       stats.last_updated = new Date().toISOString();
       localStorage.setItem("mi_review_assistant_stats", JSON.stringify(stats));
     } catch (e) {
-      // Ignore local storage error
+      // Ignore
     }
   };
 
   useEffect(() => {
-    trackEvent("review_page_opened");
+    trackEvent("review_assistant_opened");
   }, []);
 
-  const handleStart = () => {
+  // Update default subcategory when service category changes
+  const handleSelectCategory = (catId: string) => {
+    setSelectedServiceId(catId);
+    const cat = REVIEW_SERVICE_CATEGORIES.find(c => c.id === catId);
+    if (cat && cat.subcategories.length > 0) {
+      setSelectedSubcategory(cat.subcategories[0]);
+    }
+    setSelectedBrand("");
+    trackEvent(`category_selected_${catId}`);
+  };
+
+  const handleSelectRelationship = (rel: CustomerRelationship) => {
+    setRelationship(rel);
     setStep(1);
-    trackEvent("start_clicked");
+    trackEvent(`relationship_selected_${rel}`);
   };
 
-  const handleSelectService = (id: string) => {
-    setSelectedServiceId(id);
+  const handleProceedToSummary = () => {
     setStep(2);
-    trackEvent(`service_selected_${id}`);
+    trackEvent("proceed_to_summary");
   };
 
-  const toggleWork = (work: string) => {
-    if (selectedWorks.includes(work)) {
-      if (selectedWorks.length > 1) {
-        setSelectedWorks(selectedWorks.filter(w => w !== work));
-      }
-    } else {
-      setSelectedWorks([...selectedWorks, work]);
-    }
+  const handleOpenGoogle = () => {
+    trackEvent("google_review_clicked");
+    window.open(GOOGLE_REVIEW_URL, "_blank", "noopener,noreferrer");
   };
 
-  const toggleExperience = (exp: string) => {
-    if (selectedExperiences.includes(exp)) {
-      if (selectedExperiences.length > 1) {
-        setSelectedExperiences(selectedExperiences.filter(e => e !== exp));
-      }
-    } else {
-      setSelectedExperiences([...selectedExperiences, exp]);
-    }
-  };
-
-  const handleGenerateDraft = async (overrideVariation?: number) => {
-    setIsGenerating(true);
-    const targetVar = overrideVariation !== undefined ? overrideVariation : variationIndex;
-    
-    const worksList = customWork.trim() ? [...selectedWorks, customWork.trim()] : selectedWorks;
-    
+  const handleCopyReviewLink = async () => {
     try {
-      // Attempt server AI generation with strict factual guardrails
-      const res = await fetch("/api/review/generate-draft", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceCategory: activeService.name,
-          works: worksList,
-          experiences: selectedExperiences,
-          location: location,
-          notes: customNotes,
-          variationIndex: targetVar
-        })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.draft) {
-          setReviewDraft(data.draft);
-          setIsGenerating(false);
-          setStep(3);
-          trackEvent("review_generated_ai");
-          return;
-        }
-      }
-    } catch (e) {
-      // Fallback seamlessly to offline generator
-    }
-
-    // Deterministic instant offline fallback
-    const offlineDraft = generateOfflineReviewDraft(
-      activeService,
-      worksList,
-      selectedExperiences,
-      location,
-      customNotes,
-      targetVar
-    );
-
-    setReviewDraft(offlineDraft);
-    setIsGenerating(false);
-    setStep(3);
-    trackEvent("review_generated_offline");
-  };
-
-  const handleRegenerate = () => {
-    const nextVar = variationIndex + 1;
-    setVariationIndex(nextVar);
-    handleGenerateDraft(nextVar);
-    trackEvent("review_regenerated");
-  };
-
-  const handleCopyReview = async () => {
-    try {
-      await navigator.clipboard.writeText(reviewDraft);
+      await navigator.clipboard.writeText(REVIEW_PAGE_URL);
       setCopied(true);
-      trackEvent("review_copied");
-      setTimeout(() => setCopied(false), 3000);
+      trackEvent("review_link_copied");
+      setTimeout(() => setCopied(false), 2500);
     } catch (err) {
-      // Fallback for clipboard
       const textArea = document.createElement("textarea");
-      textArea.value = reviewDraft;
+      textArea.value = REVIEW_PAGE_URL;
       document.body.appendChild(textArea);
       textArea.select();
       document.execCommand("copy");
       document.body.removeChild(textArea);
       setCopied(true);
-      trackEvent("review_copied");
-      setTimeout(() => setCopied(false), 3000);
+      setTimeout(() => setCopied(false), 2500);
     }
   };
 
-  const handleContinueToGoogle = async () => {
-    // Ensure text is copied first
-    await handleCopyReview();
-    trackEvent("continue_to_google_clicked");
-    setStep(4);
-  };
-
-  const openGoogleDirectly = () => {
-    trackEvent("direct_google_opened");
-    window.open(GOOGLE_REVIEW_URL, "_blank", "noopener,noreferrer");
+  const handleShareWhatsApp = () => {
+    const brandText = selectedBrand && selectedBrand !== "Not sure" && selectedBrand !== "Other / Mixed" 
+      ? ` (${selectedBrand})` 
+      : "";
+    const text = encodeURIComponent(
+      `Hello! Thank you for choosing MIINFOTECH for your ${selectedSubcategory}${brandText} service.\n\nPlease share your genuine experience with us on Google:\n${REVIEW_PAGE_URL}`
+    );
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+    trackEvent("whatsapp_share_clicked");
   };
 
   return (
@@ -443,7 +131,7 @@ export default function ReviewAssistant() {
           </div>
         </a>
 
-        {step > 0 && step < 4 && (
+        {step > 0 && (
           <button
             onClick={() => setStep(prev => Math.max(0, prev - 1))}
             className="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
@@ -458,7 +146,7 @@ export default function ReviewAssistant() {
       <div className="w-full max-w-md mx-auto flex-1 flex flex-col justify-start">
         
         {/* ========================================================================= */}
-        {/* SCREEN 0: WELCOME & START */}
+        {/* SCREEN 0: CUSTOMER RELATIONSHIP (NEW VS EXISTING) */}
         {/* ========================================================================= */}
         {step === 0 && (
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-center animate-fadeIn my-auto">
@@ -474,358 +162,210 @@ export default function ReviewAssistant() {
               <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                 Share Your Service Experience
               </h1>
-              <p className="text-sm text-slate-300 leading-relaxed pt-1">
-                Tell us what service you received. We'll help you turn your actual answers into a clear, professional review for Google.
+              <p className="text-sm text-slate-300 leading-relaxed pt-1 font-medium">
+                Have you used MIINFOTECH services before?
               </p>
             </div>
 
-            {/* Quick Guarantees */}
-            <div className="bg-slate-950/60 border border-slate-850 rounded-2xl p-4 text-left space-y-2.5 text-xs text-slate-300">
-              <div className="flex items-center gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Takes less than 60 seconds</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>You can edit or change anything before posting</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Submitted manually by you directly on Google</span>
-              </div>
-            </div>
-
-            {/* Primary Start CTA */}
-            <div className="space-y-3 pt-2">
+            {/* Step 1 Choice Cards */}
+            <div className="space-y-3 pt-1">
+              {/* Option A: New Customer */}
               <button
-                onClick={handleStart}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-base py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+                type="button"
+                onClick={() => handleSelectRelationship("new")}
+                className="w-full bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-blue-500/60 p-4 rounded-2xl text-left flex items-center justify-between gap-3 transition-all cursor-pointer group shadow-md"
               >
-                <span>Start Your Review</span>
-                <ArrowRight className="w-5 h-5" />
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <UserPlus className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm text-white block">First-time service</span>
+                      <span className="text-[10px] font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full uppercase">
+                        New Customer
+                      </span>
+                    </div>
+                    <span className="text-xs text-slate-400 block pt-0.5">
+                      Tap if this is your first service with MIInfotech
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all shrink-0" />
               </button>
 
+              {/* Option B: Existing Customer */}
               <button
-                onClick={openGoogleDirectly}
-                className="w-full bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                type="button"
+                onClick={() => handleSelectRelationship("existing")}
+                className="w-full bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-emerald-500/60 p-4 rounded-2xl text-left flex items-center justify-between gap-3 transition-all cursor-pointer group shadow-md"
               >
-                <span>Skip suggestion & write directly on Google</span>
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                    <UserCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm text-white block">I have used MIINFOTECH before</span>
+                      <span className="text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full uppercase">
+                        Existing Customer
+                      </span>
+                    </div>
+                    <span className="text-xs text-slate-400 block pt-0.5">
+                      Tap if you are a returning or ongoing customer
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0" />
+              </button>
+            </div>
+
+            {/* Policy & Direct Skip */}
+            <div className="pt-2 space-y-3">
+              <button
+                onClick={handleOpenGoogle}
+                className="w-full text-xs text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 cursor-pointer py-1.5 transition-colors"
+              >
+                <span>Or write directly on Google without selecting</span>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
               </button>
+
+              <div className="border-t border-slate-800 pt-3 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Takes less than 30 seconds • No login required</span>
+              </div>
             </div>
 
           </div>
         )}
 
         {/* ========================================================================= */}
-        {/* SCREEN 1: SERVICE SELECTION */}
+        {/* SCREEN 1: SERVICE CATEGORY & SUBCATEGORY SELECTION */}
         {/* ========================================================================= */}
         {step === 1 && (
-          <div className="space-y-4 animate-fadeIn">
-            <div className="text-left space-y-1">
-              <h2 className="text-xl font-extrabold text-white tracking-tight">
-                What service did you receive?
-              </h2>
-              <p className="text-xs text-slate-400">
-                Select the service completed by MIInfotech:
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {SERVICE_CATEGORIES.map((cat) => {
-                const IconComp = cat.icon;
-                const isSelected = selectedServiceId === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => handleSelectService(cat.id)}
-                    className={`p-3.5 rounded-2xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-blue-600/20 border-blue-500 text-white shadow-md shadow-blue-500/10"
-                        : "bg-slate-900 border-slate-800 hover:border-slate-700 text-slate-200"
-                    }`}
-                  >
-                    <div className={`p-2.5 rounded-xl ${isSelected ? "bg-blue-600 text-white" : "bg-slate-800 text-blue-400"}`}>
-                      <IconComp className="w-5 h-5" />
-                    </div>
-                    <div className="min-w-0">
-                      <span className="font-bold text-sm block truncate">{cat.name}</span>
-                      <span className="text-[11px] text-slate-400 block truncate">Tap to choose work</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* SCREEN 2: DYNAMIC FACTUAL QUESTIONS */}
-        {/* ========================================================================= */}
-        {step === 2 && (
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-5 animate-fadeIn text-left">
-            
-            <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-mono uppercase text-blue-400 font-bold">Step 2 of 3</span>
-                <h2 className="text-lg font-bold text-white tracking-tight">
-                  {activeService.name}
-                </h2>
-              </div>
-              <div className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400">
-                {React.createElement(activeService.icon, { className: "w-5 h-5" })}
-              </div>
-            </div>
-
-            {/* Q1: Specific Work Completed */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-200 block">
-                1. What specific work did MIInfotech provide?
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {activeService.works.map((work) => {
-                  const isChecked = selectedWorks.includes(work);
-                  return (
-                    <button
-                      key={work}
-                      type="button"
-                      onClick={() => toggleWork(work)}
-                      className={`px-3 py-2 rounded-xl text-xs font-medium border text-left transition-all cursor-pointer ${
-                        isChecked
-                          ? "bg-blue-600 text-white border-blue-500 shadow-sm"
-                          : "bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700"
-                      }`}
-                    >
-                      {isChecked ? "✓ " : "+ "}{work}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Optional Custom Work Input */}
-              <input
-                type="text"
-                value={customWork}
-                onChange={(e) => setCustomWork(e.target.value)}
-                placeholder="Other specific work (optional)..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 mt-1"
-              />
-            </div>
-
-            {/* Q2: Customer Experience */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-200 block">
-                2. What was your experience with the service?
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {EXPERIENCE_OPTIONS.map((exp) => {
-                  const isChecked = selectedExperiences.includes(exp);
-                  return (
-                    <button
-                      key={exp}
-                      type="button"
-                      onClick={() => toggleExperience(exp)}
-                      className={`px-3 py-2 rounded-xl text-xs font-medium border text-left transition-all cursor-pointer ${
-                        isChecked
-                          ? exp === "Needs improvement"
-                            ? "bg-amber-600/30 text-amber-300 border-amber-500"
-                            : "bg-emerald-600/30 text-emerald-300 border-emerald-500"
-                          : "bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700"
-                      }`}
-                    >
-                      {isChecked ? "✓ " : ""}{exp}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Q3: Optional Location */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-200 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-blue-400" />
-                <span>3. Where was the service provided? (Optional)</span>
-              </label>
-              <div className="flex gap-2">
-                {["Hassan", "Outskirts", "Other"].map((loc) => (
-                  <button
-                    key={loc}
-                    type="button"
-                    onClick={() => setLocation(loc === "Other" ? "" : loc)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-medium border cursor-pointer ${
-                      location === loc || (loc === "Other" && location !== "Hassan" && location !== "Outskirts")
-                        ? "bg-blue-600 text-white border-blue-500"
-                        : "bg-slate-950 border-slate-800 text-slate-300"
-                    }`}
-                  >
-                    {loc}
-                  </button>
-                ))}
-              </div>
-              {location !== "Hassan" && location !== "Outskirts" && (
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Enter location (e.g. Belur, Sakleshpur)..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                />
-              )}
-            </div>
-
-            {/* Q4: Optional Additional Comments */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-200 block">
-                4. Anything else you'd like to mention? (Optional)
-              </label>
-              <input
-                type="text"
-                value={customNotes}
-                onChange={(e) => setCustomNotes(e.target.value)}
-                placeholder="e.g. Fixed the issue quickly, came on the same day..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            {/* Submit / Generate Button */}
-            <div className="pt-2">
-              <button
-                onClick={() => handleGenerateDraft()}
-                disabled={isGenerating}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer disabled:opacity-50"
-              >
-                {isGenerating ? (
-                  <>
-                    <RotateCw className="w-4 h-4 animate-spin" />
-                    <span>Preparing Review Draft...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 text-blue-200" />
-                    <span>Generate Review Suggestion</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* SCREEN 3: REVIEW SUGGESTION & EDIT CONTROLS */}
-        {/* ========================================================================= */}
-        {step === 3 && (
           <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-5 animate-fadeIn text-left">
             
-            <div className="space-y-1.5">
+            {/* Friendly Relationship Banner */}
+            <div className="bg-slate-950 border border-slate-850 p-3.5 rounded-2xl space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
-                  Draft Created from Your Answers
+                <span className="text-[10px] font-mono uppercase text-blue-400 font-bold">
+                  {relationship === "new" ? "New Customer" : "Returning Customer"}
                 </span>
-                <button
-                  onClick={handleRegenerate}
-                  className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 cursor-pointer font-medium"
-                  title="Generate alternative natural wording with same facts"
-                >
-                  <RotateCw className="w-3.5 h-3.5" />
-                  <span>Try Another Style</span>
-                </button>
+                <span className="text-[10px] text-slate-400 font-mono">Step 1 of 2</span>
               </div>
-              <h2 className="text-xl font-extrabold text-white tracking-tight">
-                Your Review Suggestion
-              </h2>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Please check this carefully and edit anything that does not accurately describe your experience.
+              <p className="text-xs font-semibold text-emerald-400">
+                {relationship === "existing"
+                  ? "Thank you for continuing to trust MIINFOTECH."
+                  : "Thank you for choosing MIINFOTECH."}
               </p>
+              <h2 className="text-base font-bold text-white tracking-tight pt-1">
+                {relationship === "existing"
+                  ? "What service would you like to share your experience about?"
+                  : "What service did we provide?"}
+              </h2>
             </div>
 
-            {/* Review Box */}
-            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 relative focus-within:border-blue-500 transition-colors">
-              {isEditing ? (
-                <textarea
-                  value={reviewDraft}
-                  onChange={(e) => setReviewDraft(e.target.value)}
-                  rows={4}
-                  className="w-full bg-transparent text-sm text-slate-100 placeholder-slate-500 focus:outline-none resize-none leading-relaxed"
-                  placeholder="Your review text..."
-                  autoFocus
-                />
-              ) : (
-                <p className="text-sm text-slate-100 leading-relaxed italic">
-                  "{reviewDraft}"
-                </p>
-              )}
-
-              <div className="flex items-center justify-between pt-3 mt-2 border-t border-slate-900 text-xs">
-                <button
-                  onClick={() => setIsEditing(!isEditing)}
-                  className="text-slate-300 hover:text-white flex items-center gap-1.5 cursor-pointer font-medium bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-lg"
-                >
-                  <Edit3 className="w-3.5 h-3.5 text-blue-400" />
-                  <span>{isEditing ? "Save Edits" : "Edit Review"}</span>
-                </button>
-
-                <button
-                  onClick={handleCopyReview}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    copied 
-                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" 
-                      : "bg-slate-800 text-slate-200 hover:text-white hover:bg-slate-700"
-                  }`}
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>Copy Review</span>
-                    </>
-                  )}
-                </button>
+            {/* 8 Primary Service Category Selector (Pills / Grid) */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-300 block">
+                Select Service Category:
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {REVIEW_SERVICE_CATEGORIES.map((cat) => {
+                  const IconComp = cat.icon;
+                  const isSelected = selectedServiceId === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => handleSelectCategory(cat.id)}
+                      className={`p-2.5 rounded-xl border text-left flex items-center gap-2.5 transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-600/20 font-bold"
+                          : "bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
+                      }`}
+                    >
+                      <IconComp className={`w-4 h-4 shrink-0 ${isSelected ? "text-white" : "text-blue-400"}`} />
+                      <span className="text-xs truncate">{cat.name}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Quick Action Grid */}
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={handleRegenerate}
-                className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <RotateCw className="w-3.5 h-3.5 text-blue-400" />
-                <span>Try Another Style</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleCopyReview}
-                className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <Copy className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Copy Review</span>
-              </button>
+            {/* Specific Subcategory Work Selector */}
+            <div className="space-y-2 pt-1 border-t border-slate-800">
+              <label className="text-xs font-bold text-slate-200 block">
+                Specific Work Completed ({activeCategory.name}):
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {activeCategory.subcategories.map((sub) => {
+                  const isSelected = selectedSubcategory === sub;
+                  return (
+                    <button
+                      key={sub}
+                      type="button"
+                      onClick={() => setSelectedSubcategory(sub)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-medium border text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-emerald-600 text-white border-emerald-500 shadow-sm font-semibold"
+                          : "bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700"
+                      }`}
+                    >
+                      {isSelected ? "✓ " : ""}{sub}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Main Action Buttons */}
-            <div className="space-y-2.5 pt-1">
+            {/* Optional Brand Selection (Only where relevant) */}
+            {activeCategory.brands && activeCategory.brands.length > 0 && (
+              <div className="space-y-2 pt-1 border-t border-slate-800">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-300">
+                    Device / Brand (Optional):
+                  </label>
+                  <span className="text-[10px] text-slate-400 italic">Optional</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {activeCategory.brands.map((b) => {
+                    const isSelected = selectedBrand === b;
+                    return (
+                      <button
+                        key={b}
+                        type="button"
+                        onClick={() => setSelectedBrand(selectedBrand === b ? "" : b)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
+                          isSelected
+                            ? "bg-blue-600 text-white border-blue-500"
+                            : "bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200"
+                        }`}
+                      >
+                        {b}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="pt-2 space-y-2">
               <button
-                onClick={handleContinueToGoogle}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm sm:text-base py-3.5 px-6 rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+                onClick={handleProceedToSummary}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm py-3.5 px-6 rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
               >
-                <Star className="w-4 h-4 fill-white text-white" />
-                <span>⭐ Continue to Google</span>
+                <span>Continue to Review</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <button
-                onClick={openGoogleDirectly}
-                className="w-full bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-400 hover:text-white text-xs font-medium py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                onClick={handleOpenGoogle}
+                className="w-full text-xs text-slate-400 hover:text-white py-1.5 flex items-center justify-center gap-1 cursor-pointer"
               >
-                <span>Write My Own Review</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Skip to Google Review</span>
+                <ExternalLink className="w-3 h-3" />
               </button>
             </div>
 
@@ -833,56 +373,125 @@ export default function ReviewAssistant() {
         )}
 
         {/* ========================================================================= */}
-        {/* SCREEN 4: READY FOR GOOGLE (ONE-TAP COPY & LAUNCH) */}
+        {/* SCREEN 2: SERVICE EXPERIENCE SUMMARY & GOOGLE DESTINATION */}
         {/* ========================================================================= */}
-        {step === 4 && (
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-center animate-fadeIn my-auto">
+        {step === 2 && (
+          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-5 animate-fadeIn text-left my-auto">
             
-            <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto">
-              <Check className="w-7 h-7 text-emerald-400" />
-            </div>
-
-            <div className="space-y-2">
-              <h2 className="text-2xl font-extrabold text-white tracking-tight">
-                Review Copied to Clipboard!
+            {/* Header Identity */}
+            <div className="text-center space-y-1">
+              <div className="inline-flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full text-blue-400 font-mono text-xs font-bold uppercase tracking-wider">
+                <Star className="w-3.5 h-3.5 fill-blue-400" />
+                <span>MIINFOTECH</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                YOUR SERVICE EXPERIENCE
               </h2>
-              <p className="text-xs text-slate-300 leading-relaxed max-w-sm mx-auto">
-                Your draft has been copied. Tap the button below to open Google Review, paste the text into the review box, and submit your rating.
-              </p>
             </div>
 
-            {/* Visual Step Indicator */}
-            <div className="bg-slate-950 border border-slate-850 rounded-2xl p-4 text-left space-y-2.5 text-xs text-slate-300">
-              <div className="flex items-start gap-2.5">
-                <span className="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">1</span>
-                <span>Google Maps write-review page will open</span>
+            {/* Clean Experience Summary Card */}
+            <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-850 pb-2.5 text-xs">
+                <span className="text-slate-400">Customer Type:</span>
+                <span className="font-semibold text-white">
+                  {relationship === "new" ? "First-time service" : "Returning customer"}
+                </span>
               </div>
-              <div className="flex items-start gap-2.5">
-                <span className="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">2</span>
-                <span>Select your genuine star rating</span>
+
+              <div className="flex items-center justify-between border-b border-slate-850 pb-2.5 text-xs">
+                <span className="text-slate-400">Service:</span>
+                <span className="font-bold text-blue-400">
+                  {selectedSubcategory}
+                </span>
               </div>
-              <div className="flex items-start gap-2.5">
-                <span className="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">3</span>
-                <span>Long-press to <strong>Paste</strong> your review text and post</span>
+
+              {selectedBrand && selectedBrand !== "Not sure" && selectedBrand !== "Other / Mixed" && (
+                <div className="flex items-center justify-between border-b border-slate-850 pb-2.5 text-xs">
+                  <span className="text-slate-400">Brand / Device:</span>
+                  <span className="font-semibold text-white">{selectedBrand}</span>
+                </div>
+              )}
+
+              <div className="pt-1 text-xs text-slate-300 leading-relaxed">
+                <p className="font-medium text-emerald-400">
+                  {relationship === "existing"
+                    ? "Thank you for your continued trust in MIINFOTECH."
+                    : "Thank you for choosing MIINFOTECH."}
+                </p>
+                <p className="text-slate-400 pt-1 text-[11px]">
+                  Your genuine feedback helps us improve our service and helps other customers understand our work.
+                </p>
               </div>
             </div>
 
-            {/* Launch CTA */}
-            <div className="space-y-3 pt-2">
+            {/* Primary Google Review CTA Button */}
+            <div className="space-y-3 pt-1">
               <button
-                onClick={openGoogleDirectly}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-base py-4 px-6 rounded-2xl shadow-xl shadow-blue-600/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+                onClick={handleOpenGoogle}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-4 px-6 rounded-2xl shadow-xl shadow-blue-600/30 flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] cursor-pointer"
               >
-                <span>⭐ Open Google Review Page</span>
+                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                <span>SHARE YOUR EXPERIENCE ON GOOGLE</span>
                 <ExternalLink className="w-4 h-4" />
               </button>
 
-              <button
-                onClick={() => setStep(3)}
-                className="text-xs text-slate-400 hover:text-white underline cursor-pointer"
-              >
-                ← Back to edit review
-              </button>
+              {/* Secondary Actions Grid */}
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <a
+                  href={REVIEW_PAGE_URL}
+                  className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open Review Page</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handleCopyReviewLink}
+                  className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400">Link Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy Review Link</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleShareWhatsApp}
+                  className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-emerald-400 hover:text-emerald-300 text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span>Share on WhatsApp</span>
+                </button>
+
+                <a
+                  href={`https://api.qrserver.com/v1/create-qr-code/?size=1200x1200&data=${encodeURIComponent(REVIEW_PAGE_URL)}&bgcolor=ffffff&color=0f172a&margin=4&format=png`}
+                  download="miinfotech-review-qr-1200px.png"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-blue-400 hover:text-blue-300 text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download QR</span>
+                </a>
+              </div>
+
+              <div className="flex items-center justify-center pt-2">
+                <button
+                  onClick={() => setStep(1)}
+                  className="text-xs text-slate-400 hover:text-white underline cursor-pointer"
+                >
+                  ← Change service selection
+                </button>
+              </div>
             </div>
 
           </div>

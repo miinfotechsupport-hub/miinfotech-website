@@ -5,6 +5,13 @@ import * as LucideIcons from "lucide-react";
 import MediaUploadZone from "./MediaUploadZone";
 import MediaGridSection from "./MediaGridSection";
 import QRCodeDisplay from "./QRCodeDisplay";
+import { 
+  REVIEW_SERVICE_CATEGORIES, 
+  CustomerRelationship, 
+  generateTruthfulWhatsAppRequest, 
+  REVIEW_PAGE_URL, 
+  GOOGLE_REVIEW_URL 
+} from "../lib/reviewConfig";
 
 interface AdminPanelProps {
   onClose: () => void;
@@ -74,6 +81,27 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [techNotesOpen, setTechNotesOpen] = useState<boolean>(false);
   const [generatingSeo, setGeneratingSeo] = useState<boolean>(false);
   const [generatingProject, setGeneratingProject] = useState<boolean>(false);
+
+  // Review Assistant Staff Generator & Reply Helper states
+  const [reqRelationship, setReqRelationship] = useState<CustomerRelationship>("new");
+  const [reqServiceId, setReqServiceId] = useState<string>("cctv");
+  const [reqSubservice, setReqSubservice] = useState<string>("CCTV Installation");
+  const [reqBrand, setReqBrand] = useState<string>("");
+  const [reqCustomerName, setReqCustomerName] = useState<string>("");
+  const [reqCustomerPhone, setReqCustomerPhone] = useState<string>("");
+  const [reqHistory, setReqHistory] = useState<any[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("mi_review_request_history") || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  // Review Reply Helper states
+  const [replyRating, setReplyRating] = useState<number>(5);
+  const [replyCustomerName, setReplyCustomerName] = useState<string>("");
+  const [replyCustomerService, setReplyCustomerService] = useState<string>("CCTV Installation");
+  const [replyDraft, setReplyDraft] = useState<string>("");
 
   // Trigger toast
   const addToast = (text: string, type: "success" | "error" = "success") => {
@@ -2545,10 +2573,10 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                 <div>
                   <h2 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
                     <LucideIcons.QrCode className="w-5 h-5 text-blue-500" />
-                    <span>Customer Google Review Assistant</span>
+                    <span>Customer Google Review Assistant & Management</span>
                   </h2>
                   <p className="text-xs text-slate-400 mt-1">
-                    Mobile-first review helper designed to assist genuine customers in structuring factual reviews without policy violations.
+                    Mobile-first review helper, doorstep QR generator, truthful WhatsApp review requester, and Google Review reply assistant.
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -2559,92 +2587,424 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                     className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 px-4 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/10 cursor-pointer transition-all"
                   >
                     <LucideIcons.ExternalLink className="w-3.5 h-3.5" />
-                    <span>Test Mobile Flow (/review)</span>
+                    <span>Test Customer Flow (/review)</span>
                   </a>
                 </div>
               </div>
 
+              {/* Main 2-Column Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Left Col: Live QR Generator */}
-                <div className="lg:col-span-5">
+                
+                {/* Left Col: Live QR Generator & Card */}
+                <div className="lg:col-span-5 space-y-4">
                   <QRCodeDisplay
                     url={`${SITE_URL}/review`}
                     title="MIInfotech Review Assistant QR"
                     size={180}
                   />
-                </div>
 
-                {/* Right Col: Operations & Policy Guide */}
-                <div className="lg:col-span-7 space-y-4 text-left">
-                  
-                  {/* How it Works Card */}
-                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3">
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                      <LucideIcons.Sparkles className="w-4 h-4 text-blue-400" />
-                      <span>The 5-Step Customer Workflow</span>
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
-                      {[
-                        { step: "1", title: "Scan QR", desc: "Doorstep scan" },
-                        { step: "2", title: "Select Work", desc: "Computer/CCTV/etc" },
-                        { step: "3", title: "Quick Facts", desc: "2-3 checkboxes" },
-                        { step: "4", title: "Review Draft", desc: "Zero invented facts" },
-                        { step: "5", title: "Post to Google", desc: "Customer's account" },
-                      ].map((s) => (
-                        <div key={s.step} className="bg-slate-950/80 border border-slate-850 p-2.5 rounded-xl text-center">
-                          <span className="w-5 h-5 rounded-full bg-blue-600 text-white font-bold text-[10px] inline-flex items-center justify-center mb-1">
-                            {s.step}
-                          </span>
-                          <span className="font-bold text-white block text-[11px]">{s.title}</span>
-                          <span className="text-[10px] text-slate-400 block">{s.desc}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Google Policy Guardrails */}
-                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3">
+                  {/* Policy Compliance Guardrails */}
+                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3 text-left">
                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
                       <LucideIcons.ShieldCheck className="w-4 h-4 text-emerald-400" />
-                      <span>Google Policy Compliance Guardrails</span>
+                      <span>Google Policy Compliance</span>
                     </h3>
                     <div className="space-y-2 text-xs text-slate-300">
                       <div className="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-850">
                         <LucideIcons.Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                         <div>
-                          <strong className="text-white block text-[11px]">No Review Gating or Filtering:</strong>
-                          <span className="text-slate-400 text-[10px]">All customers receive direct, unhindered access to the official Google review page regardless of their feedback or rating.</span>
+                          <strong className="text-white block text-[11px]">No Review Gating:</strong>
+                          <span className="text-slate-400 text-[10px]">All customers receive direct, unhindered access to the official Google review page.</span>
                         </div>
                       </div>
                       <div className="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-850">
                         <LucideIcons.Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                         <div>
-                          <strong className="text-white block text-[11px]">No Invented Facts or Fake Praise:</strong>
-                          <span className="text-slate-400 text-[10px]">The draft generator strictly uses only facts explicitly chosen by the customer (camera counts, dates, prices, or names are never fabricated).</span>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-850">
-                        <LucideIcons.Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                        <div>
-                          <strong className="text-white block text-[11px]">Full Customer Agency & Control:</strong>
-                          <span className="text-slate-400 text-[10px]">The customer can edit, rewrite, or discard the draft at any time before posting directly from their own authenticated Google account.</span>
+                          <strong className="text-white block text-[11px]">Strict Fact Verification:</strong>
+                          <span className="text-slate-400 text-[10px]">No fabricated details or fake praise; customer maintains full agency over their review.</span>
                         </div>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Technician Instructions */}
-                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-2">
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                      <LucideIcons.Users className="w-4 h-4 text-amber-400" />
-                      <span>Instructions for Doorstep Engineers</span>
-                    </h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      After completing an onsite diagnosis, hardware installation, or repair in Hassan, present the QR code card or share the link via WhatsApp:
-                    </p>
-                    <div className="bg-slate-950 p-3 rounded-xl border border-slate-850 text-slate-300 text-xs italic">
-                      &quot;Thank you for choosing MIInfotech! If you have a minute, please scan this code to share your genuine feedback with us on Google. It takes less than 30 seconds.&quot;
+                {/* Right Col: Staff WhatsApp Requester & Review History */}
+                <div className="lg:col-span-7 space-y-5 text-left">
+                  
+                  {/* Staff WhatsApp Request Generator Card */}
+                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl">
+                          <LucideIcons.MessageSquare className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-white">Staff WhatsApp Review Requester</h3>
+                          <span className="text-[11px] text-slate-400">Generate truthful, policy-compliant review requests for customers</span>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">
+                        Doorstep Tool
+                      </span>
                     </div>
+
+                    {/* Controls Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      
+                      {/* Customer Relationship */}
+                      <div>
+                        <label className="text-xs font-semibold text-slate-300 block mb-1">
+                          Customer Relationship
+                        </label>
+                        <select
+                          value={reqRelationship}
+                          onChange={(e) => setReqRelationship(e.target.value as CustomerRelationship)}
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none cursor-pointer"
+                        >
+                          <option value="new">New Customer (First-time service)</option>
+                          <option value="existing">Existing Customer (Returning / Ongoing)</option>
+                          <option value="longterm">Long-term Customer (Multi-year trust)</option>
+                        </select>
+                      </div>
+
+                      {/* Service Category */}
+                      <div>
+                        <label className="text-xs font-semibold text-slate-300 block mb-1">
+                          Service Category
+                        </label>
+                        <select
+                          value={reqServiceId}
+                          onChange={(e) => {
+                            const catId = e.target.value;
+                            setReqServiceId(catId);
+                            const cat = REVIEW_SERVICE_CATEGORIES.find(c => c.id === catId);
+                            if (cat && cat.subcategories.length > 0) {
+                              setReqSubservice(cat.subcategories[0]);
+                            }
+                            setReqBrand("");
+                          }}
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none cursor-pointer"
+                        >
+                          {REVIEW_SERVICE_CATEGORIES.map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Subcategory Work */}
+                      <div>
+                        <label className="text-xs font-semibold text-slate-300 block mb-1">
+                          Specific Work Completed
+                        </label>
+                        <select
+                          value={reqSubservice}
+                          onChange={(e) => setReqSubservice(e.target.value)}
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none cursor-pointer"
+                        >
+                          {(REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.subcategories || []).map(s => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Optional Brand */}
+                      <div>
+                        <label className="text-xs font-semibold text-slate-300 block mb-1">
+                          Brand / Hardware (Optional)
+                        </label>
+                        <select
+                          value={reqBrand}
+                          onChange={(e) => setReqBrand(e.target.value)}
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none cursor-pointer"
+                        >
+                          <option value="">None / Skip</option>
+                          {(REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.brands || []).map(b => (
+                            <option key={b} value={b}>{b}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Optional Customer Phone */}
+                      <div>
+                        <label className="text-xs font-semibold text-slate-300 block mb-1">
+                          Customer Phone (10 digits)
+                        </label>
+                        <input
+                          type="text"
+                          value={reqCustomerPhone}
+                          onChange={(e) => setReqCustomerPhone(e.target.value.replace(/[^0-9]/g, "").slice(0, 10))}
+                          placeholder="e.g. 9964761624"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none"
+                        >
+                        </input>
+                      </div>
+
+                      {/* Optional Customer Name */}
+                      <div>
+                        <label className="text-xs font-semibold text-slate-300 block mb-1">
+                          Customer / Business Name (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={reqCustomerName}
+                          onChange={(e) => setReqCustomerName(e.target.value)}
+                          placeholder="e.g. Rahul / Hassan Traders"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+
+                    </div>
+
+                    {/* Formatted Message Preview */}
+                    <div className="space-y-1.5 pt-1">
+                      <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
+                        <span>WhatsApp Message Preview:</span>
+                        <span className="text-[10px] font-mono text-emerald-400">Truthful & Policy-Compliant</span>
+                      </label>
+                      <pre className="bg-slate-950 border border-slate-850 p-3.5 rounded-xl text-xs text-slate-200 font-sans whitespace-pre-wrap leading-relaxed select-all">
+                        {generateTruthfulWhatsAppRequest(
+                          reqRelationship,
+                          REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.name || "Technical Service",
+                          reqSubservice,
+                          reqBrand
+                        )}
+                      </pre>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const message = generateTruthfulWhatsAppRequest(
+                            reqRelationship,
+                            REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.name || "Technical Service",
+                            reqSubservice,
+                            reqBrand
+                          );
+                          const cleanPhone = reqCustomerPhone.trim() ? `91${reqCustomerPhone.trim()}` : "";
+                          const url = cleanPhone
+                            ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`
+                            : `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+                          
+                          window.open(url, "_blank");
+
+                          // Log into history
+                          const newEntry = {
+                            id: Date.now().toString(),
+                            date: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+                            name: reqCustomerName.trim() || "Customer",
+                            phone: reqCustomerPhone.trim() || "Shared via link",
+                            service: reqSubservice,
+                            brand: reqBrand || "-",
+                            relationship: reqRelationship
+                          };
+                          const updated = [newEntry, ...reqHistory].slice(0, 30);
+                          setReqHistory(updated);
+                          localStorage.setItem("mi_review_request_history", JSON.stringify(updated));
+                          addToast("WhatsApp opened and request logged to history!", "success");
+                        }}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 px-4 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer shadow-md shadow-emerald-600/20"
+                      >
+                        <LucideIcons.Send className="w-3.5 h-3.5" />
+                        <span>Send via WhatsApp</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const message = generateTruthfulWhatsAppRequest(
+                            reqRelationship,
+                            REVIEW_SERVICE_CATEGORIES.find(c => c.id === reqServiceId)?.name || "Technical Service",
+                            reqSubservice,
+                            reqBrand
+                          );
+                          await navigator.clipboard.writeText(message);
+                          addToast("Message text copied to clipboard!", "success");
+                        }}
+                        className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <LucideIcons.Copy className="w-3.5 h-3.5" />
+                        <span>Copy Message</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(REVIEW_PAGE_URL);
+                          addToast("Review link copied: " + REVIEW_PAGE_URL, "success");
+                        }}
+                        className="bg-slate-950 hover:bg-slate-850 border border-slate-800 text-blue-400 hover:text-blue-300 text-xs font-mono py-2.5 px-3 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <LucideIcons.Link className="w-3.5 h-3.5" />
+                        <span>Copy Link Only</span>
+                      </button>
+                    </div>
+
+                  </div>
+
+                  {/* Review Request History Tracker */}
+                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                        <LucideIcons.History className="w-4 h-4 text-blue-400" />
+                        <span>Recent Sent Review Requests ({reqHistory.length})</span>
+                      </h3>
+                      {reqHistory.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm("Clear review request history log?")) {
+                              setReqHistory([]);
+                              localStorage.removeItem("mi_review_request_history");
+                              addToast("History log cleared.", "success");
+                            }
+                          }}
+                          className="text-[10px] text-slate-400 hover:text-rose-400 cursor-pointer"
+                        >
+                          Clear Log
+                        </button>
+                      )}
+                    </div>
+
+                    {reqHistory.length === 0 ? (
+                      <div className="bg-slate-950/60 p-4 rounded-xl text-center text-xs text-slate-400 border border-slate-850">
+                        No review requests sent yet. Use the WhatsApp Requester above to send and track customer feedback requests.
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead>
+                            <tr className="border-b border-slate-800 text-slate-400">
+                              <th className="pb-2 font-semibold">Date</th>
+                              <th className="pb-2 font-semibold">Customer / Phone</th>
+                              <th className="pb-2 font-semibold">Service</th>
+                              <th className="pb-2 font-semibold">Type</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-850">
+                            {reqHistory.slice(0, 8).map((item) => (
+                              <tr key={item.id} className="text-slate-200">
+                                <td className="py-2 text-[11px] text-slate-400 font-mono">{item.date}</td>
+                                <td className="py-2">
+                                  <span className="font-semibold block">{item.name}</span>
+                                  <span className="text-[10px] text-slate-400 font-mono">{item.phone}</span>
+                                </td>
+                                <td className="py-2 text-[11px] text-blue-400">{item.service} {item.brand !== "-" ? `(${item.brand})` : ""}</td>
+                                <td className="py-2">
+                                  <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full uppercase ${
+                                    item.relationship === "new" 
+                                      ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
+                                      : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                                  }`}>
+                                    {item.relationship}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Future-Ready: Google Review Reply Assistant */}
+                  <div className="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-2 bg-purple-500/10 text-purple-400 rounded-xl">
+                          <LucideIcons.Sparkles className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold text-white">Business Owner Review Reply Assistant</h3>
+                          <span className="text-[11px] text-slate-400">Professional, ethical replies for real Google reviews received by MIInfotech</span>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-full">
+                        Admin Reply Helper
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <label className="text-slate-300 block mb-1 font-semibold">Review Rating:</label>
+                        <select
+                          value={replyRating}
+                          onChange={(e) => setReplyRating(Number(e.target.value))}
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white cursor-pointer"
+                        >
+                          <option value={5}>⭐⭐⭐⭐⭐ (5 Stars)</option>
+                          <option value={4}>⭐⭐⭐⭐ (4 Stars)</option>
+                          <option value={3}>⭐⭐⭐ (3 Stars - Constructive)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-slate-300 block mb-1 font-semibold">Customer Name:</label>
+                        <input
+                          type="text"
+                          value={replyCustomerName}
+                          onChange={(e) => setReplyCustomerName(e.target.value)}
+                          placeholder="e.g. Ramesh Kumar"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-slate-300 block mb-1 font-semibold">Service Mentioned:</label>
+                        <input
+                          type="text"
+                          value={replyCustomerService}
+                          onChange={(e) => setReplyCustomerService(e.target.value)}
+                          placeholder="e.g. CCTV Installation"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Generate Sample Reply */}
+                    <div className="pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const name = replyCustomerName.trim() || "Customer";
+                          const srv = replyCustomerService.trim() || "technical service";
+                          let sample = "";
+                          if (replyRating === 5) {
+                            sample = `Hi ${name}, thank you very much for your 5-star review! We're glad to have assisted you with your ${srv} in Hassan. We always strive to provide honest, reliable doorstep support. Please feel free to reach out whenever you need technical assistance. – Mohammed Ishtiaqh, MIInfotech`;
+                          } else if (replyRating === 4) {
+                            sample = `Hi ${name}, thank you for choosing MIInfotech for your ${srv} and taking the time to share your feedback. We appreciate your trust and are glad the service went well. We look forward to supporting you again! – MIInfotech Team`;
+                          } else {
+                            sample = `Hi ${name}, thank you for your honest feedback regarding your ${srv}. We take every customer experience seriously and would appreciate the opportunity to make sure everything continues to run smoothly. Please feel free to reach me directly at +91 9964761624. – Mohammed Ishtiaqh, MIInfotech`;
+                          }
+                          setReplyDraft(sample);
+                        }}
+                        className="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <LucideIcons.Sparkles className="w-3.5 h-3.5" />
+                        <span>Generate Owner Reply Draft</span>
+                      </button>
+                    </div>
+
+                    {replyDraft && (
+                      <div className="bg-slate-950 border border-slate-850 p-3.5 rounded-xl space-y-2">
+                        <p className="text-xs text-slate-200 leading-relaxed font-sans select-all">
+                          {replyDraft}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(replyDraft);
+                            addToast("Reply draft copied for Google Business Profile!", "success");
+                          }}
+                          className="text-xs text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 cursor-pointer"
+                        >
+                          <LucideIcons.Copy className="w-3.5 h-3.5" />
+                          <span>Copy Reply for Google Maps</span>
+                        </button>
+                      </div>
+                    )}
+
                   </div>
 
                 </div>
