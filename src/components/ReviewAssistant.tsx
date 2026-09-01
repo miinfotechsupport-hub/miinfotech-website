@@ -36,18 +36,14 @@ export default function ReviewAssistant() {
 
   // Step 1: Selected Category & Main Services
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("cctv");
-  const [selectedMainServices, setSelectedMainServices] = useState<string[]>(["CCTV Installation"]);
+  const [selectedMainServices, setSelectedMainServices] = useState<string[]>([]);
 
   // Step 2: Selected Work Done (Max 5)
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(["Camera Installation", "Remote Viewing Setup"]);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [customFeatureText, setCustomFeatureText] = useState<string>("");
 
   // Step 3: Experience Feedback (Max 3)
-  const [selectedExperiences, setSelectedExperiences] = useState<string[]>([
-    "Professional Work",
-    "Good Communication",
-    "Neat Installation"
-  ]);
+  const [selectedExperiences, setSelectedExperiences] = useState<string[]>([]);
 
   // Step 4: Location & Optional Custom Note
   const [selectedLocation, setSelectedLocation] = useState<string>("Hassan");
@@ -68,18 +64,29 @@ export default function ReviewAssistant() {
     return REVIEW_SERVICE_CATEGORIES.find(c => c.id === selectedCategoryId) || REVIEW_SERVICE_CATEGORIES[0];
   }, [selectedCategoryId]);
 
-  // Compute available Step 2 work options based on active category & selected main service
+  // Compute available Step 2 work options based on active category & all selected main services
   const availableFeatureOptions: string[] = useMemo(() => {
     if (!currentCategory.featureOptions) return [];
     
-    // Check if first selected main service has specific work list
-    if (selectedMainServices.length > 0) {
-      const firstMain = selectedMainServices[0];
-      if (currentCategory.featureOptions[firstMain]) {
-        return currentCategory.featureOptions[firstMain];
+    if (selectedMainServices.length === 0) {
+      return currentCategory.featureOptions["default"] || currentCategory.workOptions || [];
+    }
+
+    // Combine feature options from ALL selected main services without duplicates
+    const combinedSet = new Set<string>();
+    for (const service of selectedMainServices) {
+      const options = currentCategory.featureOptions[service];
+      if (options && Array.isArray(options)) {
+        options.forEach(opt => combinedSet.add(opt));
       }
     }
-    return currentCategory.featureOptions["default"] || [];
+
+    if (combinedSet.size === 0) {
+      const defaultOpts = currentCategory.featureOptions["default"] || currentCategory.workOptions || [];
+      defaultOpts.forEach(opt => combinedSet.add(opt));
+    }
+
+    return Array.from(combinedSet);
   }, [currentCategory, selectedMainServices]);
 
   // Combined work for generation
@@ -128,12 +135,7 @@ export default function ReviewAssistant() {
   const handleSelectCategory = (catId: string) => {
     if (catId === selectedCategoryId) return;
     setSelectedCategoryId(catId);
-    const newCat = REVIEW_SERVICE_CATEGORIES.find(c => c.id === catId);
-    if (newCat && newCat.mainServices.length > 0) {
-      setSelectedMainServices([newCat.mainServices[0]]);
-    } else {
-      setSelectedMainServices([]);
-    }
+    setSelectedMainServices([]);
     setSelectedFeatures([]);
     setCustomFeatureText("");
   };

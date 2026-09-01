@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
+import { VERIFIED_GOOGLE_REVIEWS_MANUAL, GOOGLE_PROFILE_SUMMARY } from "./src/lib/verifiedGoogleReviews";
 
 dotenv.config();
 
@@ -28,9 +29,9 @@ interface CachedReviewData {
 }
 
 let reviewsCache: CachedReviewData = {
-  totalReviewCount: 0,
-  averageRating: 5.0,
-  reviews: [],
+  totalReviewCount: GOOGLE_PROFILE_SUMMARY.totalReviewCount,
+  averageRating: GOOGLE_PROFILE_SUMMARY.averageRating,
+  reviews: VERIFIED_GOOGLE_REVIEWS_MANUAL,
 };
 
 // Initialize cache from disk if available
@@ -149,46 +150,52 @@ async function syncGoogleBusinessReviews() {
     };
 
     // Normalize and preserve genuine review data unaltered
-    const formattedReviews = rawReviews.map((r: any) => {
-      const rawRating = r.starRating;
-      const numRating = typeof rawRating === "number" ? rawRating : (starMap[rawRating] || 5);
-      
-      return {
-        reviewId: r.reviewId || r.name || Math.random().toString(36).substring(2),
-        reviewer: {
-          displayName: r.reviewer?.displayName || "Google Customer",
-          profilePhotoUrl: r.reviewer?.profilePhotoUrl || "",
-          isAnonymous: r.reviewer?.isAnonymous || false,
-        },
-        starRating: numRating,
-        comment: r.comment || "",
-        createTime: r.createTime || new Date().toISOString(),
-        updateTime: r.updateTime,
-        reviewReply: r.reviewReply ? {
-          comment: r.reviewReply.comment,
-          updateTime: r.reviewReply.updateTime,
-        } : undefined,
-        reviewUrl: r.reviewUrl || `https://search.google.com/local/reviews?placeid=ChIJ4yWvawOvsk8RQZn4nX_0Wz0`,
+    const formattedReviews = rawReviews
+      .filter((r: any) => r && (r.comment || r.starRating))
+      .map((r: any) => {
+        const rawRating = r.starRating;
+        const numRating = typeof rawRating === "number" ? rawRating : (starMap[rawRating] || 5);
+        
+        return {
+          reviewId: r.reviewId || r.name || Math.random().toString(36).substring(2),
+          reviewer: {
+            displayName: r.reviewer?.displayName || "Google Customer",
+            profilePhotoUrl: r.reviewer?.profilePhotoUrl || "",
+            isAnonymous: r.reviewer?.isAnonymous || false,
+          },
+          starRating: numRating,
+          comment: r.comment || "",
+          createTime: r.createTime || null,
+          updateTime: r.updateTime || null,
+          reviewReply: r.reviewReply ? {
+            comment: r.reviewReply.comment,
+            updateTime: r.reviewReply.updateTime,
+          } : undefined,
+          reviewUrl: r.reviewUrl || undefined,
+          source: "google",
+          verified: true,
+        };
+      });
+
+    if (formattedReviews.length > 0) {
+      // Calculate rating summary
+      const totalCount = data.totalReviewCount || formattedReviews.length;
+      const avg = data.averageRating || (formattedReviews.length > 0 
+        ? formattedReviews.reduce((acc: number, cur: any) => acc + cur.starRating, 0) / formattedReviews.length 
+        : 5.0);
+
+      reviewsCache = {
+        lastSyncAttempt: new Date().toISOString(),
+        lastSuccessfulSync: new Date().toISOString(),
+        totalReviewCount: totalCount,
+        averageRating: Number(avg.toFixed(1)),
+        reviews: formattedReviews,
+        error: undefined,
       };
-    });
 
-    // Calculate rating summary
-    const totalCount = data.totalReviewCount || formattedReviews.length;
-    const avg = data.averageRating || (formattedReviews.length > 0 
-      ? formattedReviews.reduce((acc: number, cur: any) => acc + cur.starRating, 0) / formattedReviews.length 
-      : 5.0);
-
-    reviewsCache = {
-      lastSyncAttempt: new Date().toISOString(),
-      lastSuccessfulSync: new Date().toISOString(),
-      totalReviewCount: totalCount,
-      averageRating: Number(avg.toFixed(1)),
-      reviews: formattedReviews,
-      error: undefined,
-    };
-
-    persistReviewsCache();
-    console.log(`[Google Reviews Sync] Successfully synchronized ${formattedReviews.length} genuine reviews from Google Business Profile.`);
+      persistReviewsCache();
+      console.log(`[Google Reviews Sync] Successfully synchronized ${formattedReviews.length} genuine reviews from Google Business Profile.`);
+    }
   } catch (err: any) {
     console.error("[Google Reviews Sync] Exception during review synchronization:", err);
     reviewsCache.error = err.message || "Sync failed";

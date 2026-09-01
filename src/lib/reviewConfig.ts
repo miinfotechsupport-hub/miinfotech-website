@@ -46,42 +46,6 @@ export interface ReviewDraftInput {
 // SIMPLIFIED, PROGRESSIVE SERVICE CONFIGURATION (CUSTOMER-CENTRIC)
 // ============================================================================
 
-export const CCTV_CAMERA_TYPES = [
-  "Dome Camera",
-  "Bullet Camera",
-  "PT Camera",
-  "PTZ Camera",
-  "IP Camera",
-  "Wi-Fi Camera",
-  "4G Camera",
-  "360° Camera",
-  "Solar Camera",
-  "Other Camera"
-];
-
-export const CCTV_INSTALLATION_FEATURES = [
-  "2MP",
-  "3MP",
-  "5MP",
-  "8MP / 4K",
-  "Camera with Mic / Audio",
-  "Two-Way Audio",
-  "360° Viewing",
-  "4G / SIM Connectivity",
-  "Solar Power",
-  "Other"
-];
-
-export const CCTV_REPAIR_FEATURES = [
-  "Camera Issue",
-  "DVR / NVR Issue",
-  "Remote Viewing Issue",
-  "Cabling / Video Issue",
-  "Camera Replacement",
-  "Hard Disk / Storage",
-  "General CCTV Service"
-];
-
 export const REVIEW_SERVICE_CATEGORIES: ServiceCategoryOption[] = [
   {
     id: "cctv",

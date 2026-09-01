@@ -11,13 +11,15 @@ export interface GoogleReviewItem {
   reviewer: GoogleReviewAuthor;
   starRating: number; // Normalized 1 to 5
   comment: string; // Original, unaltered review text
-  createTime: string; // ISO 8601 string
-  updateTime?: string;
+  createTime: string | null; // ISO 8601 string or null if unavailable
+  updateTime?: string | null;
   reviewReply?: {
     comment: string;
     updateTime: string;
   };
   reviewUrl?: string;
+  source?: "google";
+  verified?: boolean;
 }
 
 export interface GoogleReviewsApiResponse {

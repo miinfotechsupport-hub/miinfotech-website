@@ -118,13 +118,12 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
                     <LogoIcon className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="text-white font-sans font-bold text-lg">MI Infotech Hub</h3>
-                    <p className="text-xs text-slate-400 font-mono mt-0.5">Live Tracking Metrics • Hassan, KA</p>
+                    <h3 className="text-white font-sans font-bold text-lg">MI Infotech</h3>
+                    <p className="text-xs text-slate-400 font-mono mt-0.5">Hassan, Karnataka</p>
                   </div>
                 </div>
-                {/* Simulated Google Rank Badge */}
-                <span className="inline-flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full text-emerald-400 text-xs font-mono font-bold">
-                  ● GBP Verified
+                <span className="inline-flex items-center gap-1 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-full text-blue-400 text-xs font-mono font-bold">
+                  Onsite Support
                 </span>
               </div>
 

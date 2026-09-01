@@ -215,7 +215,7 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
 
           <div className="mt-8 text-center flex flex-col items-center justify-center gap-4 animate-fadeIn">
             <a 
-              href="https://share.google/hnUk6Bt7LUOFrdL2g"
+              href="https://search.google.com/local/reviews?placeid=ChIJ4yWvawOvsk8RQZn4nX_0Wz0"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 hover:text-white px-5 py-3 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
