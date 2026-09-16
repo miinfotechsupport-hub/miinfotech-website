@@ -54,6 +54,8 @@ export interface ReviewGenerationContext {
   variationIndex?: number;
 }
 
+export type ReviewDraftStyle = "natural" | "short" | "detailed" | "professional" | "simple";
+
 export interface ReviewDraftInput extends Partial<ReviewGenerationContext> {
   rating?: number;
   serviceCategoryIds?: string[];
@@ -66,6 +68,7 @@ export interface ReviewDraftInput extends Partial<ReviewGenerationContext> {
   customNote?: string;
   variationIndex?: number;
   tone?: ReviewTone;
+  draftStyle?: ReviewDraftStyle;
 }
 
 // ============================================================================
@@ -1006,18 +1009,22 @@ function getFactualExperienceClause(
 
 /**
  * Validation Guard
- * Validates that all selected services have corresponding representation in the text.
+ * Validates that all selected services have corresponding representation in the text,
+ * AND verifies that unselected major service categories are NOT mentioned.
  */
 export function validateReviewText(
   reviewText: string,
   selectedServices: string[]
-): { isValid: boolean; missingServices: string[] } {
+): { isValid: boolean; missingServices: string[]; forbiddenServices: string[] } {
   if (!selectedServices || selectedServices.length === 0) {
-    return { isValid: true, missingServices: [] };
+    return { isValid: true, missingServices: [], forbiddenServices: [] };
   }
 
   const missing: string[] = [];
+  const forbidden: string[] = [];
   const text = reviewText.toLowerCase();
+
+  const selectedKeys = selectedServices.map(getServiceKey);
 
   for (const rawService of selectedServices) {
     const key = getServiceKey(rawService);
@@ -1028,9 +1035,33 @@ export function validateReviewText(
     }
   }
 
+  // Cross-category exclusion guard: ensure unselected categories are not hallucinated
+  const allMajorCategories: Record<string, RegExp[]> = {
+    cctv: [/cctv/i, /\bcameras?\b/i, /\bdvr\b/i, /\bnvr\b/i, /surveillance/i],
+    printer: [/\bprinters?\b/i, /cartridge/i, /printhead/i, /toner/i],
+    laptop: [/\blaptops?\b/i],
+    computer: [/\bdesktop\b/i, /windows installation/i, /system formatting/i],
+    networking: [/lan cabling/i, /cat6/i, /router configuration/i, /office networking/i],
+    ups: [/ups battery/i, /inverter/i, /power backup/i],
+    biometric: [/biometric/i, /fingerprint attendance/i, /attendance software/i],
+    intercom: [/intercom/i, /epabx/i],
+    fire_alarm: [/fire alarm/i, /smoke detector/i],
+    p2p_wireless: [/p2p wireless/i, /wireless bridge/i],
+    school_it: [/computer lab setup/i, /school it/i]
+  };
+
+  for (const [catKey, patterns] of Object.entries(allMajorCategories)) {
+    if (!selectedKeys.includes(catKey)) {
+      if (patterns.some(p => p.test(text))) {
+        forbidden.push(catKey);
+      }
+    }
+  }
+
   return {
-    isValid: missing.length === 0,
-    missingServices: missing
+    isValid: missing.length === 0 && forbidden.length === 0,
+    missingServices: missing,
+    forbiddenServices: forbidden
   };
 }
 
@@ -1077,6 +1108,11 @@ function getWorkForServiceKey(key: string, rawWork: string[]): string {
   }
 }
 
+/**
+ * Multi-Service Review Generator
+ * Handles 2, 3, or more services naturally, generating 5 distinct styles.
+ * Ensures ALL selected services are represented without keyword stuffing or omitting categories.
+ */
 function generateMultiServiceReviewNarrative(params: {
   serviceKeys: string[];
   rawServices: string[];
@@ -1084,21 +1120,38 @@ function generateMultiServiceReviewNarrative(params: {
   locPhrase: string;
   rawWork: string[];
   tone: ReviewTone;
+  draftStyle?: ReviewDraftStyle;
   variationIndex: number;
   rawExperiences: string[];
   customNote?: string;
 }): string {
-  const { serviceKeys, servicePhrase, locPhrase, rawWork, tone, variationIndex, rawExperiences, customNote } = params;
+  const { serviceKeys, servicePhrase, locPhrase, rawWork, tone, draftStyle, variationIndex, rawExperiences, customNote } = params;
   const experienceClause = getFactualExperienceClause(rawExperiences, tone, variationIndex);
+
+  // Map each selected service key to its specific work phrase
+  const workMap: Record<string, string> = {};
+  serviceKeys.forEach(k => {
+    workMap[k] = getWorkForServiceKey(k, rawWork);
+  });
 
   const k1 = serviceKeys[0];
   const k2 = serviceKeys[1];
-  const work1 = getWorkForServiceKey(k1, rawWork);
-  const work2 = getWorkForServiceKey(k2, rawWork);
+  const k3 = serviceKeys[2];
+  const work1 = workMap[k1] || "technical service";
+  const work2 = workMap[k2] || "equipment maintenance";
+  const work3 = k3 ? (workMap[k3] || "system setup") : "";
 
+  const isThreePlus = serviceKeys.length >= 3;
   const cycle = variationIndex % 4;
+  const style = draftStyle || (tone === "concise" ? "short" : tone === "technical" ? "detailed" : "natural");
 
-  if (tone === "concise") {
+  // 1. Short & Crisp Style (35-50 words)
+  if (style === "short") {
+    if (isThreePlus) {
+      const p1 = `Dependable ${servicePhrase} by MIINFOTECH ${locPhrase}.`;
+      const p2 = `Prompt execution on ${work1}, ${work2} and ${work3} with complete testing before handover.`;
+      return [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
+    }
     switch (cycle) {
       case 0: {
         const p1 = `Dependable ${servicePhrase} by MIINFOTECH ${locPhrase}.`;
@@ -1121,7 +1174,16 @@ function generateMultiServiceReviewNarrative(params: {
         return [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
       }
     }
-  } else if (tone === "technical") {
+  }
+
+  // 2. Detailed & Technical Style (50-70 words)
+  if (style === "detailed") {
+    if (isThreePlus) {
+      const p1 = `MIINFOTECH completed our ${servicePhrase} ${locPhrase} systematically.`;
+      const p2 = `The technician executed the ${work1}, handled ${work2}, and verified ${work3}.`;
+      const p3 = `All systems were configured cleanly and tested on-site for stable performance before sign-off.`;
+      return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+    }
     switch (cycle) {
       case 0: {
         const p1 = `MIINFOTECH completed our ${servicePhrase} ${locPhrase} systematically.`;
@@ -1148,33 +1210,68 @@ function generateMultiServiceReviewNarrative(params: {
         return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
       }
     }
-  } else {
-    // Courteous / Default
-    switch (cycle) {
-      case 0: {
-        const p1 = `MIINFOTECH handled our ${servicePhrase} ${locPhrase}.`;
-        const p2 = `The technician took care of our ${work1} and also completed the ${work2} neatly.`;
-        const p3 = `Both were tested thoroughly and are working perfectly.`;
-        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
-      }
-      case 1: {
-        const p1 = `Had a very good experience with MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
-        const p2 = `They attended to the ${work1} and resolved the ${work2} without any delay.`;
-        const p3 = `Everything was explained clearly and tested before handover.`;
-        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
-      }
-      case 2: {
-        const p1 = `Contacted MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
-        const p2 = `The team completed the ${work1} and sorted out our ${work2} in a single visit.`;
-        const p3 = `Both systems were checked and confirmed working before they left.`;
-        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
-      }
-      default: {
-        const p1 = `Very pleased with the ${servicePhrase} provided by MIINFOTECH ${locPhrase}.`;
-        const p2 = `The technician handled our ${work1} with care and configured the ${work2} properly.`;
-        const p3 = `Everything was tested before sign-off, and the team was polite throughout.`;
-        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
-      }
+  }
+
+  // 3. Professional & Timely Style (45-65 words)
+  if (style === "professional") {
+    if (isThreePlus) {
+      const p1 = `Very pleased with the doorstep ${servicePhrase} from MIINFOTECH ${locPhrase}.`;
+      const p2 = `The technician arrived on schedule, attended to the ${work1}, ${work2} and ${work3} with great care, and explained everything clearly.`;
+      const p3 = `All equipment was checked and confirmed working before leaving.`;
+      return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+    }
+    const p1 = `Very pleased with the doorstep ${servicePhrase} from MIINFOTECH ${locPhrase}.`;
+    const p2 = `The technician arrived on schedule, handled the ${work1} and ${work2} with great care, and explained the setup clearly.`;
+    const p3 = `Both systems were verified before leaving.`;
+    return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+  }
+
+  // 4. Simple & Direct Style (35-50 words)
+  if (style === "simple") {
+    if (isThreePlus) {
+      const p1 = `Got our ${servicePhrase} attended to by MIINFOTECH ${locPhrase}.`;
+      const p2 = `The technician completed the ${work1}, ${work2} and ${work3} cleanly in one doorstep visit.`;
+      const p3 = `Dependable local service and clear handover.`;
+      return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+    }
+    const p1 = `Got our ${servicePhrase} done through MIINFOTECH ${locPhrase}.`;
+    const p2 = `The work on ${work1} and ${work2} was completed cleanly without delay.`;
+    const p3 = `Dependable local service and clear handover.`;
+    return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+  }
+
+  // 5. Natural & Balanced Style (Default, 45-65 words)
+  if (isThreePlus) {
+    const p1 = `MIINFOTECH handled our ${servicePhrase} ${locPhrase}.`;
+    const p2 = `The technician took care of our ${work1}, ${work2} and ${work3} cleanly in a single visit.`;
+    const p3 = `All three systems were tested thoroughly and are working smoothly.`;
+    return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+  }
+
+  switch (cycle) {
+    case 0: {
+      const p1 = `MIINFOTECH handled our ${servicePhrase} ${locPhrase}.`;
+      const p2 = `The technician took care of our ${work1} and also completed the ${work2} neatly.`;
+      const p3 = `Both were tested thoroughly and are working properly.`;
+      return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+    }
+    case 1: {
+      const p1 = `Had a very good experience with MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
+      const p2 = `They attended to the ${work1} and resolved the ${work2} without any delay.`;
+      const p3 = `Everything was explained clearly and tested before handover.`;
+      return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+    }
+    case 2: {
+      const p1 = `Contacted MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
+      const p2 = `The team completed the ${work1} and sorted out our ${work2} in a single visit.`;
+      const p3 = `Both systems were checked and confirmed working before they left.`;
+      return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+    }
+    default: {
+      const p1 = `Very pleased with the ${servicePhrase} provided by MIINFOTECH ${locPhrase}.`;
+      const p2 = `The technician handled our ${work1} with care and configured the ${work2} properly.`;
+      const p3 = `Everything was tested before sign-off, and the team was polite throughout.`;
+      return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
     }
   }
 }
@@ -1214,22 +1311,44 @@ export interface ReviewDraftOption {
 export function generateReviewDraftOptions(input: ReviewDraftInput): ReviewDraftOption[] {
   const baseIndex = Math.abs(input.variationIndex || 0);
 
+  // Draft 1 — Natural & Balanced (Courteous, 45-65 words)
   const draft1Text = generateDeterministicReview({
     ...input,
     tone: "courteous",
+    draftStyle: "natural",
     variationIndex: baseIndex
   });
 
+  // Draft 2 — Short & Crisp (Concise, 35-50 words)
   const draft2Text = generateDeterministicReview({
     ...input,
-    tone: "technical",
+    tone: "concise",
+    draftStyle: "short",
     variationIndex: baseIndex + 1
   });
 
+  // Draft 3 — Detailed & Technical (Technical, 50-70 words)
   const draft3Text = generateDeterministicReview({
     ...input,
-    tone: "concise",
+    tone: "technical",
+    draftStyle: "detailed",
     variationIndex: baseIndex + 2
+  });
+
+  // Draft 4 — Professional & Timely (Courteous, 45-65 words)
+  const draft4Text = generateDeterministicReview({
+    ...input,
+    tone: "courteous",
+    draftStyle: "professional",
+    variationIndex: baseIndex + 3
+  });
+
+  // Draft 5 — Simple & Direct (Concise, 35-50 words)
+  const draft5Text = generateDeterministicReview({
+    ...input,
+    tone: "concise",
+    draftStyle: "simple",
+    variationIndex: baseIndex + 4
   });
 
   return [
@@ -1242,20 +1361,36 @@ export function generateReviewDraftOptions(input: ReviewDraftInput): ReviewDraft
       wordCount: draft1Text.trim().split(/\s+/).filter(Boolean).length
     },
     {
-      id: "draft-technical",
-      title: "Draft 2: Detailed",
-      tone: "technical",
-      tag: "Technical & Verification",
+      id: "draft-crisp",
+      title: "Draft 2: Short",
+      tone: "concise",
+      tag: "Short & Crisp",
       text: draft2Text,
       wordCount: draft2Text.trim().split(/\s+/).filter(Boolean).length
     },
     {
-      id: "draft-crisp",
-      title: "Draft 3: Quick",
-      tone: "concise",
-      tag: "Short & Crisp",
+      id: "draft-technical",
+      title: "Draft 3: Detailed",
+      tone: "technical",
+      tag: "Detailed & Technical",
       text: draft3Text,
       wordCount: draft3Text.trim().split(/\s+/).filter(Boolean).length
+    },
+    {
+      id: "draft-professional",
+      title: "Draft 4: Professional",
+      tone: "courteous",
+      tag: "Professional & Timely",
+      text: draft4Text,
+      wordCount: draft4Text.trim().split(/\s+/).filter(Boolean).length
+    },
+    {
+      id: "draft-simple",
+      title: "Draft 5: Simple",
+      tone: "concise",
+      tag: "Simple & Direct",
+      text: draft5Text,
+      wordCount: draft5Text.trim().split(/\s+/).filter(Boolean).length
     }
   ];
 }
@@ -1345,6 +1480,7 @@ export function generateDeterministicReview(input: ReviewDraftInput): string {
       locPhrase,
       rawWork,
       tone,
+      draftStyle: input.draftStyle,
       variationIndex,
       rawExperiences,
       customNote
@@ -1354,9 +1490,10 @@ export function generateDeterministicReview(input: ReviewDraftInput): string {
 
   // 7. Tone-Aware & Variation-Aware Review Generation (Single Service)
   let reviewText = "";
+  const singleStyle = input.draftStyle || (tone === "concise" ? "short" : tone === "technical" ? "detailed" : "natural");
 
-  if (tone === "concise") {
-    // Concise Tone: 35–55 words, direct, punchy
+  if (singleStyle === "short") {
+    // Concise Tone: 35–50 words, direct, punchy
     const cycle = variationIndex % 4;
     switch (cycle) {
       case 0: {
@@ -1387,7 +1524,7 @@ export function generateDeterministicReview(input: ReviewDraftInput): string {
         break;
       }
     }
-  } else if (tone === "technical") {
+  } else if (singleStyle === "detailed") {
     // Technical Tone: 45–65 words, methodical, setup & verification focused
     const cycle = variationIndex % 4;
     switch (cycle) {
@@ -1421,8 +1558,20 @@ export function generateDeterministicReview(input: ReviewDraftInput): string {
         break;
       }
     }
+  } else if (singleStyle === "professional") {
+    // Professional Style: 45–65 words, punctuality & courteous doorstep demeanor
+    const p1 = `Very pleased with the doorstep ${servicePhrase} from MIINFOTECH ${locPhrase}.`;
+    const p2 = workClause ? `The technician arrived on schedule, handled ${workClause} with great care, and explained everything clearly.` : "The technician arrived on schedule, completed the work with great care, and explained everything clearly.";
+    const p3 = "All systems were tested before sign-off.";
+    reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+  } else if (singleStyle === "simple") {
+    // Simple Style: 35–50 words, straightforward, hassle-free
+    const p1 = `Got our ${servicePhrase} done from MIINFOTECH ${locPhrase}.`;
+    const p2 = workClause ? `The work on ${workClause} was completed cleanly without delay.` : "The work was completed cleanly without delay.";
+    const p3 = "Dependable local technical service and clear handover.";
+    reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
   } else {
-    // Courteous Tone (Default): 45–65 words, warm, polite, customer-centric
+    // Courteous / Natural Tone (Default): 45–65 words, warm, polite, customer-centric
     const cycle = variationIndex % 4;
     switch (cycle) {
       case 0: {
@@ -1456,7 +1605,7 @@ export function generateDeterministicReview(input: ReviewDraftInput): string {
     }
   }
 
-  // 8. VALIDATION GUARD: Ensure all selected services are represented
+  // 8. VALIDATION GUARD: Ensure all selected services are represented and no forbidden categories appear
   const validation = validateReviewText(reviewText, rawServices);
   if (!validation.isValid) {
     // Auto-recover with guaranteed multi-service structure

@@ -1,6 +1,7 @@
 import React from "react";
 import { Phone, MessageSquare, ShieldCheck, MapPin, Award, Star, ArrowRight, UserCheck } from "lucide-react";
 import LogoIcon from "./LogoIcon";
+import { BUSINESS_ENTITY } from "../lib/businessEntity";
 
 interface HeroProps {
   onQuoteClick: () => void;
@@ -141,13 +142,13 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
                 </div>
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
                   <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Direct Assistance</span>
-                  <span className="text-xl sm:text-2xl font-extrabold text-white block mt-1 tracking-tight">+91 9964761624</span>
+                  <span className="text-xl sm:text-2xl font-extrabold text-white block mt-1 tracking-tight">{BUSINESS_ENTITY.contact.phone}</span>
                   <span className="text-[10px] text-blue-400 font-medium mt-0.5 block">Direct Call & WhatsApp</span>
                 </div>
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
                   <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Google Profile</span>
                   <a 
-                    href="https://share.google/hnUk6Bt7LUOFrdL2g"
+                    href={BUSINESS_ENTITY.googleBusinessProfile.profileUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="text-base sm:text-lg font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 mt-1 tracking-tight"

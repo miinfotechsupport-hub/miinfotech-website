@@ -6,6 +6,7 @@ import {
   Globe, AlertCircle, CheckCircle2, Trash2, Eye, EyeOff, Building
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { BUSINESS_ENTITY } from "../lib/businessEntity";
 
 interface ReviewsFAQProps {
   showOnly?: "reviews" | "faqs" | "process";
@@ -135,13 +136,13 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
                       <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
                     ))}
                   </div>
-                  <span className="text-xs text-slate-400 font-medium block mt-1">Based on {totalReviews} verified reviews</span>
+                  <span className="text-xs text-slate-400 font-medium block mt-1">Based on {totalReviews} genuine customer reviews</span>
                 </div>
               </div>
             ) : (
               <div className="bg-slate-950/80 border border-slate-800/80 px-4 py-3 rounded-2xl text-xs font-mono text-slate-400 flex items-center gap-2">
                 <Globe className="w-4 h-4 text-blue-400" />
-                <span>Verified Google Business Profile Sync</span>
+                <span>Google Business Profile Reviews</span>
               </div>
             )}
           </div>
@@ -157,7 +158,7 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
                     <div className="flex justify-between items-center mb-4">
                       <div className="flex items-center gap-1.5 text-blue-400 font-bold text-[9px] uppercase tracking-wider font-mono bg-blue-500/10 border border-blue-500/10 px-2.5 py-0.5 rounded-full">
                         <UserCheck className="w-3 h-3" />
-                        <span>Verified Client</span>
+                        <span>Customer Review</span>
                       </div>
                       <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
@@ -208,7 +209,7 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
               </div>
               <h3 className="text-lg font-bold text-white">Genuine Google Customer Reviews</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                All client reviews are directly synced from our verified Google Business Profile in Hassan, Karnataka.
+                All client reviews are directly synced from our Google Business Profile in Hassan, Karnataka.
               </p>
             </div>
           )}
@@ -399,7 +400,7 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
                     <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
                   ))}
                 </div>
-                <span className="text-xs text-slate-400 font-medium block mt-1">Based on {totalReviews} verified reviews</span>
+                <span className="text-xs text-slate-400 font-medium block mt-1">Based on {totalReviews} genuine customer reviews</span>
               </div>
             </div>
           </div>
@@ -414,11 +415,11 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
                 className="bg-slate-950 border border-slate-850 p-6 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all shadow-lg relative animate-fadeIn"
               >
                 <div>
-                  {/* Verified badge */}
+                  {/* Customer Review badge */}
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-1.5 text-blue-400 font-bold text-[9px] uppercase tracking-wider font-mono bg-blue-500/10 border border-blue-500/10 px-2.5 py-0.5 rounded-full">
                       <UserCheck className="w-3 h-3" />
-                      <span>Verified Client</span>
+                      <span>Customer Review</span>
                     </div>
                     <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
@@ -473,7 +474,7 @@ export default function ReviewsFAQ({ showOnly }: ReviewsFAQProps = {}) {
               <span>→</span>
             </a>
             <a 
-              href="https://share.google/hnUk6Bt7LUOFrdL2g"
+              href={BUSINESS_ENTITY.googleBusinessProfile.profileUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 hover:text-white px-5 py-3 rounded-xl text-xs font-semibold cursor-pointer transition-colors"

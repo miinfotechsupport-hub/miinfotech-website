@@ -5,6 +5,7 @@ import {
   Send, CheckCircle, RefreshCw, ArrowRight, ShieldCheck, HeartHandshake, Sparkles, Star 
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { BUSINESS_ENTITY } from "../lib/businessEntity";
 
 export default function ContactSection({ showOnly }: { showOnly?: "contact" | "brands" } = {}) {
   const [formData, setFormData] = useState({
@@ -214,7 +215,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
               <div className="space-y-4 text-xs sm:text-sm">
                 
                 <a 
-                  href="tel:+919964761624" 
+                  href={`tel:${BUSINESS_ENTITY.contact.phone.replace(/\s+/g, "")}`} 
                   className="flex items-center gap-3.5 bg-slate-900 border border-slate-850 p-4 rounded-xl hover:border-blue-500 transition-colors cursor-pointer group"
                 >
                   <div className="p-2.5 bg-blue-500/10 rounded-lg text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
@@ -222,12 +223,12 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
                   </div>
                   <div className="text-left">
                     <span className="text-slate-400 text-[10px] uppercase font-mono tracking-wider block">Call Founder Directly</span>
-                    <strong className="text-white text-base block mt-0.5">+91 99647 61624</strong>
+                    <strong className="text-white text-base block mt-0.5">{BUSINESS_ENTITY.contact.phone}</strong>
                   </div>
                 </a>
 
                 <a 
-                  href="https://wa.me/919964761624?text=Hi%20MIInfotech,%20I%20need%20onsite%20support." 
+                  href={`https://wa.me/${BUSINESS_ENTITY.contact.whatsapp.replace(/[^0-9]/g, "")}?text=Hi%20${encodeURIComponent(BUSINESS_ENTITY.brand.name)}%2C%20I%20need%20doorstep%20IT%20support.`} 
                   target="_blank" 
                   rel="noreferrer"
                   className="flex items-center gap-3.5 bg-slate-900 border border-slate-850 p-4 rounded-xl hover:border-emerald-500 transition-colors cursor-pointer group"
@@ -237,12 +238,12 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
                   </div>
                   <div className="text-left">
                     <span className="text-slate-400 text-[10px] uppercase font-mono tracking-wider block">Chat on WhatsApp</span>
-                    <strong className="text-white text-base block mt-0.5">+91 99647 61624</strong>
+                    <strong className="text-white text-base block mt-0.5">{BUSINESS_ENTITY.contact.whatsapp}</strong>
                   </div>
                 </a>
 
                 <a 
-                  href="https://share.google/hnUk6Bt7LUOFrdL2g" 
+                  href={BUSINESS_ENTITY.googleBusinessProfile.profileUrl} 
                   target="_blank" 
                   rel="noreferrer"
                   className="flex items-center gap-3.5 bg-slate-900 border border-slate-850 p-4 rounded-xl hover:border-amber-500 transition-colors cursor-pointer group"
@@ -260,7 +261,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
                 </a>
 
                 <a 
-                  href="mailto:miinfotech.support@gmail.com" 
+                  href={`mailto:${BUSINESS_ENTITY.contact.email}`} 
                   className="flex items-center gap-3.5 bg-slate-900 border border-slate-850 p-4 rounded-xl hover:border-blue-500 transition-colors cursor-pointer group"
                 >
                   <div className="p-2.5 bg-blue-500/10 rounded-lg text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
@@ -268,7 +269,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
                   </div>
                   <div className="text-left">
                     <span className="text-slate-400 text-[10px] uppercase font-mono tracking-wider block">Official Support Email</span>
-                    <strong className="text-white text-sm sm:text-base block mt-0.5">miinfotech.support@gmail.com</strong>
+                    <strong className="text-white text-sm sm:text-base block mt-0.5">{BUSINESS_ENTITY.contact.email}</strong>
                   </div>
                 </a>
 
@@ -279,7 +280,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
                 <span className="text-slate-500 font-mono text-[10px] uppercase tracking-wider block">Follow Our Work On Social Media:</span>
                 <div className="flex gap-2">
                   <a 
-                    href="https://www.facebook.com/share/18nFLrKJ1a/" 
+                    href={BUSINESS_ENTITY.socialProfiles.facebook.url} 
                     target="_blank" 
                     rel="noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-blue-600 border border-slate-800 hover:border-blue-500 text-slate-300 hover:text-white px-4 py-3 rounded-xl text-xs font-semibold transition-all cursor-pointer"
@@ -288,7 +289,7 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
                     <span>Facebook</span>
                   </a>
                   <a 
-                    href="https://www.instagram.com/miinfotech.in" 
+                    href={BUSINESS_ENTITY.socialProfiles.instagram.url} 
                     target="_blank" 
                     rel="noreferrer"
                     className="flex-1 flex items-center justify-center gap-2 bg-slate-900 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 border border-slate-800 hover:border-purple-500 text-slate-300 hover:text-white px-4 py-3 rounded-xl text-xs font-semibold transition-all cursor-pointer"

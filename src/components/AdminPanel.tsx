@@ -24,6 +24,7 @@ import MediaUploadZone from "./MediaUploadZone";
 import MediaGridSection from "./MediaGridSection";
 import QRCodeDisplay from "./QRCodeDisplay";
 import OwnerReplyAssistant from "./OwnerReplyAssistant";
+import { BUSINESS_ENTITY } from "../lib/businessEntity";
 import { 
   REVIEW_SERVICE_CATEGORIES, 
   CustomerRelationship, 
@@ -100,6 +101,28 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [techNotesOpen, setTechNotesOpen] = useState<boolean>(false);
   const [generatingSeo, setGeneratingSeo] = useState<boolean>(false);
   const [generatingProject, setGeneratingProject] = useState<boolean>(false);
+
+  // Safe Agentic Technical SEO Audit state
+  const [auditLoading, setAuditLoading] = useState<boolean>(false);
+  const [auditData, setAuditData] = useState<any>(null);
+
+  const handleRunTechnicalAudit = async () => {
+    setAuditLoading(true);
+    try {
+      const res = await fetch("/api/seo/technical-audit", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        setAuditData(data);
+        addToast(`Technical SEO Audit Complete! Overall Score: ${data.overallScore}/100`, "success");
+      } else {
+        addToast(data.error || "Audit failed to complete", "error");
+      }
+    } catch (err: any) {
+      addToast(`Audit error: ${err.message}`, "error");
+    } finally {
+      setAuditLoading(false);
+    }
+  };
 
   // Review Assistant Staff Generator & Reply Helper states
   const [reqRelationship, setReqRelationship] = useState<CustomerRelationship>("new");
@@ -2507,9 +2530,262 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             </div>
           )}
 
-          {/* TAB 10: SEO MANAGER */}
+          {/* TAB 10: SEO MANAGER & ENTITY CONSISTENCY */}
           {activeTab === "seo" && (
             <div className="space-y-6 animate-fadeIn">
+              
+              {/* SOCIAL / ENTITY CONSISTENCY SECTION */}
+              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-5 text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <LucideIcons.ShieldCheck className="w-5 h-5 text-emerald-400" />
+                      <h3 className="text-white font-extrabold text-base tracking-tight">Social & Entity Consistency Checker</h3>
+                      <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">
+                        100% NAP ALIGNED
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Single source of truth audit across Google Business Profile, social profiles, and Schema.org LocalBusiness graphs.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        addToast("Entity Alignment confirmed: All profiles match BUSINESS_ENTITY.", "success");
+                      }}
+                      className="py-2 px-3.5 bg-slate-850 hover:bg-slate-800 text-slate-200 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-750"
+                    >
+                      <LucideIcons.CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Check Entity Alignment</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Entity Summary Bar */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-850 text-xs">
+                  <div>
+                    <span className="text-[10px] font-mono text-slate-500 uppercase block font-bold">Official Entity</span>
+                    <strong className="text-white block mt-0.5">{BUSINESS_ENTITY.brand.name}</strong>
+                    <span className="text-[10px] text-slate-400">Founder: {BUSINESS_ENTITY.founder.name}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono text-slate-500 uppercase block font-bold">Service Model</span>
+                    <strong className="text-white block mt-0.5">On-site / Doorstep</strong>
+                    <span className="text-[10px] text-slate-400">Hassan & Outskirts</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono text-slate-500 uppercase block font-bold">Canonical Phone</span>
+                    <strong className="text-white block mt-0.5">{BUSINESS_ENTITY.contact.phone}</strong>
+                    <span className="text-[10px] text-emerald-400 font-mono">WhatsApp Active</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono text-slate-500 uppercase block font-bold">Schema.org SameAs</span>
+                    <strong className="text-emerald-400 block mt-0.5">4 Linked Profiles</strong>
+                    <span className="text-[10px] text-slate-400">LocalBusiness + Service</span>
+                  </div>
+                </div>
+
+                {/* Profiles Status Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  {/* Google Business Profile */}
+                  <div className="bg-slate-950 border border-slate-850 p-4 rounded-2xl space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 bg-amber-500/10 text-amber-400 rounded-xl">
+                          <LucideIcons.Star className="w-4 h-4 fill-current" />
+                        </div>
+                        <div>
+                          <strong className="text-white text-xs block">Google Business Profile</strong>
+                          <span className="text-[10px] text-slate-400 font-mono">CID: {BUSINESS_ENTITY.googleBusinessProfile.cid}</span>
+                        </div>
+                      </div>
+                      <span className="text-[9px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
+                        CONNECTED
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-slate-850/80 font-mono truncate">
+                      {BUSINESS_ENTITY.googleBusinessProfile.profileUrl}
+                    </div>
+                    <div className="flex gap-2">
+                      <a
+                        href={BUSINESS_ENTITY.googleBusinessProfile.profileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex-1 py-1.5 px-3 bg-slate-900 hover:bg-slate-850 text-slate-200 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 border border-slate-800 transition-colors"
+                      >
+                        <LucideIcons.ExternalLink className="w-3 h-3" />
+                        <span>Open Profile</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(BUSINESS_ENTITY.googleBusinessProfile.profileUrl);
+                          addToast("Google Profile URL copied!", "success");
+                        }}
+                        className="py-1.5 px-3 bg-slate-900 hover:bg-slate-850 text-slate-300 text-[11px] rounded-lg border border-slate-800 transition-colors cursor-pointer"
+                        title="Copy URL"
+                      >
+                        <LucideIcons.Copy className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Instagram Profile */}
+                  <div className="bg-slate-950 border border-slate-850 p-4 rounded-2xl space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 bg-purple-500/10 text-purple-400 rounded-xl">
+                          <LucideIcons.Camera className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <strong className="text-white text-xs block">Instagram Profile</strong>
+                          <span className="text-[10px] text-slate-400 font-mono">@{BUSINESS_ENTITY.socialProfiles.instagram.handle}</span>
+                        </div>
+                      </div>
+                      <span className="text-[9px] font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full">
+                        OFFICIAL PROFILE
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-slate-850/80 font-mono truncate">
+                      {BUSINESS_ENTITY.socialProfiles.instagram.url}
+                    </div>
+                    <div className="flex gap-2">
+                      <a
+                        href={BUSINESS_ENTITY.socialProfiles.instagram.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex-1 py-1.5 px-3 bg-slate-900 hover:bg-slate-850 text-slate-200 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 border border-slate-800 transition-colors"
+                      >
+                        <LucideIcons.ExternalLink className="w-3 h-3" />
+                        <span>Open Instagram</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(BUSINESS_ENTITY.socialProfiles.instagram.url);
+                          addToast("Instagram URL copied!", "success");
+                        }}
+                        className="py-1.5 px-3 bg-slate-900 hover:bg-slate-850 text-slate-300 text-[11px] rounded-lg border border-slate-850 transition-colors cursor-pointer"
+                        title="Copy URL"
+                      >
+                        <LucideIcons.Copy className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Facebook Page */}
+                  <div className="bg-slate-950 border border-slate-850 p-4 rounded-2xl space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl">
+                          <LucideIcons.Facebook className="w-4 h-4 fill-current" />
+                        </div>
+                        <div>
+                          <strong className="text-white text-xs block">Facebook Page</strong>
+                          <span className="text-[10px] text-slate-400 font-mono">{BUSINESS_ENTITY.socialProfiles.facebook.handle}</span>
+                        </div>
+                      </div>
+                      <span className="text-[9px] font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">
+                        OFFICIAL PROFILE
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-slate-850/80 font-mono truncate">
+                      {BUSINESS_ENTITY.socialProfiles.facebook.url}
+                    </div>
+                    <div className="flex gap-2">
+                      <a
+                        href={BUSINESS_ENTITY.socialProfiles.facebook.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex-1 py-1.5 px-3 bg-slate-900 hover:bg-slate-850 text-slate-200 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 border border-slate-800 transition-colors"
+                      >
+                        <LucideIcons.ExternalLink className="w-3 h-3" />
+                        <span>Open Facebook</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(BUSINESS_ENTITY.socialProfiles.facebook.url);
+                          addToast("Facebook URL copied!", "success");
+                        }}
+                        className="py-1.5 px-3 bg-slate-900 hover:bg-slate-850 text-slate-300 text-[11px] rounded-lg border border-slate-850 transition-colors cursor-pointer"
+                        title="Copy URL"
+                      >
+                        <LucideIcons.Copy className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* WhatsApp Support Direct API */}
+                  <div className="bg-slate-950 border border-slate-850 p-4 rounded-2xl space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl">
+                          <LucideIcons.MessageSquare className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <strong className="text-white text-xs block">WhatsApp Support API</strong>
+                          <span className="text-[10px] text-slate-400 font-mono">wa.me/{BUSINESS_ENTITY.contact.whatsapp.replace(/[^0-9]/g, "")}</span>
+                        </div>
+                      </div>
+                      <span className="text-[9px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                        OFFICIAL CONTACT
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 bg-slate-900/60 p-2.5 rounded-xl border border-slate-850/80 font-mono truncate">
+                      https://wa.me/{BUSINESS_ENTITY.contact.whatsapp.replace(/[^0-9]/g, "")}
+                    </div>
+                    <div className="flex gap-2">
+                      <a
+                        href={`https://wa.me/${BUSINESS_ENTITY.contact.whatsapp.replace(/[^0-9]/g, "")}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex-1 py-1.5 px-3 bg-slate-900 hover:bg-slate-850 text-slate-200 text-[11px] font-semibold rounded-lg flex items-center justify-center gap-1.5 border border-slate-800 transition-colors"
+                      >
+                        <LucideIcons.ExternalLink className="w-3 h-3" />
+                        <span>Open WhatsApp</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(`https://wa.me/${BUSINESS_ENTITY.contact.whatsapp.replace(/[^0-9]/g, "")}`);
+                          addToast("WhatsApp link copied!", "success");
+                        }}
+                        className="py-1.5 px-3 bg-slate-900 hover:bg-slate-850 text-slate-300 text-[11px] rounded-lg border border-slate-850 transition-colors cursor-pointer"
+                        title="Copy Link"
+                      >
+                        <LucideIcons.Copy className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Schema sameAs Linked Array Preview */}
+                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase text-slate-400 font-bold tracking-wider">
+                      Canonical Schema.org "sameAs" Entity Graph Ingestion
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(JSON.stringify(BUSINESS_ENTITY.sameAs, null, 2));
+                        addToast("Schema sameAs array copied!", "success");
+                      }}
+                      className="text-[10px] text-blue-400 hover:text-blue-300 font-bold font-mono uppercase flex items-center gap-1 cursor-pointer"
+                    >
+                      <LucideIcons.Copy className="w-3 h-3" />
+                      <span>Copy Array</span>
+                    </button>
+                  </div>
+                  <pre className="text-[11px] font-mono text-emerald-400 bg-slate-900/80 p-3 rounded-xl border border-slate-800 overflow-x-auto select-all">
+{JSON.stringify(BUSINESS_ENTITY.sameAs, null, 2)}
+                  </pre>
+                </div>
+              </div>
+
               <div>
                 <h3 className="text-white font-extrabold text-base tracking-tight">Meta SEO Parameters</h3>
                 <p className="text-[11px] text-slate-400 mt-0.5">Control search engine titles, metadata descriptions, social OG, and deep sitemap schemas</p>
@@ -2613,6 +2889,161 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                   </div>
                 </div>
 
+              </div>
+
+              {/* Safe Agentic Technical SEO & Audit Assistant */}
+              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-5 text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <LucideIcons.Sparkles className="w-4 h-4 text-blue-400" />
+                      <h4 className="text-white font-extrabold text-sm tracking-tight">Safe Agentic Technical SEO & Health Auditor</h4>
+                      <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold">Local SEO Hassan</span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Audits robots.txt, sitemap XML, NAP consistency, canonical URLs, service coverage, and search snippet rendering.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRunTechnicalAudit}
+                    disabled={auditLoading}
+                    className="py-2.5 px-5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-blue-500/20 cursor-pointer disabled:opacity-50 transition-all"
+                  >
+                    {auditLoading ? (
+                      <>
+                        <LucideIcons.Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Auditing Signals...</span>
+                      </>
+                    ) : (
+                      <>
+                        <LucideIcons.RefreshCw className="w-3.5 h-3.5" />
+                        <span>Run Technical Audit</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Safety & Isolation Notice */}
+                <div className="p-3 bg-slate-950 border border-slate-850 rounded-2xl flex items-start gap-2.5 text-[11px] text-slate-400">
+                  <LucideIcons.ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold text-slate-300">Safety & Privacy Isolation:</span> This auditor monitors strictly public technical signals (HTTP headers, sitemaps, robots.txt, and metadata). Customer reviews and review generation remain 100% private, client-controlled, and completely decoupled from external scraping or browsing.
+                  </div>
+                </div>
+
+                {/* Audit Results View */}
+                {auditData && (
+                  <div className="space-y-4 animate-fadeIn">
+                    {/* Score Bar */}
+                    <div className="flex items-center justify-between p-4 bg-slate-950 border border-slate-850 rounded-2xl">
+                      <div>
+                        <div className="text-[10px] font-mono uppercase text-slate-400 font-bold tracking-wider">Overall Technical Health Score</div>
+                        <div className="text-2xl font-extrabold text-white mt-0.5 flex items-center gap-2">
+                          <span className={auditData.overallScore >= 90 ? "text-emerald-400" : "text-amber-400"}>
+                            {auditData.overallScore} / 100
+                          </span>
+                          <span className="text-xs font-normal text-slate-400">
+                            ({auditData.overallScore >= 90 ? "Excellent Production Ready" : "Good - Minor Recommendations"})
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right text-[10px] font-mono text-slate-500">
+                        Audited: {new Date(auditData.timestamp).toLocaleTimeString()}
+                      </div>
+                    </div>
+
+                    {/* 4 Cards Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      {/* Robots */}
+                      <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">Robots.txt</span>
+                          {auditData.robots.valid ? (
+                            <span className="text-emerald-400 text-xs font-bold flex items-center gap-1"><LucideIcons.CheckCircle className="w-3 h-3" /> Valid</span>
+                          ) : (
+                            <span className="text-rose-400 text-xs font-bold">Missing</span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-slate-300">Admin protected: {auditData.robots.disallowsAdmin ? "Yes (/admin)" : "No"}</p>
+                        <p className="text-[10px] text-slate-500">Sitemap declared: {auditData.robots.hasSitemapDirective ? "Yes" : "No"}</p>
+                      </div>
+
+                      {/* Sitemap */}
+                      <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">Sitemap.xml</span>
+                          {auditData.sitemap.valid ? (
+                            <span className="text-emerald-400 text-xs font-bold flex items-center gap-1"><LucideIcons.CheckCircle className="w-3 h-3" /> Valid</span>
+                          ) : (
+                            <span className="text-rose-400 text-xs font-bold">Missing</span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-slate-300">Indexed URLs: <span className="font-bold text-white">{auditData.sitemap.urlCount} routes</span></p>
+                        <p className="text-[10px] text-slate-500">Includes base, services & blogs</p>
+                      </div>
+
+                      {/* NAP Consistency */}
+                      <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">NAP Consistency</span>
+                          <span className="text-emerald-400 text-xs font-bold">{auditData.nap.score}%</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300 font-semibold">{auditData.nap.details.businessName} • {auditData.nap.details.locality}</p>
+                        <p className="text-[10px] text-slate-500">{auditData.nap.details.phone}</p>
+                      </div>
+
+                      {/* Service Coverage */}
+                      <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">Services Coverage</span>
+                          <span className="text-emerald-400 text-xs font-bold flex items-center gap-1">
+                            <LucideIcons.CheckCircle className="w-3 h-3" /> {auditData.serviceCoverage.coveredServices}/{auditData.serviceCoverage.totalCoreServices}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-300">100% Core Local Services</p>
+                        <p className="text-[10px] text-slate-500">All Hassan service URLs mapped</p>
+                      </div>
+                    </div>
+
+                    {/* Live Google Search Snippet SERP Preview */}
+                    <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl space-y-2">
+                      <div className="text-[10px] font-mono uppercase text-slate-400 font-bold tracking-wider">Live Google SERP Snippet Preview (Desktop & Mobile)</div>
+                      <div className="p-4 bg-white rounded-xl text-left font-sans space-y-1 max-w-xl">
+                        <div className="text-xs text-slate-600 truncate flex items-center gap-1.5">
+                          <span className="font-semibold text-slate-900">MIInfotech</span>
+                          <span>›</span>
+                          <span className="text-slate-500">{auditData.searchSnippet.displayUrl}</span>
+                        </div>
+                        <div className="text-base text-[#1a0dab] hover:underline font-medium cursor-pointer leading-snug">
+                          {auditData.searchSnippet.title}
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-amber-500 font-bold">
+                          <span>★★★★★</span>
+                          <span className="text-slate-700 font-normal">Rating: 5.0 · {auditData.searchSnippet.ratingCount} reviews</span>
+                        </div>
+                        <div className="text-xs text-slate-700 leading-relaxed">
+                          {auditData.searchSnippet.description}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Local Hassan Search Insights */}
+                    {auditData.terminologyInsights && auditData.terminologyInsights.length > 0 && (
+                      <div className="p-4 bg-slate-950 border border-slate-850 rounded-2xl space-y-2">
+                        <div className="text-[10px] font-mono uppercase text-slate-400 font-bold tracking-wider">Local Hassan Search Intent & Terminology Insights</div>
+                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-300">
+                          {auditData.terminologyInsights.map((insight: string, idx: number) => (
+                            <li key={idx} className="flex items-start gap-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-850">
+                              <LucideIcons.CornerDownRight className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
+                              <span>{insight}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}

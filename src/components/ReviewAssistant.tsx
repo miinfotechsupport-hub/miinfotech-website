@@ -666,17 +666,17 @@ export default function ReviewAssistant() {
               </div>
             </div>
 
-            {/* 3 Curated Draft Options Grid */}
+            {/* 5 Curated Draft Options Grid */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>Choose Your Preferred Review Draft</span>
+                  <span>Choose Your Preferred Review Draft (5 Variations)</span>
                 </span>
                 <button
                   type="button"
                   id="regenerate-variations-btn"
-                  onClick={() => setVariationIndex((prev) => prev + 3)}
+                  onClick={() => setVariationIndex((prev) => prev + 5)}
                   className="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 font-medium cursor-pointer transition-colors"
                 >
                   <RotateCw className="w-3.5 h-3.5" />
@@ -684,7 +684,7 @@ export default function ReviewAssistant() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {draftOptions.map((opt) => {
                   const isSelected = opt.id === selectedDraftId;
                   return (

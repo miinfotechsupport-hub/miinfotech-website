@@ -17,6 +17,7 @@ const ReviewAssistant = lazy(() => import("./components/ReviewAssistant"));
 const TermsConditions = lazy(() => import("./components/TermsConditions"));
 import { supabase, useSettings } from "./lib/supabase";
 import { SITE_URL } from "./lib/config";
+import { BUSINESS_ENTITY, generateLocalBusinessJsonLd } from "./lib/businessEntity";
 import { BLOG_DATA, BlogItem, SERVICES_DATA } from "./types";
 import { Cpu, Mail, MapPin, Phone, MessageSquare, Facebook, Instagram, ShieldCheck, HeartHandshake, BookOpen, Clock, ArrowLeft, ArrowRight, CornerDownRight } from "lucide-react";
 
@@ -29,18 +30,31 @@ const STATIC_PROJECT_SLUGS = new Set([
 
 const SERVICE_PATH_MAP: { [key: string]: string } = {
   "/computer-repair-hassan": "computer",
+  "/computer-service": "computer",
+  "/computer-repair": "computer",
   "/laptop-repair-hassan": "laptop",
+  "/laptop-repair": "laptop",
+  "/laptop-service": "laptop",
   "/cctv-installation-hassan": "cctv",
+  "/cctv-installation": "cctv",
+  "/cctv-service": "cctv",
+  "/cctv-repair": "cctv",
   "/printer-repair-hassan": "printer",
+  "/printer-repair": "printer",
+  "/printer-service": "printer",
   "/networking-services-hassan": "networking",
+  "/networking": "networking",
   "/biometric-installation-hassan": "biometric",
+  "/biometric-installation": "biometric",
   "/windows-installation-hassan": "windows",
   "/data-recovery-hassan": "data-recovery",
   "/ups-installation-repair-hassan": "ups",
+  "/ups-service": "ups",
   "/intercom-systems-hassan": "intercom",
   "/fire-alarm-systems-hassan": "firealarm",
   "/p2p-wireless-installation-hassan": "p2p",
   "/it-support-amc-hassan": "amc",
+  "/it-support": "amc",
 };
 
 const SERVICE_ID_TO_PATH: { [key: string]: string } = {
@@ -287,6 +301,11 @@ export default function App() {
         description = "Share your genuine technical service experience with MIInfotech on Google.";
         keywords = "MIInfotech review, customer feedback, Google review";
         canonicalUrl = `${SITE_URL}/review`;
+      } else if (activeTab === "admin") {
+        title = "Admin Portal | MIINFOTECH";
+        description = "MIINFOTECH Administrative Management Portal.";
+        keywords = "admin";
+        canonicalUrl = `${SITE_URL}/admin`;
       }
     }
 
@@ -308,7 +327,7 @@ export default function App() {
     // Set Meta Description, Keywords, Robots, Author
     setMetaTag("name", "description", description);
     setMetaTag("name", "keywords", keywords);
-    setMetaTag("name", "robots", activeTab === "review" ? "noindex, follow" : "index, follow");
+    setMetaTag("name", "robots", activeTab === "admin" ? "noindex, nofollow" : activeTab === "review" ? "noindex, follow" : "index, follow");
     setMetaTag("name", "author", "Mohammed Ishtiaqh (MIInfotech)");
 
     // Set Open Graph tags
@@ -350,6 +369,10 @@ export default function App() {
           console.error("Failed to parse project schema JSON:", e);
         }
       }
+    }
+
+    if (!schemaObject) {
+      schemaObject = generateLocalBusinessJsonLd();
     }
 
     if (schemaObject) {
@@ -953,7 +976,7 @@ export default function App() {
               {/* Conversion Badges */}
               <div className="flex gap-2 pt-2 border-t border-slate-900 flex-wrap">
                 <a 
-                  href={`https://wa.me/${settings?.whatsapp_number?.replace(/[^0-9]/g, "") || "919964761624"}?text=Hi%20${encodeURIComponent(settings?.business_name || "MIInfotech")}%2C%20I%20would%20like%20to%20enquire%20about%20your%20doorstep%20IT%20services.%20Thanks!`} 
+                  href={`https://wa.me/${(settings?.whatsapp_number || BUSINESS_ENTITY.contact.whatsapp).replace(/[^0-9]/g, "")}?text=Hi%20${encodeURIComponent(settings?.business_name || BUSINESS_ENTITY.brand.name)}%2C%20I%20would%20like%20to%20enquire%20about%20your%20doorstep%20IT%20services.%20Thanks!`} 
                   target="_blank" 
                   rel="noreferrer" 
                   className="bg-emerald-950/30 border border-emerald-900/80 text-[10px] text-emerald-400 font-mono py-1.5 px-3 rounded hover:border-emerald-500 hover:bg-emerald-950/60 transition-all flex items-center gap-1 cursor-pointer"
@@ -974,7 +997,7 @@ export default function App() {
                   ⭐ Share Service Review
                 </a>
                 <a 
-                  href="https://share.google/26j3KMLobkBNnH89a" 
+                  href={BUSINESS_ENTITY.googleBusinessProfile.profileUrl} 
                   target="_blank" 
                   rel="noreferrer" 
                   className="bg-slate-900 border border-slate-800 text-[10px] text-slate-300 font-mono py-1.5 px-3 rounded hover:border-blue-500 transition-all flex items-center gap-1 cursor-pointer"
@@ -982,7 +1005,7 @@ export default function App() {
                   🌐 Google Business Profile
                 </a>
                 <a 
-                  href="https://www.instagram.com/miinfotech.in" 
+                  href={BUSINESS_ENTITY.socialProfiles.instagram.url} 
                   target="_blank" 
                   rel="noreferrer" 
                   className="bg-slate-900 border border-slate-800 text-[10px] text-slate-300 font-mono py-1.5 px-3 rounded hover:border-purple-500 transition-all flex items-center gap-1 cursor-pointer"
@@ -990,7 +1013,7 @@ export default function App() {
                   📷 Instagram
                 </a>
                 <a 
-                  href="https://www.facebook.com/share/18nFLrKJ1a/" 
+                  href={BUSINESS_ENTITY.socialProfiles.facebook.url} 
                   target="_blank" 
                   rel="noreferrer" 
                   className="bg-slate-900 border border-slate-800 text-[10px] text-slate-300 font-mono py-1.5 px-3 rounded hover:border-blue-600 transition-all flex items-center gap-1 cursor-pointer"

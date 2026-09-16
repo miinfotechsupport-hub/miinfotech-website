@@ -447,29 +447,34 @@ function generatePageHtml(templateHtml, routeInfo) {
   html = setOrReplaceMeta(html, "name", "twitter:description", routeInfo.desc);
   html = setOrReplaceMeta(html, "name", "twitter:image", logoUrl);
 
-  // 6. JSON-LD Structured Data Schema Construction
+  // 6. JSON-LD Structured Data Schema Construction (Centralized Business Entity)
   const localBusinessSchema = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": ["LocalBusiness", "ProfessionalService"],
     "@id": `${SITE_URL}/#localbusiness`,
-    "name": "MIInfotech",
-    "alternateName": "MI Infotech Hassan Doorstep IT",
+    "name": "MIINFOTECH",
+    "alternateName": ["MI Infotech", "MIINFOTECH Hassan", "MI Infotech Hassan Doorstep IT"],
+    "founder": {
+      "@type": "Person",
+      "name": "Mohammed Ishtiaqh",
+      "jobTitle": "Founder & Lead Technical Specialist"
+    },
     "logo": logoUrl,
     "image": logoUrl,
-    "telephone": "+91-9964761624",
+    "telephone": "+91 99647 61624",
     "email": "miinfotech.support@gmail.com",
     "url": SITE_URL,
     "priceRange": "₹₹",
-    "hasMap": "https://www.google.com/maps?cid=e21256333bf9e86c",
+    "hasMap": "https://www.google.com/maps?cid=16290076249457617004",
     "sameAs": [
+      "https://share.google/26j3KMLobkBNnH89a",
       "https://www.instagram.com/miinfotech.in",
       "https://www.facebook.com/share/18nFLrKJ1a/",
-      "https://share.google/26j3KMLobkBNnH89a",
       "https://wa.me/919964761624"
     ],
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Onsite Doorstep Services",
+      "streetAddress": "Doorstep & Onsite Technical Support",
       "addressLocality": "Hassan",
       "addressRegion": "Karnataka",
       "postalCode": "573201",
@@ -499,7 +504,10 @@ function generatePageHtml(templateHtml, routeInfo) {
       { "@type": "AdministrativeArea", "name": "Belur" },
       { "@type": "AdministrativeArea", "name": "Sakleshpur" },
       { "@type": "AdministrativeArea", "name": "Arasikere" },
-      { "@type": "AdministrativeArea", "name": "Channarayapatna" }
+      { "@type": "AdministrativeArea", "name": "Channarayapatna" },
+      { "@type": "AdministrativeArea", "name": "Alur" },
+      { "@type": "AdministrativeArea", "name": "Arkalgud" },
+      { "@type": "AdministrativeArea", "name": "Holenarasipura" }
     ]
   };
 
@@ -596,8 +604,9 @@ function generatePageHtml(templateHtml, routeInfo) {
       "description": routeInfo.desc,
       "provider": {
         "@type": "LocalBusiness",
-        "name": "MIInfotech",
-        "telephone": "+91-9964761624",
+        "@id": `${SITE_URL}/#localbusiness`,
+        "name": "MIINFOTECH",
+        "telephone": "+91 99647 61624",
         "url": SITE_URL
       },
       "areaServed": {
@@ -705,6 +714,62 @@ function generatePageHtml(templateHtml, routeInfo) {
   }
 
   html = html.replace("</head>", `${jsonLdScripts}\n</head>`);
+
+  // Build crawlable semantic HTML snapshot inside #root for crawlers, search engines, and AI agents
+  let crawlableBody = `
+    <header style="padding:1rem 1.5rem;background:#030712;color:#f9fafb;border-bottom:1px solid #1f2937;">
+      <div style="max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;">
+        <div>
+          <a href="/" style="color:#60a5fa;font-size:1.25rem;font-weight:bold;text-decoration:none;">MIINFOTECH</a>
+          <span style="display:block;font-size:0.75rem;color:#9ca3af;">Doorstep IT & CCTV Camera Services in Hassan</span>
+        </div>
+        <nav aria-label="Main navigation" style="display:flex;gap:1rem;font-size:0.875rem;">
+          <a href="/" style="color:#e5e7eb;text-decoration:none;">Home</a>
+          <a href="/services" style="color:#e5e7eb;text-decoration:none;">Services</a>
+          <a href="/projects" style="color:#e5e7eb;text-decoration:none;">Projects</a>
+          <a href="/blog" style="color:#e5e7eb;text-decoration:none;">Tech Guides</a>
+          <a href="/faqs" style="color:#e5e7eb;text-decoration:none;">FAQs</a>
+          <a href="/contact" style="color:#60a5fa;text-decoration:none;font-weight:600;">Contact / Book</a>
+        </nav>
+      </div>
+    </header>
+    <main style="max-width:900px;margin:2rem auto;padding:0 1.5rem;font-family:system-ui,-apple-system,sans-serif;color:#1e293b;line-height:1.6;">
+      <article>
+        <h1 style="font-size:2rem;font-weight:800;color:#0f172a;margin-bottom:1rem;line-height:1.25;">${routeInfo.title}</h1>
+        <p style="font-size:1.1rem;color:#334155;margin-bottom:1.5rem;">${routeInfo.desc}</p>
+  `;
+
+  if (routeInfo.faqs && routeInfo.faqs.length > 0) {
+    crawlableBody += `<section style="margin:2rem 0;"><h2 style="font-size:1.35rem;font-weight:700;color:#0f172a;">Frequently Asked Questions</h2>`;
+    routeInfo.faqs.forEach(f => {
+      crawlableBody += `
+        <div style="margin:1rem 0;padding:1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.5rem;">
+          <h3 style="font-size:1rem;font-weight:600;color:#1e293b;margin-bottom:0.5rem;">${f.q}</h3>
+          <p style="font-size:0.925rem;color:#475569;margin:0;">${f.a}</p>
+        </div>`;
+    });
+    crawlableBody += `</section>`;
+  }
+
+  crawlableBody += `
+      <section style="margin-top:2.5rem;padding:1.5rem;background:#f1f5f9;border-radius:0.75rem;">
+        <h2 style="font-size:1.2rem;font-weight:700;color:#0f172a;margin-bottom:0.75rem;">Service Area & Contact Details</h2>
+        <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Business:</strong> MIINFOTECH (Doorstep IT Support & CCTV Installation)</p>
+        <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Founder & Specialist:</strong> Mohammed Ishtiaqh</p>
+        <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Phone / WhatsApp:</strong> <a href="tel:+919964761624" style="color:#2563eb;">+91 99647 61624</a></p>
+        <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Coverage:</strong> Hassan City, Belur, Sakleshpur, Arasikere, Channarayapatna, Alur, Arkalgud, Holenarasipura</p>
+        <p style="margin-top:1rem;"><a href="https://wa.me/919964761624" style="display:inline-block;padding:0.6rem 1.25rem;background:#2563eb;color:#fff;text-decoration:none;border-radius:0.5rem;font-weight:600;">Book Doorstep Diagnostics on WhatsApp</a></p>
+      </section>
+    </article>
+  </main>
+  <footer style="padding:1.5rem;background:#030712;color:#9ca3af;font-size:0.875rem;text-align:center;margin-top:3rem;">
+    <p>© ${new Date().getFullYear()} MIINFOTECH — Official Google Business Profile, Instagram & Facebook Connected</p>
+  </footer>
+  `;
+
+  if (html.includes('<div id="root"></div>')) {
+    html = html.replace('<div id="root"></div>', `<div id="root">${crawlableBody}</div>`);
+  }
 
   return html;
 }

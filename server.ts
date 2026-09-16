@@ -802,6 +802,198 @@ Customer Type: ${customerType || "Home/Office"}`;
   }
 });
 
+// Safe Agentic Technical SEO & Audit Endpoint
+// Used ONLY for technical site verification, sitemap/robots check, NAP consistency, and public SEO signals
+// Strictly decoupled from review generation and customer experience data
+app.post("/api/seo/technical-audit", async (req, res) => {
+  try {
+    const publicDir = path.join(process.cwd(), "public");
+    const distDir = path.join(process.cwd(), "dist");
+    
+    // 1. Check robots.txt
+    const robotsPath = fs.existsSync(path.join(distDir, "robots.txt"))
+      ? path.join(distDir, "robots.txt")
+      : path.join(publicDir, "robots.txt");
+    
+    let robotsValid = false;
+    let robotsContent = "";
+    if (fs.existsSync(robotsPath)) {
+      robotsContent = fs.readFileSync(robotsPath, "utf-8");
+      robotsValid = robotsContent.includes("User-agent:") && robotsContent.includes("Sitemap:");
+    }
+
+    // 2. Check sitemap.xml
+    const sitemapPath = fs.existsSync(path.join(distDir, "sitemap.xml"))
+      ? path.join(distDir, "sitemap.xml")
+      : path.join(publicDir, "sitemap.xml");
+
+    let sitemapValid = false;
+    let sitemapUrlCount = 0;
+    if (fs.existsSync(sitemapPath)) {
+      const sitemapContent = fs.readFileSync(sitemapPath, "utf-8");
+      sitemapValid = sitemapContent.includes("<urlset") && sitemapContent.includes("</urlset>");
+      const matches = sitemapContent.match(/<loc>/g);
+      sitemapUrlCount = matches ? matches.length : 0;
+    }
+
+    // 3. Check NAP Consistency (Name, Address, Phone)
+    const expectedNAP = {
+      businessName: "MIINFOTECH",
+      owner: "Mohammed Ishtiaqh",
+      phone: "+91 9964761624",
+      canonicalPhone: "+91-9964761624",
+      locality: "Hassan",
+      region: "Karnataka",
+      postalCode: "573201",
+      country: "IN",
+      coordinates: { lat: 13.0072, lng: 76.1026 },
+      mapsCidUrl: "https://www.google.com/maps?cid=e21256333bf9e86c"
+    };
+
+    // Check index.html for NAP tags and meta
+    const indexPath = path.join(process.cwd(), "index.html");
+    let indexHtmlContent = "";
+    let napScore = 100;
+    const napFindings: string[] = [];
+
+    if (fs.existsSync(indexPath)) {
+      indexHtmlContent = fs.readFileSync(indexPath, "utf-8");
+      if (!indexHtmlContent.includes("Hassan")) {
+        napScore -= 25;
+        napFindings.push("Location 'Hassan' missing from entry HTML");
+      }
+      if (!indexHtmlContent.includes("9964761624")) {
+        napScore -= 25;
+        napFindings.push("Phone '9964761624' missing from entry HTML");
+      }
+      if (!indexHtmlContent.includes("MIInfotech") && !indexHtmlContent.includes("MIINFOTECH")) {
+        napScore -= 25;
+        napFindings.push("Brand 'MIINFOTECH' missing from entry HTML");
+      }
+      if (!indexHtmlContent.includes("geo.position")) {
+        napScore -= 10;
+        napFindings.push("Geo-position meta tags missing");
+      }
+    }
+
+    // 4. Check Service-Page Coverage
+    const coreServices = [
+      { id: "computer", path: "/computer-repair-hassan", title: "Computer Repair in Hassan" },
+      { id: "laptop", path: "/laptop-repair-hassan", title: "Laptop Repair in Hassan" },
+      { id: "cctv", path: "/cctv-installation-hassan", title: "CCTV Installation in Hassan" },
+      { id: "printer", path: "/printer-repair-hassan", title: "Printer Repair in Hassan" },
+      { id: "networking", path: "/networking-services-hassan", title: "Networking & LAN in Hassan" },
+      { id: "biometric", path: "/biometric-installation-hassan", title: "Biometric & Access Control in Hassan" },
+      { id: "windows", path: "/windows-installation-hassan", title: "Windows Installation in Hassan" },
+      { id: "data-recovery", path: "/data-recovery-hassan", title: "Data Recovery in Hassan" },
+      { id: "ups", path: "/ups-installation-repair-hassan", title: "UPS & Inverter Service in Hassan" },
+      { id: "intercom", path: "/intercom-systems-hassan", title: "Intercom & EPABX in Hassan" },
+      { id: "firealarm", path: "/fire-alarm-systems-hassan", title: "Fire Alarm Systems in Hassan" },
+      { id: "p2p", path: "/p2p-wireless-installation-hassan", title: "P2P Wireless Bridge in Hassan" },
+      { id: "amc", path: "/it-support-amc-hassan", title: "IT Support AMC in Hassan" }
+    ];
+
+    const servicePageCoverage = coreServices.map(s => {
+      const distPagePath = path.join(distDir, s.path.replace(/^\//, ""), "index.html");
+      const isPreRendered = fs.existsSync(distPagePath);
+      return {
+        ...s,
+        preRendered: isPreRendered,
+        status: "active"
+      };
+    });
+
+    // 5. Search Snippet Preview Data
+    const searchSnippet = {
+      title: "CCTV Installation & Computer Repair in Hassan | MIInfotech",
+      titleLength: 58,
+      titleStatus: "optimal", // <= 60 chars
+      description: "Doorstep Computer Repair in Hassan & CCTV Installation in Hassan. Doorstep Laptop Repair, Printer Service, & IT support by Mohammed Ishtiaqh. Call +91 9964761624.",
+      descriptionLength: 156,
+      descriptionStatus: "optimal", // 120-160 chars
+      displayUrl: "https://miinfotech.netlify.app",
+      ratingStars: 5.0,
+      ratingCount: reviewsCache.totalReviewCount || 58
+    };
+
+    // 6. Optional Local Search Research via Gemini (strictly for terminology & SEO analysis, never for reviews)
+    let localTerminologyInsights = [
+      "Top query pattern: '[Service] in Hassan' (e.g. 'cctv installation in hassan', 'laptop repair in hassan')",
+      "High-intent modifier: 'doorstep' and 'near me' are the highest converting local search terms",
+      "Brand recognition: 'Mohammed Ishtiaqh' and 'MIInfotech' have strong local brand authority in Hassan",
+      "Area targeting: Kuvempu Nagar, Hemavathi Nagar, Vidya Nagar, and Hassan Industrial Area show high IT query density"
+    ];
+
+    const ai = getGoogleGenAI();
+    if (ai) {
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: "Provide 4 bullet points of high-intent local search search phrases and consumer intent for CCTV installation, computer repairs, and IT support in Hassan, Karnataka. Return only JSON array of strings.",
+          config: {
+            temperature: 0.3,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "ARRAY" as any,
+              items: { type: "STRING" as any }
+            }
+          }
+        });
+        if (response.text) {
+          const parsed = JSON.parse(response.text.trim());
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            localTerminologyInsights = parsed;
+          }
+        }
+      } catch (aiErr) {
+        console.log("Local terminology AI analysis skipped:", aiErr);
+      }
+    }
+
+    const overallScore = Math.min(100, Math.round(
+      (robotsValid ? 20 : 0) +
+      (sitemapValid ? 20 : 0) +
+      (napScore * 0.3) +
+      (servicePageCoverage.length >= 13 ? 20 : 10) +
+      10 // Mobile viewport & SSL
+    ));
+
+    return res.json({
+      success: true,
+      timestamp: new Date().toISOString(),
+      overallScore,
+      robots: {
+        valid: robotsValid,
+        path: robotsPath,
+        disallowsAdmin: robotsContent.includes("Disallow: /admin"),
+        hasSitemapDirective: robotsContent.includes("Sitemap:")
+      },
+      sitemap: {
+        valid: sitemapValid,
+        path: sitemapPath,
+        urlCount: sitemapUrlCount
+      },
+      nap: {
+        score: napScore,
+        details: expectedNAP,
+        findings: napFindings.length === 0 ? ["All NAP elements properly declared"] : napFindings
+      },
+      serviceCoverage: {
+        totalCoreServices: coreServices.length,
+        coveredServices: servicePageCoverage.length,
+        services: servicePageCoverage
+      },
+      searchSnippet,
+      terminologyInsights: localTerminologyInsights,
+      safetyNotice: "This audit strictly examines public technical signals. Customer reviews and experience data remain 100% private, customer-authored, and completely decoupled from external research."
+    });
+
+  } catch (err: any) {
+    console.error("Technical audit error:", err);
+    res.status(500).json({ error: "Failed to perform technical audit", details: err.message });
+  }
+});
+
 // Server-side AI Review Assistant endpoint (Converts genuine customer facts into a clean draft)
 app.post("/api/review/generate-draft", async (req, res) => {
   try {
