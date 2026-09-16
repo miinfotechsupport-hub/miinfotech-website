@@ -7,14 +7,14 @@ import ReviewsFAQ from "./components/ReviewsFAQ";
 import ContactSection from "./components/ContactSection";
 import SEOPanel from "./components/SEOPanel";
 import FloatingCTABar from "./components/FloatingCTABar";
-import TermsConditions from "./components/TermsConditions";
 import ProductsShowcase from "./components/ProductsShowcase";
 import LogoIcon from "./components/LogoIcon";
-import ServiceLandingPage from "./components/ServiceLandingPage";
-import ReviewAssistant from "./components/ReviewAssistant";
 import { GoogleReviewsSection } from "./components/GoogleReviewsSection";
 
 const AdminPanel = lazy(() => import("./components/AdminPanel"));
+const ServiceLandingPage = lazy(() => import("./components/ServiceLandingPage"));
+const ReviewAssistant = lazy(() => import("./components/ReviewAssistant"));
+const TermsConditions = lazy(() => import("./components/TermsConditions"));
 import { supabase, useSettings } from "./lib/supabase";
 import { SITE_URL } from "./lib/config";
 import { BLOG_DATA, BlogItem, SERVICES_DATA } from "./types";
@@ -400,7 +400,9 @@ export default function App() {
   if (activeTab === "review") {
     return (
       <div className="bg-slate-950 min-h-screen text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
-        <ReviewAssistant />
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 font-mono text-xs">Loading Review Assistant...</div>}>
+          <ReviewAssistant />
+        </Suspense>
       </div>
     );
   }
@@ -421,25 +423,27 @@ export default function App() {
       {/* Main Dynamic View switcher */}
       <main className="flex-grow">
         {selectedServiceId ? (
-          <ServiceLandingPage
-            serviceId={selectedServiceId}
-            onBackClick={() => {
-              setSelectedServiceId(null);
-              window.history.pushState(null, "", "/");
-              window.dispatchEvent(new Event("popstate"));
-            }}
-            onBookClick={handleRequestOnsiteVisit}
-            onNavigateToService={(id) => {
-              setSelectedServiceId(id);
-              const path = SERVICE_ID_TO_PATH[id];
-              if (path) {
-                window.history.pushState(null, "", path);
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-slate-400 font-mono text-xs">Loading Service Page...</div>}>
+            <ServiceLandingPage
+              serviceId={selectedServiceId}
+              onBackClick={() => {
+                setSelectedServiceId(null);
+                window.history.pushState(null, "", "/");
                 window.dispatchEvent(new Event("popstate"));
-              } else {
-                window.location.hash = `service/${id}`;
-              }
-            }}
-          />
+              }}
+              onBookClick={handleRequestOnsiteVisit}
+              onNavigateToService={(id) => {
+                setSelectedServiceId(id);
+                const path = SERVICE_ID_TO_PATH[id];
+                if (path) {
+                  window.history.pushState(null, "", path);
+                  window.dispatchEvent(new Event("popstate"));
+                } else {
+                  window.location.hash = `service/${id}`;
+                }
+              }}
+            />
+          </Suspense>
         ) : (
           <>
             {/* VIEW 1: HOME PAGE (Exhaustive, rich lead funnel) */}
@@ -813,7 +817,9 @@ export default function App() {
         {/* VIEW 7: TERMS & CONDITIONS VIEW */}
         {activeTab === "terms" && (
           <div className="animate-fadeIn pt-16">
-            <TermsConditions />
+            <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-slate-400 font-mono text-xs">Loading Terms...</div>}>
+              <TermsConditions />
+            </Suspense>
           </div>
         )}
 

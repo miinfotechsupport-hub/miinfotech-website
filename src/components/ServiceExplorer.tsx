@@ -1,7 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { SERVICES_DATA, ServiceDetail } from "../types";
-import * as LucideIcons from "lucide-react";
-import { ShieldCheck, Flame, Cpu, MessageSquare, PhoneCall, AlertCircle, Sparkles, Check, Clock, IndianRupee } from "lucide-react";
+import { 
+  SERVICES_DATA, 
+  ServiceDetail 
+} from "../types";
+import { 
+  ShieldCheck, 
+  Flame, 
+  Cpu, 
+  MessageSquare, 
+  PhoneCall, 
+  AlertCircle, 
+  Sparkles, 
+  Check, 
+  Clock, 
+  IndianRupee,
+  Monitor,
+  Laptop,
+  Printer,
+  Eye,
+  Network,
+  BatteryCharging,
+  ShieldAlert,
+  Wifi,
+  Briefcase,
+  ArrowRight
+} from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface ServiceExplorerProps {
@@ -48,18 +71,18 @@ export default function ServiceExplorer({ onBookClick, onViewFullPage }: Service
   const renderIcon = (iconName: string, className: string = "w-6 h-6") => {
     // Fallback dictionary for dynamic matching
     const icons: Record<string, React.ComponentType<any>> = {
-      Monitor: LucideIcons.Monitor,
-      Laptop: LucideIcons.Laptop,
-      Printer: LucideIcons.Printer,
-      Eye: LucideIcons.Eye,
-      Network: LucideIcons.Network,
-      BatteryCharging: LucideIcons.BatteryCharging,
-      PhoneCall: LucideIcons.PhoneCall,
-      ShieldAlert: LucideIcons.ShieldAlert,
-      Wifi: LucideIcons.Wifi,
-      Briefcase: LucideIcons.Briefcase,
+      Monitor,
+      Laptop,
+      Printer,
+      Eye,
+      Network,
+      BatteryCharging,
+      PhoneCall,
+      ShieldAlert,
+      Wifi,
+      Briefcase,
     };
-    const IconComponent = icons[iconName] || LucideIcons.Monitor;
+    const IconComponent = icons[iconName] || Monitor;
     return <IconComponent className={className} />;
   };
 
@@ -118,7 +141,7 @@ export default function ServiceExplorer({ onBookClick, onViewFullPage }: Service
                   className="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white border border-slate-800 text-xs font-bold rounded-xl transition-all text-center cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>Learn More</span>
-                  <LucideIcons.ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </button>
               </div>
             </div>

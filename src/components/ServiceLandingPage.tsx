@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SITE_URL } from "../lib/config";
 import { SERVICES_DATA, FAQS_DATA, SUPPORTED_BRANDS, HASSAN_AREAS } from "../types";
-import { VERIFIED_GOOGLE_REVIEWS_MANUAL } from "../lib/verifiedGoogleReviews";
+import { ServicePageReviews } from "./ServicePageReviews";
 import { 
   Check, 
   ChevronRight, 
@@ -392,32 +392,6 @@ export default function ServiceLandingPage({
 
   const relevantFaqs = getRelevantFaqs();
 
-  // Filter reviews matching or mentioning keywords
-  const getRelevantReviews = () => {
-    const keywords: Record<string, string[]> = {
-      computer: ["computer", "desktop", "motherboard", "windows"],
-      laptop: ["laptop", "keyboard", "screen", "hp", "dell"],
-      printer: ["printer", "laserjet", "ink", "cartridge"],
-      cctv: ["cctv", "camera", "surveillance", "hikvision"],
-      networking: ["cabling", "lan", "network", "router", "switch"],
-      ups: ["ups", "battery", "backup"],
-      intercom: ["intercom", "epabx", "telephone"],
-      firealarm: ["fire", "alarm", "smoke"],
-      p2p: ["wireless", "bridge", "p2p", "ubiquiti"],
-      amc: ["amc", "annual", "contract"]
-    };
-
-    const searchWords = keywords[service.id] || [];
-    const matched = VERIFIED_GOOGLE_REVIEWS_MANUAL.filter((review) => {
-      const text = review.comment.toLowerCase();
-      return searchWords.some((word) => text.includes(word));
-    });
-
-    return matched.length > 0 ? matched.slice(0, 4) : VERIFIED_GOOGLE_REVIEWS_MANUAL.slice(0, 4);
-  };
-
-  const relevantReviews = getRelevantReviews();
-
   // Internal linking: list other services excluding current
   const getRelatedServices = () => {
     return servicesList.filter((s) => s.id !== serviceId).slice(0, 3);
@@ -777,53 +751,8 @@ export default function ServiceLandingPage({
               </div>
             </div>
 
-            {/* Contextual Reviews (Social Proof / E-E-A-T) */}
-            <div className="space-y-6">
-              <div className="text-left">
-                <span className="text-blue-500 font-semibold uppercase tracking-wider text-xs font-mono">Genuine Feedbacks</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-white mt-1">Verified Hassan Customer Reviews</h2>
-                <p className="text-slate-400 text-xs mt-1">Read what local homeowners, clinics, and retail shop owners say about our {service.name.toLowerCase()} work.</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {relevantReviews.map((rev) => (
-                  <div key={rev.reviewId} className="bg-slate-900 border border-slate-850 p-6 rounded-2xl space-y-3 flex flex-col justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1 text-amber-400">
-                          {[...Array(rev.starRating)].map((_, i) => (
-                            <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                          ))}
-                        </div>
-                        <span className="text-[10px] font-mono text-slate-400">Posted on Google</span>
-                      </div>
-                      <p className="text-slate-300 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
-                        "{rev.comment}"
-                      </p>
-                    </div>
-                    
-                    <div className="flex justify-between items-center pt-3 border-t border-slate-850/50 text-xs">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-950 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-[11px]">
-                          {rev.reviewer.displayName.charAt(0)}
-                        </div>
-                        <span className="text-white font-bold text-xs">{rev.reviewer.displayName}</span>
-                      </div>
-                      {rev.reviewUrl && (
-                        <a
-                          href={rev.reviewUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors"
-                        >
-                          View <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Contextual Verified Google Reviews */}
+            <ServicePageReviews serviceId={service.id} serviceName={service.name} />
 
           </div>
 

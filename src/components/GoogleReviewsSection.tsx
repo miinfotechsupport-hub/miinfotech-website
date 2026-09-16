@@ -97,9 +97,13 @@ export const GoogleReviewsSection: React.FC = () => {
     setCurrentPage((prev) => (prev < totalPages - 1 ? prev + 1 : 0));
   }, [totalPages]);
 
-  // Autoplay slideshow timer (every 5.5s, paused on interaction/hover)
+  // Autoplay slideshow timer (every 5.5s, paused on interaction/hover or reduced motion)
   useEffect(() => {
     if (isPaused || totalPages <= 1) return;
+
+    const prefersReducedMotion = typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
 
     const timer = setInterval(() => {
       handleNext();
@@ -107,6 +111,17 @@ export const GoogleReviewsSection: React.FC = () => {
 
     return () => clearInterval(timer);
   }, [isPaused, totalPages, handleNext]);
+
+  // Keyboard navigation for carousel accessibility
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (totalPages <= 1) return;
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "ArrowRight") handleNext();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [totalPages, handlePrev, handleNext]);
 
   // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -183,7 +198,7 @@ export const GoogleReviewsSection: React.FC = () => {
                 ))}
               </div>
               <span className="text-[11px] text-slate-400 mt-1 font-semibold">
-                {totalReviewCount} Google Reviews
+                {totalReviewCount} on Google Profile
               </span>
             </div>
 
@@ -254,6 +269,7 @@ export const GoogleReviewsSection: React.FC = () => {
             <div className="text-xs text-slate-400 font-medium order-2 sm:order-1">
               Page <span className="text-white font-semibold">{currentPage + 1}</span> of{" "}
               <span className="text-white font-semibold">{totalPages}</span>
+              <span className="text-slate-500 ml-1.5 font-mono">({reviews.length} verified records stored of {totalReviewCount} total on Google)</span>
             </div>
 
             {/* Pagination Dots */}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Star, MessageSquareQuote, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import { GoogleReviewItem } from "../types/googleReviews";
+import { GOOGLE_PROFILE_SUMMARY } from "../lib/verifiedGoogleReviews";
 
 interface GoogleReviewCardProps {
   review: GoogleReviewItem;
@@ -9,6 +10,7 @@ interface GoogleReviewCardProps {
 export const GoogleReviewCard: React.FC<GoogleReviewCardProps> = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isLongText = review.comment.length > 220;
+  const reviewTargetUrl = review.reviewUrl || GOOGLE_PROFILE_SUMMARY.profileUrl;
 
   // Format real date if provided, or show verified badge label
   const formattedDate = (() => {
@@ -137,20 +139,19 @@ export const GoogleReviewCard: React.FC<GoogleReviewCardProps> = ({ review }) =>
       </div>
 
       {/* Footer link to original review */}
-      {review.reviewUrl && (
-        <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs">
-          <span className="text-[11px] text-slate-500 font-medium">Posted on Google</span>
-          <a
-            id={`view-google-review-${review.reviewId}`}
-            href={review.reviewUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs font-medium text-slate-400 hover:text-blue-400 flex items-center gap-1 transition-colors"
-          >
-            View on Google <ExternalLink className="w-3 h-3" />
-          </a>
-        </div>
-      )}
+      <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs">
+        <span className="text-[11px] text-slate-500 font-medium">Google Verified</span>
+        <a
+          id={`view-google-review-${review.reviewId}`}
+          href={reviewTargetUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-medium text-slate-400 hover:text-blue-400 flex items-center gap-1 transition-colors"
+        >
+          View on Google <ExternalLink className="w-3 h-3" />
+        </a>
+      </div>
     </div>
   );
 };
+
