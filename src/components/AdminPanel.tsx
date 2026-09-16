@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { supabase, localDB, triggerAuthChange, triggerSettingsChange, updateAdminPassword, isRealSupabase, getUseLocalDatabase, customAuthStorage, isLocalhost } from "../lib/supabase";
 import { SITE_URL } from "../lib/config";
-import * as LucideIcons from "lucide-react";
+import {
+  AlertCircle, AlertTriangle, ArrowLeft, Check, CheckCircle, ChevronDown, ChevronUp,
+  Code, Copy, Cpu, Download, Edit2, ExternalLink, Filter, Globe, Globe2, History,
+  KeyRound, LayoutGrid, Link, List, Loader2, Lock, LogOut, Mail, MapPin, MessageSquare,
+  Monitor, Phone, Plus, QrCode, RefreshCw, Save, Search, Send, Share2, ShieldAlert,
+  ShieldCheck, Sparkles, Star, Trash2, X, LayoutDashboard, Briefcase, FileText,
+  ShoppingBag, Image, FolderOpen, HelpCircle, Settings, Users, MessageCircle,
+  Laptop, Printer, Eye, Network, BatteryCharging, PhoneCall, Wifi, Fingerprint, Database
+} from "lucide-react";
+
+const LucideIcons: Record<string, React.ComponentType<any>> = {
+  AlertCircle, AlertTriangle, ArrowLeft, Check, CheckCircle, ChevronDown, ChevronUp,
+  Code, Copy, Cpu, Download, Edit2, ExternalLink, Filter, Globe, Globe2, History,
+  KeyRound, LayoutGrid, Link, List, Loader2, Lock, LogOut, Mail, MapPin, MessageSquare,
+  Monitor, Phone, Plus, QrCode, RefreshCw, Save, Search, Send, Share2, ShieldAlert,
+  ShieldCheck, Sparkles, Star, Trash2, X, LayoutDashboard, Briefcase, FileText,
+  ShoppingBag, Image, FolderOpen, HelpCircle, Settings, Users, MessageCircle,
+  Laptop, Printer, Eye, Network, BatteryCharging, PhoneCall, Wifi, Fingerprint, Database
+};
 import MediaUploadZone from "./MediaUploadZone";
 import MediaGridSection from "./MediaGridSection";
 import QRCodeDisplay from "./QRCodeDisplay";

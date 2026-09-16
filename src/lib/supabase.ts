@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
 import { SERVICES_DATA, BLOG_DATA, ProjectItem, PROJECTS_DATA } from "../types";
 import { SITE_URL } from "./config";
 
@@ -431,8 +430,11 @@ class LocalQueryBuilder {
     }
   }
 
+  private selectCols: string = "*";
+
   select(columns = "*") {
     this.action = "select";
+    this.selectCols = columns;
     return this;
   }
 
@@ -473,96 +475,128 @@ class LocalQueryBuilder {
     return this;
   }
 
+  executeLocal() {
+    let resultData: any = null;
+    let resultError: any = null;
+
+    try {
+      if (this.action === "insert") {
+        const data = this.getTableData();
+        const isArray = Array.isArray(this.payload);
+        const records = isArray ? this.payload : [this.payload];
+
+        const recordsWithId = records.map(rec => ({
+          id: rec.id || `rec-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          timestamp: rec.timestamp || new Date().toISOString(),
+          created_at: new Date().toISOString(),
+          ...rec
+        }));
+
+        const updated = [...data, ...recordsWithId];
+        this.saveTableData(updated);
+
+        localDB.logActivity("Insert Record", `Added entry inside ${this.tableName} table`);
+        resultData = isArray ? recordsWithId : recordsWithId[0];
+      } else if (this.action === "update") {
+        const data = this.getTableData();
+        const updates = this.payload;
+        const updated = data.map((item: any) => {
+          let matches = true;
+          for (const filter of this.filters) {
+            if (filter.type === "eq" && String(item[filter.column]) !== String(filter.value)) {
+              matches = false;
+            }
+          }
+          if (matches) {
+            return { ...item, ...updates, updated_at: new Date().toISOString() };
+          }
+          return item;
+        });
+
+        this.saveTableData(updated);
+        localDB.logActivity("Update Record", `Modified entries inside ${this.tableName} table`);
+        resultData = updates;
+      } else if (this.action === "delete") {
+        const data = this.getTableData();
+        const remaining = data.filter((item: any) => {
+          let matches = true;
+          for (const filter of this.filters) {
+            if (filter.type === "eq" && String(item[filter.column]) !== String(filter.value)) {
+              matches = false;
+            }
+          }
+          return !matches;
+        });
+
+        this.saveTableData(remaining);
+        localDB.logActivity("Delete Record", `Removed entries from ${this.tableName} table`);
+        resultData = null;
+      } else {
+        // default "select"
+        let data = this.getTableData();
+
+        for (const filter of this.filters) {
+          if (filter.type === "eq") {
+            data = data.filter((item: any) => String(item[filter.column]) === String(filter.value));
+          }
+        }
+
+        if (this.orderCol) {
+          const col = this.orderCol;
+          const asc = this.orderAsc;
+          data.sort((a: any, b: any) => {
+            const valA = a[col];
+            const valB = b[col];
+            if (valA === valB) return 0;
+            if (valA == null) return 1;
+            if (valB == null) return -1;
+            return asc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+          });
+        }
+        resultData = data;
+      }
+    } catch (err: any) {
+      resultError = { message: err.message || "Query failed" };
+    }
+
+    return { data: resultData, error: resultError };
+  }
+
   // Executes query and returns results using a standard promise wrapper
   then(onfulfilled?: (value: any) => any, onrejected?: (reason: any) => any) {
     return Promise.resolve()
       .then(async () => {
-        let resultData: any = null;
-        let resultError: any = null;
-
-        try {
-          if (this.action === "insert") {
-            const data = this.getTableData();
-            const isArray = Array.isArray(this.payload);
-            const records = isArray ? this.payload : [this.payload];
-
-            const recordsWithId = records.map(rec => ({
-              id: rec.id || `rec-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-              timestamp: rec.timestamp || new Date().toISOString(),
-              created_at: new Date().toISOString(),
-              ...rec
-            }));
-
-            const updated = [...data, ...recordsWithId];
-            this.saveTableData(updated);
-
-            localDB.logActivity("Insert Record", `Added entry inside ${this.tableName} table`);
-            resultData = isArray ? recordsWithId : recordsWithId[0];
-          } else if (this.action === "update") {
-            const data = this.getTableData();
-            const updates = this.payload;
-            const updated = data.map((item: any) => {
-              let matches = true;
+        const useLocal = getUseLocalDatabase();
+        if (!useLocal && isRealSupabase) {
+          try {
+            const client = await getRealSupabaseClient();
+            if (client) {
+              let q = client.from(this.tableName);
+              if (this.action === "insert") {
+                q = q.insert(this.payload);
+              } else if (this.action === "update") {
+                q = q.update(this.payload);
+              } else if (this.action === "delete") {
+                q = q.delete();
+              } else {
+                q = q.select(this.selectCols || "*");
+              }
               for (const filter of this.filters) {
-                if (filter.type === "eq" && String(item[filter.column]) !== String(filter.value)) {
-                  matches = false;
+                if (filter.type === "eq") {
+                  q = q.eq(filter.column, filter.value);
                 }
               }
-              if (matches) {
-                return { ...item, ...updates, updated_at: new Date().toISOString() };
+              if (this.orderCol) {
+                q = q.order(this.orderCol, { ascending: this.orderAsc });
               }
-              return item;
-            });
-
-            this.saveTableData(updated);
-            localDB.logActivity("Update Record", `Modified entries inside ${this.tableName} table`);
-            resultData = updates;
-          } else if (this.action === "delete") {
-            const data = this.getTableData();
-            const remaining = data.filter((item: any) => {
-              let matches = true;
-              for (const filter of this.filters) {
-                if (filter.type === "eq" && String(item[filter.column]) !== String(filter.value)) {
-                  matches = false;
-                }
-              }
-              return !matches; // Keep those that do not match filters (meaning we delete matching ones)
-            });
-
-            this.saveTableData(remaining);
-            localDB.logActivity("Delete Record", `Removed entries from ${this.tableName} table`);
-            resultData = null;
-          } else {
-            // default "select"
-            let data = this.getTableData();
-
-            // Apply filters
-            for (const filter of this.filters) {
-              if (filter.type === "eq") {
-                data = data.filter((item: any) => String(item[filter.column]) === String(filter.value));
-              }
+              const res = await q;
+              return res;
             }
-
-            // Apply order
-            if (this.orderCol) {
-              const col = this.orderCol;
-              const asc = this.orderAsc;
-              data.sort((a: any, b: any) => {
-                const valA = a[col];
-                const valB = b[col];
-                if (valA === valB) return 0;
-                if (valA == null) return 1;
-                if (valB == null) return -1;
-                return asc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
-              });
-            }
-            resultData = data;
+          } catch (err: any) {
+            console.warn("Supabase query error, falling back to local DB:", err);
           }
-        } catch (err: any) {
-          resultError = { message: err.message || "Query failed" };
         }
-
-        return { data: resultData, error: resultError };
+        return this.executeLocal();
       })
       .then(onfulfilled, onrejected);
   }
@@ -638,23 +672,66 @@ export const customAuthStorage = {
   }
 };
 
-const realSupabaseClient = isRealSupabase ? createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    storage: customAuthStorage,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-}) : null;
+let realSupabaseClient: any = null;
+let realSupabasePromise: Promise<any> | null = null;
 
-const mockSupabaseClient = {
+export async function getRealSupabaseClient() {
+  if (!isRealSupabase) return null;
+  if (realSupabaseClient) return realSupabaseClient;
+  if (!realSupabasePromise) {
+    realSupabasePromise = import("@supabase/supabase-js").then(({ createClient }) => {
+      realSupabaseClient = createClient(supabaseUrl, supabaseKey, {
+        auth: {
+          storage: customAuthStorage,
+          persistSession: true,
+          detectSessionInUrl: true
+        }
+      });
+      return realSupabaseClient;
+    }).catch(err => {
+      console.warn("Could not load Supabase client library:", err);
+      return null;
+    });
+  }
+  return realSupabasePromise;
+}
+
+export const supabase = {
   auth: {
     signInWithPassword: async ({ email, password }: any) => {
+      const useLocal = getUseLocalDatabase();
+      if (!useLocal && isRealSupabase) {
+        try {
+          const client = await getRealSupabaseClient();
+          if (client) return await client.auth.signInWithPassword({ email, password });
+        } catch (err) {
+          console.warn("Supabase auth error, falling back to local:", err);
+        }
+      }
       return localDB.signIn(email, password);
     },
     signOut: async () => {
+      const useLocal = getUseLocalDatabase();
+      if (!useLocal && isRealSupabase) {
+        try {
+          const client = await getRealSupabaseClient();
+          if (client) await client.auth.signOut();
+        } catch (err) {
+          console.warn("Supabase sign out error:", err);
+        }
+      }
       return localDB.signOut();
     },
     getSession: async () => {
+      const useLocal = getUseLocalDatabase();
+      if (!useLocal && isRealSupabase) {
+        try {
+          const client = await getRealSupabaseClient();
+          if (client) return await client.auth.getSession();
+        } catch (err) {
+          console.warn("Supabase getSession error:", err);
+        }
+      }
       const user = localDB.getAdminUser();
       const sessionStr = customAuthStorage.getItem("mi_admin_session");
       if (user && sessionStr) {
@@ -668,6 +745,15 @@ const mockSupabaseClient = {
       return { data: { session: null }, error: null };
     },
     getUser: async () => {
+      const useLocal = getUseLocalDatabase();
+      if (!useLocal && isRealSupabase) {
+        try {
+          const client = await getRealSupabaseClient();
+          if (client) return await client.auth.getUser();
+        } catch (err) {
+          console.warn("Supabase getUser error:", err);
+        }
+      }
       const user = localDB.getAdminUser();
       if (user) {
         return { data: { user }, error: null };
@@ -675,7 +761,15 @@ const mockSupabaseClient = {
       return { data: { user: null }, error: { message: "No active session" } };
     },
     onAuthStateChange: (callback: any) => {
-      // Listen to session changes
+      let realUnsub: (() => void) | null = null;
+      if (isRealSupabase && !getUseLocalDatabase()) {
+        getRealSupabaseClient().then(client => {
+          if (client) {
+            const { data } = client.auth.onAuthStateChange(callback);
+            realUnsub = data?.subscription?.unsubscribe;
+          }
+        }).catch(() => {});
+      }
       const handler = () => {
         const user = localDB.getAdminUser();
         const sessionStr = customAuthStorage.getItem("mi_admin_session");
@@ -688,12 +782,12 @@ const mockSupabaseClient = {
         callback(user ? "SIGNED_IN" : "SIGNED_OUT", session);
       };
       window.addEventListener("mi_auth_change", handler);
-      // Initial trigger
       handler();
       return {
         data: {
           subscription: {
             unsubscribe: () => {
+              if (realUnsub) realUnsub();
               window.removeEventListener("mi_auth_change", handler);
             }
           }
@@ -701,10 +795,32 @@ const mockSupabaseClient = {
       };
     },
     updateUser: async ({ password }: any) => {
+      const useLocal = getUseLocalDatabase();
+      if (!useLocal && isRealSupabase) {
+        try {
+          const client = await getRealSupabaseClient();
+          if (client) return await client.auth.updateUser({ password });
+        } catch (err) {
+          console.warn("Supabase updateUser error:", err);
+        }
+      }
       if (password) {
         await localDB.setAdminPassword(password);
       }
       return { data: { user: localDB.getAdminUser() }, error: null };
+    },
+    resetPasswordForEmail: async (email: string, options?: any) => {
+      const useLocal = getUseLocalDatabase();
+      if (!useLocal && isRealSupabase) {
+        try {
+          const client = await getRealSupabaseClient();
+          if (client) return await client.auth.resetPasswordForEmail(email, options);
+        } catch (err) {
+          console.warn("Supabase resetPasswordForEmail error:", err);
+          return { data: null, error: err };
+        }
+      }
+      return { data: {}, error: null };
     }
   },
   from: (tableName: string) => {
@@ -713,31 +829,24 @@ const mockSupabaseClient = {
   storage: {
     from: (bucketName: string) => ({
       upload: async (filePath: string, file: any, options?: any) => {
+        const useLocal = getUseLocalDatabase();
+        if (!useLocal && isRealSupabase) {
+          try {
+            const client = await getRealSupabaseClient();
+            if (client) return await client.storage.from(bucketName).upload(filePath, file, options);
+          } catch (err) {
+            console.warn("Supabase storage upload error:", err);
+          }
+        }
         return { data: { path: filePath }, error: null };
       },
       getPublicUrl: (filePath: string) => {
+        if (isRealSupabase && !getUseLocalDatabase()) {
+          return { data: { publicUrl: `${supabaseUrl}/storage/v1/object/public/${bucketName}/${filePath}` } };
+        }
         return { data: { publicUrl: filePath } };
       }
     })
-  }
-} as any;
-
-// Explicit delegate wrapper instead of dynamic Proxy to guarantee 100% stable function binding and type correctness in any runtime
-export const supabase = {
-  get auth() {
-    const useLocal = getUseLocalDatabase();
-    const client = useLocal ? mockSupabaseClient : (realSupabaseClient || mockSupabaseClient);
-    return client.auth;
-  },
-  get storage() {
-    const useLocal = getUseLocalDatabase();
-    const client = useLocal ? mockSupabaseClient : (realSupabaseClient || mockSupabaseClient);
-    return client.storage;
-  },
-  from(tableName: string) {
-    const useLocal = getUseLocalDatabase();
-    const client = useLocal ? mockSupabaseClient : (realSupabaseClient || mockSupabaseClient);
-    return client.from(tableName);
   }
 };
 

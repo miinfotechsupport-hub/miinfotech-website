@@ -953,10 +953,10 @@ function getFactualExperienceClause(
   const remarks: string[] = [];
 
   if (hasNeat) {
-    remarks.push("neat installation and clean setup");
+    remarks.push("neat installation and tidy setup");
   }
   if (hasCommunication) {
-    remarks.push("clear communication and helpful guidance");
+    remarks.push("clear communication");
   }
   if (hasCourteous) {
     remarks.push("polite and courteous service");
@@ -965,14 +965,14 @@ function getFactualExperienceClause(
     remarks.push("prompt response and timely service");
   }
   if (hasProfessional) {
-    remarks.push("professional workmanship throughout");
+    remarks.push("professional workmanship");
   }
 
   if (remarks.length > 0) {
     if (remarks.length === 1) {
-      return `Appreciate the ${remarks[0]}.`;
+      return `Appreciate their ${remarks[0]}.`;
     }
-    return `Appreciate the ${remarks[0]} and ${remarks[1]}.`;
+    return `Appreciate their ${remarks[0]} and ${remarks[1]}.`;
   }
 
   if (hasResolved) {
@@ -1034,6 +1034,151 @@ export function validateReviewText(
   };
 }
 
+function getWorkForServiceKey(key: string, rawWork: string[]): string {
+  // Find items in rawWork that match this service key
+  const matching = rawWork.filter(w => {
+    const low = w.toLowerCase();
+    switch (key) {
+      case "cctv": return low.includes("cctv") || low.includes("camera") || low.includes("dvr") || low.includes("nvr") || low.includes("viewing");
+      case "computer": return low.includes("computer") || low.includes("windows") || low.includes("software") || low.includes("formatting") || low.includes("hardware") || low.includes("desktop");
+      case "laptop": return low.includes("laptop") || low.includes("ssd") || low.includes("ram") || low.includes("cleaning");
+      case "printer": return low.includes("printer") || low.includes("cartridge") || low.includes("ink") || low.includes("toner");
+      case "networking": return low.includes("lan") || low.includes("wi-fi") || low.includes("wifi") || low.includes("router") || low.includes("switch") || low.includes("network");
+      case "ups": return low.includes("ups") || low.includes("inverter") || low.includes("battery");
+      case "biometric": return low.includes("biometric") || low.includes("attendance") || low.includes("fingerprint") || low.includes("face") || low.includes("access");
+      case "school_it": return low.includes("school") || low.includes("lab") || low.includes("projector");
+      case "intercom": return low.includes("intercom") || low.includes("epabx") || low.includes("phone");
+      case "fire_alarm": return low.includes("fire") || low.includes("smoke") || low.includes("alarm");
+      case "p2p_wireless": return low.includes("wireless") || low.includes("p2p") || low.includes("bridge");
+      default: return false;
+    }
+  });
+
+  if (matching.length > 0) {
+    const formatted = matching.map(formatWorkItem).filter(Boolean);
+    if (formatted.length === 1) return formatted[0];
+    return `${formatted[0]} and ${formatted[1]}`;
+  }
+
+  // Natural fallback action when no specific sub-work was selected
+  switch (key) {
+    case "cctv": return "CCTV camera setup and configuration";
+    case "computer": return "computer diagnosis and repair";
+    case "laptop": return "laptop repair and service";
+    case "printer": return "printer servicing and test prints";
+    case "networking": return "Wi-Fi setup and network cabling";
+    case "ups": return "UPS service and battery check";
+    case "biometric": return "biometric attendance system installation";
+    case "school_it": return "school computer lab setup";
+    case "intercom": return "intercom system and extension cabling";
+    case "fire_alarm": return "fire alarm and detector setup";
+    case "p2p_wireless": return "P2P wireless bridge configuration";
+    default: return "technical troubleshooting";
+  }
+}
+
+function generateMultiServiceReviewNarrative(params: {
+  serviceKeys: string[];
+  rawServices: string[];
+  servicePhrase: string;
+  locPhrase: string;
+  rawWork: string[];
+  tone: ReviewTone;
+  variationIndex: number;
+  rawExperiences: string[];
+  customNote?: string;
+}): string {
+  const { serviceKeys, servicePhrase, locPhrase, rawWork, tone, variationIndex, rawExperiences, customNote } = params;
+  const experienceClause = getFactualExperienceClause(rawExperiences, tone, variationIndex);
+
+  const k1 = serviceKeys[0];
+  const k2 = serviceKeys[1];
+  const work1 = getWorkForServiceKey(k1, rawWork);
+  const work2 = getWorkForServiceKey(k2, rawWork);
+
+  const cycle = variationIndex % 4;
+
+  if (tone === "concise") {
+    switch (cycle) {
+      case 0: {
+        const p1 = `Dependable ${servicePhrase} by MIINFOTECH ${locPhrase}.`;
+        const p2 = `Prompt execution on ${work1} and ${work2}, with complete verification before leaving.`;
+        return [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
+      }
+      case 1: {
+        const p1 = `Got our ${servicePhrase} completed from MIINFOTECH ${locPhrase}.`;
+        const p2 = `The technician handled the ${work1} and ${work2} cleanly, and both are running smoothly.`;
+        return [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
+      }
+      case 2: {
+        const p1 = `MIINFOTECH completed our ${servicePhrase} ${locPhrase} on time.`;
+        const p2 = `Handled the ${work1} along with ${work2}, and tested everything before handover.`;
+        return [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
+      }
+      default: {
+        const p1 = `Quick and neat ${servicePhrase} by MIINFOTECH ${locPhrase}.`;
+        const p2 = `Took care of ${work1} and ${work2} efficiently with proper testing.`;
+        return [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
+      }
+    }
+  } else if (tone === "technical") {
+    switch (cycle) {
+      case 0: {
+        const p1 = `MIINFOTECH completed our ${servicePhrase} ${locPhrase} systematically.`;
+        const p2 = `The technician executed the ${work1} and carried out full ${work2}.`;
+        const p3 = `Both systems were configured cleanly and verified on-site before sign-off.`;
+        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+      }
+      case 1: {
+        const p1 = `Engaged MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
+        const p2 = `They handled the ${work1} followed by complete ${work2} with thorough diagnosis.`;
+        const p3 = `All hardware and software settings were checked before handover.`;
+        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+      }
+      case 2: {
+        const p1 = `Thorough technical work by MIINFOTECH ${locPhrase} on our ${servicePhrase}.`;
+        const p2 = `The team completed ${work1} as well as ${work2} with methodical configuration.`;
+        const p3 = `Everything was tested on-site for stable performance.`;
+        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+      }
+      default: {
+        const p1 = `Had our ${servicePhrase} attended to by MIINFOTECH ${locPhrase}.`;
+        const p2 = `The technician completed the ${work1} and properly configured the ${work2}.`;
+        const p3 = `Full testing was done before leaving, with clear technical explanation.`;
+        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+      }
+    }
+  } else {
+    // Courteous / Default
+    switch (cycle) {
+      case 0: {
+        const p1 = `MIINFOTECH handled our ${servicePhrase} ${locPhrase}.`;
+        const p2 = `The technician took care of our ${work1} and also completed the ${work2} neatly.`;
+        const p3 = `Both were tested thoroughly and are working perfectly.`;
+        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+      }
+      case 1: {
+        const p1 = `Had a very good experience with MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
+        const p2 = `They attended to the ${work1} and resolved the ${work2} without any delay.`;
+        const p3 = `Everything was explained clearly and tested before handover.`;
+        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+      }
+      case 2: {
+        const p1 = `Contacted MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
+        const p2 = `The team completed the ${work1} and sorted out our ${work2} in a single visit.`;
+        const p3 = `Both systems were checked and confirmed working before they left.`;
+        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+      }
+      default: {
+        const p1 = `Very pleased with the ${servicePhrase} provided by MIINFOTECH ${locPhrase}.`;
+        const p2 = `The technician handled our ${work1} with care and configured the ${work2} properly.`;
+        const p3 = `Everything was tested before sign-off, and the team was polite throughout.`;
+        return [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+      }
+    }
+  }
+}
+
 /**
  * Guaranteed multi-service draft builder used when a variation needs complete representation
  */
@@ -1055,6 +1200,64 @@ function generateGuaranteedMultiServiceReview(params: {
   const p4 = getFactualExperienceClause(rawExperiences, tone, variationIndex);
 
   return [p1, p2, customNote, p3, p4].filter(Boolean).join(" ");
+}
+
+export interface ReviewDraftOption {
+  id: string;
+  title: string;
+  tone: ReviewTone;
+  tag: string;
+  text: string;
+  wordCount: number;
+}
+
+export function generateReviewDraftOptions(input: ReviewDraftInput): ReviewDraftOption[] {
+  const baseIndex = Math.abs(input.variationIndex || 0);
+
+  const draft1Text = generateDeterministicReview({
+    ...input,
+    tone: "courteous",
+    variationIndex: baseIndex
+  });
+
+  const draft2Text = generateDeterministicReview({
+    ...input,
+    tone: "technical",
+    variationIndex: baseIndex + 1
+  });
+
+  const draft3Text = generateDeterministicReview({
+    ...input,
+    tone: "concise",
+    variationIndex: baseIndex + 2
+  });
+
+  return [
+    {
+      id: "draft-balanced",
+      title: "Draft 1: Recommended",
+      tone: "courteous",
+      tag: "Natural & Balanced",
+      text: draft1Text,
+      wordCount: draft1Text.trim().split(/\s+/).filter(Boolean).length
+    },
+    {
+      id: "draft-technical",
+      title: "Draft 2: Detailed",
+      tone: "technical",
+      tag: "Technical & Verification",
+      text: draft2Text,
+      wordCount: draft2Text.trim().split(/\s+/).filter(Boolean).length
+    },
+    {
+      id: "draft-crisp",
+      title: "Draft 3: Quick",
+      tone: "concise",
+      tag: "Short & Crisp",
+      text: draft3Text,
+      wordCount: draft3Text.trim().split(/\s+/).filter(Boolean).length
+    }
+  ];
 }
 
 export function generateDeterministicReview(input: ReviewDraftInput): string {
@@ -1133,7 +1336,23 @@ export function generateDeterministicReview(input: ReviewDraftInput): string {
   // 6. Experience Clause (Factual only, no invented claims)
   const experienceClause = getFactualExperienceClause(rawExperiences, tone, variationIndex);
 
-  // 7. Tone-Aware & Variation-Aware Review Generation
+  // Special multi-service branch: If 2 or more services were chosen, use the dedicated multi-service narrative
+  if (serviceKeys.length >= 2) {
+    const multiReview = generateMultiServiceReviewNarrative({
+      serviceKeys,
+      rawServices,
+      servicePhrase,
+      locPhrase,
+      rawWork,
+      tone,
+      variationIndex,
+      rawExperiences,
+      customNote
+    });
+    return multiReview.replace(/\s+/g, " ").trim();
+  }
+
+  // 7. Tone-Aware & Variation-Aware Review Generation (Single Service)
   let reviewText = "";
 
   if (tone === "concise") {

@@ -23,6 +23,8 @@ import {
   CUSTOMER_REVIEW_SERVICES,
   CustomerServiceItem,
   generateDeterministicReview,
+  generateReviewDraftOptions,
+  ReviewDraftOption,
   ReviewDraftInput,
   ReviewTone
 } from "../lib/reviewConfig";
@@ -63,6 +65,7 @@ export default function ReviewAssistant() {
 
   // Review Draft State
   const [variationIndex, setVariationIndex] = useState<number>(0);
+  const [selectedDraftId, setSelectedDraftId] = useState<string>("draft-balanced");
   const [reviewDraft, setReviewDraft] = useState<string>("");
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -124,8 +127,8 @@ export default function ReviewAssistant() {
     }
   };
 
-  // Generate Review Draft whenever inputs change or user asks for new phrasing
-  const generatedText = useMemo(() => {
+  // Generate 3 curated Review Draft Options whenever inputs change or user asks for new phrasing
+  const draftOptions: ReviewDraftOption[] = useMemo(() => {
     const mainServiceNames = selectedServices.map((s) => s.name);
     const draftInput: ReviewDraftInput = {
       rating,
@@ -142,7 +145,7 @@ export default function ReviewAssistant() {
       variationIndex,
       tone
     };
-    return generateDeterministicReview(draftInput);
+    return generateReviewDraftOptions(draftInput);
   }, [
     rating,
     selectedServices,
@@ -154,10 +157,13 @@ export default function ReviewAssistant() {
     tone
   ]);
 
-  // Keep draft text synced with generatedText unless customer explicitly edits it
+  // Keep draft text synced with selected option
   useEffect(() => {
-    setReviewDraft(generatedText);
-  }, [generatedText]);
+    const current = draftOptions.find((d) => d.id === selectedDraftId) || draftOptions[0];
+    if (current) {
+      setReviewDraft(current.text);
+    }
+  }, [draftOptions, selectedDraftId]);
 
   // Copy helper
   const handleCopyReview = async () => {
@@ -574,10 +580,10 @@ export default function ReviewAssistant() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-                  <span>Your Review Draft is Ready!</span>
+                  <span>Your Review Drafts are Ready!</span>
                 </h2>
                 <p className="text-slate-400 text-xs sm:text-sm mt-0.5">
-                  Review and edit your draft below. You can tweak any wording before posting to Google.
+                  We've prepared 3 draft options based on your selections. Choose one to edit or copy directly.
                 </p>
               </div>
 
@@ -660,6 +666,100 @@ export default function ReviewAssistant() {
               </div>
             </div>
 
+            {/* 3 Curated Draft Options Grid */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>Choose Your Preferred Review Draft</span>
+                </span>
+                <button
+                  type="button"
+                  id="regenerate-variations-btn"
+                  onClick={() => setVariationIndex((prev) => prev + 3)}
+                  className="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 font-medium cursor-pointer transition-colors"
+                >
+                  <RotateCw className="w-3.5 h-3.5" />
+                  <span>Try New Variations</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                {draftOptions.map((opt) => {
+                  const isSelected = opt.id === selectedDraftId;
+                  return (
+                    <div
+                      key={opt.id}
+                      id={`draft-card-${opt.id}`}
+                      onClick={() => {
+                        setSelectedDraftId(opt.id);
+                        setReviewDraft(opt.text);
+                      }}
+                      className={`relative flex flex-col justify-between rounded-2xl p-4 transition-all cursor-pointer border ${
+                        isSelected
+                          ? "bg-slate-900 border-blue-500 shadow-lg shadow-blue-500/10 ring-1 ring-blue-500"
+                          : "bg-slate-950/80 hover:bg-slate-900/80 border-slate-800 hover:border-slate-700"
+                      }`}
+                    >
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-bold text-white">{opt.title}</span>
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                              {opt.tag}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-slate-400 font-medium">
+                            {opt.wordCount} words
+                          </span>
+                        </div>
+
+                        <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
+                          "{opt.text}"
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-800/60 text-xs">
+                        <span
+                          className={`inline-flex items-center gap-1 font-semibold ${
+                            isSelected ? "text-blue-400" : "text-slate-400"
+                          }`}
+                        >
+                          {isSelected ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
+                              <span>Selected</span>
+                            </>
+                          ) : (
+                            <span>Tap to Select</span>
+                          )}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            setSelectedDraftId(opt.id);
+                            setReviewDraft(opt.text);
+                            try {
+                              await navigator.clipboard.writeText(opt.text);
+                              showToast(`Copied ${opt.title} to clipboard!`);
+                            } catch {
+                              showToast("Failed to copy. You can edit and copy below.");
+                            }
+                          }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 font-medium cursor-pointer transition-colors"
+                        >
+                          <Copy className="w-3 h-3" />
+                          <span>Copy</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Tone Selector Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-2.5 bg-slate-950/70 border border-slate-800/80 rounded-2xl p-2.5">
               <span className="text-xs text-slate-400 font-medium px-1 flex items-center gap-1.5">
@@ -693,7 +793,7 @@ export default function ReviewAssistant() {
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-300 font-semibold flex items-center gap-1.5">
                   <PenTool className="w-3.5 h-3.5 text-blue-400" />
-                  <span>Review Draft (Click to edit directly)</span>
+                  <span>Selected Review Draft (Click to edit directly)</span>
                 </span>
                 <span className="text-slate-400">
                   {wordCount} words • <span className="text-emerald-400">40–70 words ideal</span>
