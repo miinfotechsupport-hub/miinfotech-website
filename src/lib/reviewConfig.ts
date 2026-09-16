@@ -6,7 +6,11 @@ import {
   Network, 
   BatteryCharging, 
   Fingerprint, 
-  Wrench 
+  Wrench,
+  GraduationCap,
+  PhoneCall,
+  ShieldAlert,
+  Wifi
 } from "lucide-react";
 
 export const GOOGLE_REVIEW_URL = "https://search.google.com/local/writereview?placeid=ChIJ4yWvawOvsk8RQZn4nX_0Wz0&source=g.page.m.ia._&laa=nmx-review-solicitation-ia2";
@@ -17,6 +21,14 @@ export const REVIEW_PAGE_URL = "https://miinfotech.netlify.app/review";
 // ============================================================================
 
 export type CustomerRelationship = "new" | "existing" | "longterm";
+
+export interface CustomerServiceItem {
+  id: string;
+  name: string;
+  shortName: string;
+  icon: any;
+  workOptions: string[];
+}
 
 export interface ServiceCategoryOption {
   id: string;
@@ -29,18 +41,208 @@ export interface ServiceCategoryOption {
   featureOptions: Record<string, string[]>; // e.g. "installation": ["2MP", "5MP", ...], "default": [...]
 }
 
-export interface ReviewDraftInput {
+export type ReviewTone = "courteous" | "technical" | "concise";
+
+export interface ReviewGenerationContext {
+  selectedServices: string[];
+  selectedWork: string[];
+  experienceSelections: string[];
+  customerNotes?: string;
+  tone?: ReviewTone;
+  location?: string;
+  rating?: number;
+  variationIndex?: number;
+}
+
+export interface ReviewDraftInput extends Partial<ReviewGenerationContext> {
   rating?: number;
   serviceCategoryIds?: string[];
   serviceNames?: string[];
   mainServices?: string[];
   cameraTypes?: string[];
   importantFeatures?: string[];
-  experiences: string[];
+  experiences?: string[];
   location?: string;
   customNote?: string;
   variationIndex?: number;
+  tone?: ReviewTone;
 }
+
+// ============================================================================
+// 12 CANONICAL CUSTOMER REVIEW SERVICES & WORK OPTIONS
+// ============================================================================
+
+export const CUSTOMER_REVIEW_SERVICES: CustomerServiceItem[] = [
+  {
+    id: "cctv",
+    name: "CCTV",
+    shortName: "CCTV",
+    icon: Video,
+    workOptions: [
+      "CCTV Installation",
+      "CCTV Camera Repair",
+      "DVR/NVR Setup",
+      "Camera Replacement",
+      "Remote Viewing / Mobile Setup",
+      "CCTV Maintenance",
+      "Camera Configuration",
+      "Other"
+    ]
+  },
+  {
+    id: "computer",
+    name: "Computer",
+    shortName: "Computer",
+    icon: Monitor,
+    workOptions: [
+      "Computer Repair",
+      "Windows Installation",
+      "Software Installation",
+      "Hardware Repair",
+      "Formatting",
+      "System Upgrade",
+      "Virus / Performance Troubleshooting",
+      "Other"
+    ]
+  },
+  {
+    id: "laptop",
+    name: "Laptop",
+    shortName: "Laptop",
+    icon: Laptop,
+    workOptions: [
+      "Laptop Repair",
+      "Windows Installation",
+      "SSD Upgrade",
+      "RAM Upgrade",
+      "Laptop Cleaning",
+      "Software Installation",
+      "Hardware Troubleshooting",
+      "Other"
+    ]
+  },
+  {
+    id: "printer",
+    name: "Printer",
+    shortName: "Printer",
+    icon: Printer,
+    workOptions: [
+      "Printer Repair",
+      "Printer Installation",
+      "Printer Setup",
+      "Ink/Cartridge Related Service",
+      "Network Printer Setup",
+      "Printer Maintenance",
+      "Other"
+    ]
+  },
+  {
+    id: "networking",
+    name: "Networking",
+    shortName: "Networking",
+    icon: Network,
+    workOptions: [
+      "LAN Installation",
+      "Wi-Fi Setup",
+      "Network Troubleshooting",
+      "Router Configuration",
+      "Switch Installation",
+      "Office Networking",
+      "Other"
+    ]
+  },
+  {
+    id: "ups",
+    name: "UPS",
+    shortName: "UPS",
+    icon: BatteryCharging,
+    workOptions: [
+      "UPS Service",
+      "UPS Battery Replacement",
+      "UPS Installation",
+      "UPS Troubleshooting",
+      "Other"
+    ]
+  },
+  {
+    id: "biometric",
+    name: "Biometric",
+    shortName: "Biometric",
+    icon: Fingerprint,
+    workOptions: [
+      "Biometric Installation",
+      "Attendance Setup",
+      "Software & Reports",
+      "Fingerprint / Face Setup",
+      "Access Control & Lock",
+      "Other"
+    ]
+  },
+  {
+    id: "school_it",
+    name: "School IT",
+    shortName: "School IT",
+    icon: GraduationCap,
+    workOptions: [
+      "School Computer Lab Setup",
+      "Lab Networking & Wi-Fi",
+      "Projector & Audio Setup",
+      "System Maintenance & Troubleshooting",
+      "Other"
+    ]
+  },
+  {
+    id: "intercom",
+    name: "Intercom / EPABX",
+    shortName: "Intercom / EPABX",
+    icon: PhoneCall,
+    workOptions: [
+      "EPABX Intercom Installation",
+      "Cabling & Extensions",
+      "Phone Line Troubleshooting",
+      "Intercom Programming & Setup",
+      "Other"
+    ]
+  },
+  {
+    id: "fire_alarm",
+    name: "Fire Alarm",
+    shortName: "Fire Alarm",
+    icon: ShieldAlert,
+    workOptions: [
+      "Fire Alarm System Installation",
+      "Smoke Detector Setup & Testing",
+      "Control Panel Wiring",
+      "Alarm System Maintenance",
+      "Other"
+    ]
+  },
+  {
+    id: "p2p_wireless",
+    name: "P2P Wireless",
+    shortName: "P2P Wireless",
+    icon: Wifi,
+    workOptions: [
+      "Long-Range Wireless Bridge Setup",
+      "Point-to-Point Antenna Alignment",
+      "Outdoor Wireless Link Configuration",
+      "Wireless Network Troubleshooting",
+      "Other"
+    ]
+  },
+  {
+    id: "other",
+    name: "Other",
+    shortName: "Other",
+    icon: Wrench,
+    workOptions: [
+      "General Technical Service",
+      "On-Site Troubleshooting",
+      "Hardware Repair",
+      "Other Work"
+    ]
+  }
+];
 
 // ============================================================================
 // SIMPLIFIED, PROGRESSIVE SERVICE CONFIGURATION (CUSTOMER-CENTRIC)
@@ -483,357 +685,571 @@ function formatCustomNote(note?: string): string {
 // Follows the 40–70 word standard (60–90 words for multi-service).
 // ============================================================================
 
+// ============================================================================
+// CANONICAL SERVICE RECOGNITION & DETECTION PATTERNS
+// ============================================================================
+
+export interface ReviewGenerationContext {
+  services: string[];
+  workCompleted: string[];
+  experience: string[];
+  location?: string;
+  customerNotes?: string;
+  rating?: number;
+  tone?: ReviewTone;
+  variationIndex?: number;
+}
+
+export const SERVICE_KEYWORD_PATTERNS: Record<string, RegExp[]> = {
+  cctv: [/cctv/i, /camera/i, /surveillance/i, /dvr/i, /nvr/i],
+  computer: [/computer/i, /\bpc\b/i, /desktop/i, /windows/i, /software/i, /formatting/i],
+  laptop: [/laptop/i, /\bssd\b/i, /\bram\b/i],
+  printer: [/printer/i, /cartridge/i, /\bink\b/i],
+  networking: [/network/i, /networking/i, /\blan\b/i, /wi-fi/i, /wifi/i, /router/i, /switch/i],
+  ups: [/\bups\b/i, /inverter/i, /battery/i],
+  biometric: [/biometric/i, /attendance/i, /fingerprint/i, /access control/i],
+  school_it: [/school/i, /computer lab/i, /projector/i],
+  intercom: [/intercom/i, /epabx/i, /phone line/i],
+  fire_alarm: [/fire alarm/i, /smoke detector/i, /alarm panel/i],
+  p2p_wireless: [/wireless bridge/i, /p2p/i, /wireless link/i, /antenna/i],
+  other: [/technical service/i, /troubleshooting/i]
+};
+
+// Canonical service key extractor
+export function getServiceKey(raw: string): string {
+  const s = raw.toLowerCase().trim();
+  if (s.includes("cctv") || s.includes("camera") || s.includes("surveillance")) return "cctv";
+  if (s.includes("laptop")) return "laptop";
+  if (s.includes("computer") || s.includes("desktop") || s.includes("pc")) return "computer";
+  if (s.includes("printer") || s.includes("cartridge")) return "printer";
+  if (s.includes("networking") || s.includes("lan") || s.includes("wifi") || s.includes("wi-fi") || s.includes("router")) return "networking";
+  if (s.includes("ups") || s.includes("inverter") || s.includes("battery")) return "ups";
+  if (s.includes("biometric") || s.includes("attendance")) return "biometric";
+  if (s.includes("school") || s.includes("lab")) return "school_it";
+  if (s.includes("intercom") || s.includes("epabx")) return "intercom";
+  if (s.includes("fire") || s.includes("alarm") || s.includes("smoke")) return "fire_alarm";
+  if (s.includes("p2p") || s.includes("wireless") || s.includes("bridge")) return "p2p_wireless";
+  return "other";
+}
+
+function getSingleServicePhrase(key: string): string {
+  switch (key) {
+    case "cctv": return "CCTV installation";
+    case "computer": return "computer repair and service";
+    case "laptop": return "laptop repair and service";
+    case "printer": return "printer service";
+    case "networking": return "LAN networking and Wi-Fi setup";
+    case "ups": return "UPS and inverter service";
+    case "biometric": return "biometric attendance system installation";
+    case "school_it": return "school computer lab and IT setup";
+    case "intercom": return "intercom and EPABX installation";
+    case "fire_alarm": return "fire alarm system installation";
+    case "p2p_wireless": return "P2P wireless bridge setup";
+    default: return "technical service";
+  }
+}
+
+function getServiceNaturalLabel(key: string): string {
+  switch (key) {
+    case "cctv": return "CCTV installation";
+    case "computer": return "computer repair";
+    case "laptop": return "laptop repair";
+    case "printer": return "printer service";
+    case "networking": return "LAN networking";
+    case "ups": return "UPS service";
+    case "biometric": return "biometric attendance";
+    case "school_it": return "school IT lab";
+    case "intercom": return "intercom installation";
+    case "fire_alarm": return "fire alarm setup";
+    case "p2p_wireless": return "P2P wireless bridge";
+    default: return "technical service";
+  }
+}
+
+export function getServicePhrase(keys: string[], rawNames: string[]): string {
+  if (keys.length === 0) {
+    return "doorstep IT service";
+  }
+
+  if (keys.length === 1) {
+    return getSingleServicePhrase(keys[0]);
+  }
+
+  if (keys.length === 2) {
+    const k1 = keys[0];
+    const k2 = keys[1];
+
+    if ((k1 === "computer" && k2 === "printer") || (k1 === "printer" && k2 === "computer")) {
+      return "computer and printer service";
+    }
+    if ((k1 === "cctv" && k2 === "computer") || (k1 === "computer" && k2 === "cctv")) {
+      return "CCTV installation and computer service";
+    }
+    if ((k1 === "cctv" && k2 === "printer") || (k1 === "printer" && k2 === "cctv")) {
+      return "CCTV installation and printer service";
+    }
+    if ((k1 === "laptop" && k2 === "printer") || (k1 === "printer" && k2 === "laptop")) {
+      return "laptop and printer repair";
+    }
+    if ((k1 === "networking" && k2 === "cctv") || (k1 === "cctv" && k2 === "networking")) {
+      return "networking and CCTV installation";
+    }
+    if ((k1 === "ups" && k2 === "computer") || (k1 === "computer" && k2 === "ups")) {
+      return "UPS setup and computer service";
+    }
+    if ((k1 === "biometric" && k2 === "computer") || (k1 === "computer" && k2 === "biometric")) {
+      return "biometric attendance and computer systems";
+    }
+    if ((k1 === "laptop" && k2 === "computer") || (k1 === "computer" && k2 === "laptop")) {
+      return "computer and laptop service";
+    }
+    if ((k1 === "school_it" && k2 === "cctv") || (k1 === "cctv" && k2 === "school_it")) {
+      return "school IT lab and CCTV setup";
+    }
+    if ((k1 === "intercom" && k2 === "cctv") || (k1 === "cctv" && k2 === "intercom")) {
+      return "intercom and CCTV installation";
+    }
+    if ((k1 === "fire_alarm" && k2 === "cctv") || (k1 === "cctv" && k2 === "fire_alarm")) {
+      return "fire alarm and CCTV installation";
+    }
+
+    const label1 = getServiceNaturalLabel(k1);
+    const label2 = getServiceNaturalLabel(k2);
+    return `${label1} and ${label2}`;
+  }
+
+  // 3 Services: Combine naturally with commas and 'and'
+  if (keys.length === 3) {
+    const hasCctv = keys.includes("cctv");
+    const hasComp = keys.includes("computer");
+    const hasPrint = keys.includes("printer");
+    const hasNet = keys.includes("networking");
+    const hasUps = keys.includes("ups");
+
+    if (hasCctv && hasComp && hasPrint) {
+      return "CCTV installation, computer repair and printer service";
+    }
+    if (hasNet && hasCctv && hasUps) {
+      return "LAN networking, CCTV installation and UPS service";
+    }
+
+    const l1 = getServiceNaturalLabel(keys[0]);
+    const l2 = getServiceNaturalLabel(keys[1]);
+    const l3 = getServiceNaturalLabel(keys[2]);
+    return `${l1}, ${l2} and ${l3}`;
+  }
+
+  // 4+ Services
+  const labels = keys.map(getServiceNaturalLabel);
+  return `${labels.slice(0, -1).join(", ")} and ${labels[labels.length - 1]}`;
+}
+
+export function formatWorkItem(item: string): string {
+  const s = item.trim();
+  const low = s.toLowerCase();
+
+  // Computer options
+  if (low === "computer repair" || low.includes("computer repair")) return "computer repair";
+  if (low === "windows installation" || low.includes("windows installation")) return "Windows installation";
+  if (low === "software installation" || low.includes("software installation")) return "software installation";
+  if (low === "hardware repair" || low.includes("hardware repair")) return "hardware repair";
+  if (low === "formatting" || low.includes("formatting")) return "system formatting";
+  if (low === "system upgrade" || low.includes("system upgrade")) return "system upgrade";
+  if (low.includes("virus") || low.includes("performance")) return "virus and performance troubleshooting";
+
+  // Laptop options
+  if (low === "laptop repair" || low.includes("laptop repair")) return "laptop repair";
+  if (low === "ssd upgrade" || low.includes("ssd")) return "SSD upgrade";
+  if (low === "ram upgrade" || low.includes("ram")) return "RAM upgrade";
+  if (low === "laptop cleaning" || low.includes("cleaning")) return "laptop cleaning";
+  if (low === "hardware troubleshooting" || low.includes("hardware troubleshooting")) return "hardware troubleshooting";
+
+  // Printer options
+  if (low.includes("network printer")) return "network printer setup";
+  if (low === "printer repair" || low.includes("printer repair")) return "printer repair";
+  if (low === "printer installation" || low.includes("printer installation")) return "printer installation";
+  if (low === "printer setup" || low.includes("printer setup")) return "printer setup";
+  if (low.includes("cartridge") || low.includes("ink")) return "cartridge and ink service";
+  if (low === "printer maintenance" || low.includes("printer maintenance")) return "printer maintenance";
+
+  // CCTV options
+  if (low === "cctv installation" || low.includes("cctv installation")) return "CCTV camera installation";
+  if (low.includes("camera repair") || low.includes("cctv repair")) return "CCTV camera repair";
+  if (low.includes("dvr") || low.includes("nvr")) return "DVR/NVR setup";
+  if (low.includes("camera replacement")) return "camera replacement";
+  if (low.includes("remote viewing") || low.includes("mobile setup")) return "remote mobile viewing setup";
+  if (low.includes("cctv maintenance")) return "CCTV maintenance";
+  if (low.includes("camera configuration") || low.includes("positioning")) return "camera configuration";
+
+  // Networking options
+  if (low === "lan installation" || low.includes("lan")) return "LAN cabling and installation";
+  if (low === "wi-fi setup" || low.includes("wi-fi") || low.includes("wifi")) return "Wi-Fi setup";
+  if (low.includes("network troubleshooting")) return "network troubleshooting";
+  if (low.includes("router")) return "router configuration";
+  if (low.includes("switch")) return "switch installation";
+  if (low.includes("office networking")) return "office networking";
+
+  // UPS options
+  if (low.includes("battery replacement") || low.includes("battery")) return "UPS battery replacement";
+  if (low === "ups installation" || low.includes("ups installation")) return "UPS installation";
+  if (low.includes("ups troubleshooting")) return "UPS troubleshooting";
+  if (low === "ups service" || low.includes("ups")) return "UPS service";
+
+  // Biometric options
+  if (low.includes("biometric installation")) return "biometric attendance system installation";
+  if (low === "attendance setup" || low.includes("attendance")) return "attendance setup";
+  if (low.includes("software & reports") || low.includes("reports")) return "attendance software setup";
+  if (low.includes("fingerprint") || low.includes("face")) return "fingerprint and face registration";
+  if (low.includes("access control") || low.includes("lock")) return "access control lock setup";
+
+  // School IT options
+  if (low.includes("school computer lab") || low.includes("lab setup")) return "school computer lab setup";
+  if (low.includes("lab networking")) return "lab networking and Wi-Fi";
+  if (low.includes("projector")) return "projector and audio setup";
+  if (low.includes("system maintenance")) return "lab system maintenance";
+
+  // Intercom options
+  if (low.includes("epabx") || low.includes("intercom installation")) return "EPABX intercom installation";
+  if (low.includes("cabling & extensions") || low.includes("extensions")) return "cabling and extensions";
+  if (low.includes("phone line")) return "phone line troubleshooting";
+  if (low.includes("intercom programming")) return "intercom programming";
+
+  // Fire Alarm options
+  if (low.includes("fire alarm")) return "fire alarm system installation";
+  if (low.includes("smoke detector")) return "smoke detector testing";
+  if (low.includes("control panel")) return "alarm panel wiring";
+  if (low.includes("alarm system maintenance")) return "alarm system maintenance";
+
+  // P2P Wireless options
+  if (low.includes("wireless bridge") || low.includes("long-range")) return "long-range wireless bridge setup";
+  if (low.includes("antenna alignment") || low.includes("p2p")) return "P2P antenna alignment";
+  if (low.includes("outdoor wireless")) return "outdoor wireless link configuration";
+  if (low.includes("wireless network troubleshooting")) return "wireless link troubleshooting";
+
+  // Other options
+  if (low === "other" || low === "other work" || low === "other camera") return "";
+  if (low.includes("troubleshooting") || low.includes("on-site")) return "on-site troubleshooting";
+  if (low.includes("technical service")) return "technical service";
+
+  return s.toLowerCase();
+}
+
+/**
+ * Strictly factual customer experience statement generator.
+ * Rule 15: NEVER invents claims (no "affordable prices", "best service", "100% satisfaction", "same-day service", "highly recommended").
+ */
+function getFactualExperienceClause(
+  rawExperiences: string[],
+  tone: ReviewTone,
+  variationIndex: number
+): string {
+  const hasPrompt = rawExperiences.some(e => /quick|prompt|fast|timely/i.test(e));
+  const hasNeat = rawExperiences.some(e => /neat|clean|tidy|cable/i.test(e));
+  const hasCommunication = rawExperiences.some(e => /communication|explained|clear/i.test(e));
+  const hasResolved = rawExperiences.some(e => /resolved|solved|diagnosis|fixed/i.test(e));
+  const hasCourteous = rawExperiences.some(e => /helpful|courteous|polite|friendly/i.test(e));
+  const hasProfessional = rawExperiences.some(e => /professional/i.test(e));
+
+  const remarks: string[] = [];
+
+  if (hasNeat) {
+    remarks.push("neat installation and clean setup");
+  }
+  if (hasCommunication) {
+    remarks.push("clear communication and helpful guidance");
+  }
+  if (hasCourteous) {
+    remarks.push("polite and courteous service");
+  }
+  if (hasPrompt) {
+    remarks.push("prompt response and timely service");
+  }
+  if (hasProfessional) {
+    remarks.push("professional workmanship throughout");
+  }
+
+  if (remarks.length > 0) {
+    if (remarks.length === 1) {
+      return `Appreciate the ${remarks[0]}.`;
+    }
+    return `Appreciate the ${remarks[0]} and ${remarks[1]}.`;
+  }
+
+  if (hasResolved) {
+    return "The reported issues were diagnosed and resolved properly.";
+  }
+
+  // Factual neutral closes that do NOT invent claims
+  if (tone === "technical") {
+    const opts = [
+      "Reliable technical expertise and dependable on-site assistance.",
+      "Methodical configuration and structured technical support.",
+      "Clear technical explanation and dependable local service."
+    ];
+    return opts[variationIndex % opts.length];
+  } else if (tone === "concise") {
+    const opts = [
+      "Dependable local service and clear handover.",
+      "Prompt and professional service throughout.",
+      "Good communication and dependable local support."
+    ];
+    return opts[variationIndex % opts.length];
+  } else {
+    const opts = [
+      "Clear communication and courteous service throughout.",
+      "Professional team and dependable local service.",
+      "Helpful guidance and reliable on-site support."
+    ];
+    return opts[variationIndex % opts.length];
+  }
+}
+
+/**
+ * Validation Guard
+ * Validates that all selected services have corresponding representation in the text.
+ */
+export function validateReviewText(
+  reviewText: string,
+  selectedServices: string[]
+): { isValid: boolean; missingServices: string[] } {
+  if (!selectedServices || selectedServices.length === 0) {
+    return { isValid: true, missingServices: [] };
+  }
+
+  const missing: string[] = [];
+  const text = reviewText.toLowerCase();
+
+  for (const rawService of selectedServices) {
+    const key = getServiceKey(rawService);
+    const patterns = SERVICE_KEYWORD_PATTERNS[key] || [new RegExp(rawService.toLowerCase(), "i")];
+    const isMatched = patterns.some((p) => p.test(text));
+    if (!isMatched) {
+      missing.push(rawService);
+    }
+  }
+
+  return {
+    isValid: missing.length === 0,
+    missingServices: missing
+  };
+}
+
+/**
+ * Guaranteed multi-service draft builder used when a variation needs complete representation
+ */
+function generateGuaranteedMultiServiceReview(params: {
+  servicePhrase: string;
+  locPhrase: string;
+  workClause: string;
+  tone: ReviewTone;
+  variationIndex: number;
+  rawExperiences: string[];
+  customNote?: string;
+}): string {
+  const { servicePhrase, locPhrase, workClause, tone, variationIndex, rawExperiences, customNote } = params;
+  const p1 = `MIINFOTECH completed our ${servicePhrase} ${locPhrase}.`;
+  const p2 = workClause ? `They handled ${workClause} with great care.` : "The work was completed cleanly.";
+  const p3 = tone === "technical"
+    ? "All equipment and settings were tested thoroughly before handover."
+    : "Everything was tested and verified before leaving.";
+  const p4 = getFactualExperienceClause(rawExperiences, tone, variationIndex);
+
+  return [p1, p2, customNote, p3, p4].filter(Boolean).join(" ");
+}
+
 export function generateDeterministicReview(input: ReviewDraftInput): string {
   const rating = input.rating ?? 5;
   const variationIndex = Math.abs(input.variationIndex || 0);
 
-  const mainServices = input.mainServices || [];
-  const workPerformed = input.importantFeatures || [];
-  const experiences = input.experiences || [];
-  const customNote = formatCustomNote(input.customNote);
+  // 1. Normalize Inputs
+  const rawServices: string[] = (input.selectedServices && input.selectedServices.length > 0)
+    ? input.selectedServices
+    : (input.mainServices && input.mainServices.length > 0)
+    ? input.mainServices
+    : (input.serviceNames || []);
 
-  // 1. Determine Location Mention (0–1 time, strictly natural)
+  const rawWork: string[] = (input.selectedWork && input.selectedWork.length > 0)
+    ? input.selectedWork
+    : (input.importantFeatures || []);
+
+  const rawExperiences: string[] = (input.experienceSelections && input.experienceSelections.length > 0)
+    ? input.experienceSelections
+    : (input.experiences || []);
+
+  const tone: ReviewTone = input.tone || "courteous";
+  const customNote = formatCustomNote(input.customerNotes || input.customNote);
+
+  // 2. Determine Location Mention (0–1 time, strictly natural)
   const isHassan = (input.location || "").toLowerCase().includes("hassan");
   const isOutskirts = (input.location || "").toLowerCase().includes("outskirts") || (input.location || "").toLowerCase().includes("nearby");
   const locPhrase = isHassan ? "in Hassan" : isOutskirts ? "in the Hassan area" : "";
 
-  // 2. Identify Primary Service Headline (Fact-locked based on Step 1 selection)
-  let primaryServiceSEO = "CCTV installation";
-  if (mainServices.length > 0) {
-    const firstMain = mainServices[0].toLowerCase();
-    if (firstMain.includes("installation")) primaryServiceSEO = "CCTV installation";
-    else if (firstMain.includes("repair") || firstMain.includes("service")) {
-      if (firstMain.includes("laptop")) primaryServiceSEO = "laptop repair";
-      else if (firstMain.includes("printer")) primaryServiceSEO = "printer service";
-      else if (firstMain.includes("computer")) primaryServiceSEO = "computer repair";
-      else primaryServiceSEO = "CCTV repair and maintenance";
-    }
-    else if (firstMain.includes("replacement") && firstMain.includes("camera")) primaryServiceSEO = "CCTV camera replacement";
-    else if (firstMain.includes("upgrade") || firstMain.includes("replacement")) primaryServiceSEO = "CCTV upgrade and replacement";
-    else if (firstMain.includes("dvr") || firstMain.includes("nvr")) primaryServiceSEO = "DVR/NVR setup";
-    else if (firstMain.includes("remote") || firstMain.includes("mobile")) primaryServiceSEO = "remote CCTV viewing setup";
-    else if (firstMain.includes("cabling")) primaryServiceSEO = "CCTV cabling";
-    else if (firstMain.includes("troubleshooting") || firstMain.includes("maintenance")) primaryServiceSEO = "CCTV maintenance and troubleshooting";
-    else if (firstMain.includes("configuration")) primaryServiceSEO = "CCTV configuration";
-    else if (firstMain.includes("laptop")) primaryServiceSEO = "laptop service";
-    else if (firstMain.includes("computer")) primaryServiceSEO = "computer service";
-    else if (firstMain.includes("printer")) primaryServiceSEO = "printer service";
-    else if (firstMain.includes("lan") || firstMain.includes("networking")) primaryServiceSEO = "LAN networking";
-    else if (firstMain.includes("wi-fi") || firstMain.includes("wifi")) primaryServiceSEO = "Wi-Fi setup";
-    else if (firstMain.includes("ups") || firstMain.includes("inverter")) primaryServiceSEO = "UPS/inverter service";
-    else if (firstMain.includes("biometric") || firstMain.includes("attendance")) primaryServiceSEO = "biometric attendance system installation";
-    else if (firstMain.includes("access control")) primaryServiceSEO = "access control installation";
-    else primaryServiceSEO = mainServices[0];
-  } else if (input.serviceNames && input.serviceNames.length > 0) {
-    const sName = input.serviceNames[0].toLowerCase();
-    if (sName.includes("cctv")) primaryServiceSEO = "CCTV service";
-    else if (sName.includes("laptop")) primaryServiceSEO = "laptop repair";
-    else if (sName.includes("computer")) primaryServiceSEO = "computer repair";
-    else if (sName.includes("printer")) primaryServiceSEO = "printer service";
-    else if (sName.includes("networking")) primaryServiceSEO = "LAN networking";
-    else if (sName.includes("ups")) primaryServiceSEO = "UPS/inverter service";
-    else if (sName.includes("biometric")) primaryServiceSEO = "biometric attendance system installation";
-  }
-
-  // 3. Extract Work Done Keywords (Fact-locked directly from Step 2 selections, strictly no invented details)
-  const workPhrases: string[] = [];
-  workPerformed.forEach(work => {
-    const wLow = work.toLowerCase();
-    if (wLow.includes("camera installation")) {
-      if (!workPhrases.includes("camera installation")) workPhrases.push("camera installation");
-    } else if (wLow.includes("camera replacement")) {
-      if (!workPhrases.includes("camera replacement")) workPhrases.push("camera replacement");
-    } else if (wLow.includes("positioning") || wLow.includes("adjustment")) {
-      if (!workPhrases.includes("camera positioning and alignment")) workPhrases.push("camera positioning and alignment");
-    } else if (wLow.includes("dvr / nvr installation") || wLow.includes("dvr / nvr setup")) {
-      if (!workPhrases.includes("DVR/NVR installation")) workPhrases.push("DVR/NVR installation");
-    } else if (wLow.includes("dvr / nvr configuration")) {
-      if (!workPhrases.includes("DVR/NVR configuration")) workPhrases.push("DVR/NVR configuration");
-    } else if (wLow.includes("hard disk") || wLow.includes("storage")) {
-      if (!workPhrases.includes("storage setup")) workPhrases.push("storage setup");
-    } else if (wLow.includes("cabling") || wLow.includes("cable")) {
-      if (!workPhrases.includes("cabling")) workPhrases.push("cabling");
-    } else if (wLow.includes("remote viewing") || wLow.includes("remote playback")) {
-      if (!workPhrases.includes("remote viewing setup")) workPhrases.push("remote viewing setup");
-    } else if (wLow.includes("mobile app")) {
-      if (!workPhrases.includes("mobile app configuration")) workPhrases.push("mobile app configuration");
-    } else if (wLow.includes("4g") || wLow.includes("sim")) {
-      if (!workPhrases.includes("4G connectivity")) workPhrases.push("4G connectivity");
-    } else if (wLow.includes("solar")) {
-      if (!workPhrases.includes("solar power setup")) workPhrases.push("solar power setup");
-    } else if (wLow.includes("two-way audio")) {
-      if (!workPhrases.includes("two-way audio configuration")) workPhrases.push("two-way audio configuration");
-    } else if (wLow.includes("audio") || wLow.includes("mic")) {
-      if (!workPhrases.includes("audio setup")) workPhrases.push("audio setup");
-    } else if (wLow.includes("camera configuration")) {
-      if (!workPhrases.includes("camera configuration")) workPhrases.push("camera configuration");
-    } else if (wLow.includes("recording configuration")) {
-      if (!workPhrases.includes("recording configuration")) workPhrases.push("recording configuration");
-    } else if (wLow.includes("night vision")) {
-      if (!workPhrases.includes("night vision configuration")) workPhrases.push("night vision configuration");
-    } else if (wLow.includes("network configuration") || wLow.includes("router")) {
-      if (!workPhrases.includes("network configuration")) workPhrases.push("network configuration");
-    } else if (wLow.includes("system testing") || wLow.includes("testing")) {
-      if (!workPhrases.includes("system testing")) workPhrases.push("system testing");
-    } else if (wLow.includes("camera issue resolved")) {
-      if (!workPhrases.includes("resolving camera issues")) workPhrases.push("resolving camera issues");
-    } else if (wLow.includes("dvr / nvr issue resolved")) {
-      if (!workPhrases.includes("resolving DVR/NVR issues")) workPhrases.push("resolving DVR/NVR issues");
-    } else if (wLow.includes("troubleshooting")) {
-      if (!workPhrases.includes("system troubleshooting")) workPhrases.push("system troubleshooting");
-    } else if (wLow.includes("ssd")) {
-      if (!workPhrases.includes("SSD upgrade")) workPhrases.push("SSD upgrade");
-    } else if (wLow.includes("ram")) {
-      if (!workPhrases.includes("RAM upgrade")) workPhrases.push("RAM upgrade");
-    } else if (wLow.includes("screen") || wLow.includes("display")) {
-      if (!workPhrases.includes("display replacement")) workPhrases.push("display replacement");
-    } else if (wLow.includes("battery")) {
-      if (!workPhrases.includes("battery replacement")) workPhrases.push("battery replacement");
-    } else if (wLow.includes("keyboard")) {
-      if (!workPhrases.includes("keyboard replacement")) workPhrases.push("keyboard replacement");
-    } else if (wLow.includes("windows") || wLow.includes("os")) {
-      if (!workPhrases.includes("OS installation")) workPhrases.push("OS installation");
-    } else if (wLow.includes("cartridge") || wLow.includes("refill")) {
-      if (!workPhrases.includes("cartridge service")) workPhrases.push("cartridge service");
-    } else if (wLow.includes("roller") || wLow.includes("paper jam")) {
-      if (!workPhrases.includes("roller repair")) workPhrases.push("roller repair");
-    } else if (wLow.includes("biometric") || wLow.includes("fingerprint")) {
-      if (!workPhrases.includes("biometric scanner setup")) workPhrases.push("biometric scanner setup");
-    } else if (wLow.includes("lock") || wLow.includes("access control")) {
-      if (!workPhrases.includes("access control lock setup")) workPhrases.push("access control lock setup");
+  // 3. Normalize Services & Build Natural Combined Phrase (Preserves ALL services)
+  const serviceKeys: string[] = [];
+  rawServices.forEach(s => {
+    const key = getServiceKey(s);
+    if (!serviceKeys.includes(key)) {
+      serviceKeys.push(key);
     }
   });
 
-  // Group work phrases naturally (select up to 3 for natural sentence balance)
+  const servicePhrase = getServicePhrase(serviceKeys, rawServices);
+
+  // 4. Format Work Performed (Preserving ALL selected work from all selected services up to 4)
+  const formattedWorkList: string[] = [];
+  rawWork.forEach(w => {
+    const formatted = formatWorkItem(w);
+    if (formatted && !formattedWorkList.includes(formatted)) {
+      formattedWorkList.push(formatted);
+    }
+  });
+
+  const topWork = formattedWorkList.slice(0, 4);
   let workClause = "";
-  const selectedWorkTop = workPhrases.slice(0, 3);
-  if (selectedWorkTop.length === 1) {
-    workClause = selectedWorkTop[0];
-  } else if (selectedWorkTop.length === 2) {
-    workClause = `${selectedWorkTop[0]} and ${selectedWorkTop[1]}`;
-  } else if (selectedWorkTop.length >= 3) {
-    workClause = `${selectedWorkTop[0]}, ${selectedWorkTop[1]} and ${selectedWorkTop[2]}`;
+  if (topWork.length === 1) {
+    workClause = topWork[0];
+  } else if (topWork.length === 2) {
+    workClause = `${topWork[0]} and ${topWork[1]}`;
+  } else if (topWork.length === 3) {
+    workClause = `${topWork[0]}, ${topWork[1]} and ${topWork[2]}`;
+  } else if (topWork.length >= 4) {
+    workClause = `${topWork[0]}, ${topWork[1]}, ${topWork[2]} and ${topWork[3]}`;
   }
 
-  // 4. Handle Experience Clauses
-  const hasNeat = experiences.some(e => e.toLowerCase().includes("neat"));
-  const hasProblemSolved = experiences.some(e => e.toLowerCase().includes("solved") || e.toLowerCase().includes("quick"));
-  const hasExplanation = experiences.some(e => e.toLowerCase().includes("explanation") || e.toLowerCase().includes("communication"));
-
-  let workmanshipSentence = "The work was completed neatly and the system was tested properly.";
-  if (hasNeat && hasExplanation) {
-    workmanshipSentence = "The installation was neat and the team explained the setup clearly.";
-  } else if (hasProblemSolved) {
-    workmanshipSentence = "The issue was diagnosed accurately and resolved quickly.";
-  } else if (hasExplanation) {
-    workmanshipSentence = "The team explained everything clearly and verified full functionality before leaving.";
-  } else if (hasNeat) {
-    workmanshipSentence = "The cabling and mounting were done very neatly.";
-  }
-
-  let closingSentence = "Professional service and good communication throughout.";
-  if (experiences.includes("Professional Work") && experiences.includes("Good Communication")) {
-    closingSentence = "Professional service and good communication throughout.";
-  } else if (experiences.includes("Quick Response")) {
-    closingSentence = "Quick response and dependable technical support.";
-  } else if (experiences.includes("Good Service")) {
-    closingSentence = "Very satisfied with the service and quality of work.";
-  } else if (experiences.includes("Problem Solved")) {
-    closingSentence = "Problem was solved completely without any hassle.";
-  }
-
-  // 5. Low Rating Fallback (1-2 Stars)
+  // 5. Handle Low Rating Fallbacks (1-3 Stars)
   if (rating <= 2) {
-    const p1 = `I contacted MI INFOTECH ${locPhrase} for ${primaryServiceSEO}.`;
+    const p1 = `I contacted MIINFOTECH ${locPhrase} for ${servicePhrase}.`;
     const p2 = "The service did not meet expectations and needs improvement.";
     return [p1, p2, customNote].filter(Boolean).join(" ");
   }
 
-  // 6. 3-Star Rating
   if (rating === 3) {
-    const p1 = `Used MI INFOTECH ${locPhrase} for ${primaryServiceSEO}.`;
-    const p2 = "The work was completed and basic testing was done.";
-    return [p1, p2, customNote].filter(Boolean).join(" ");
-  }
-
-  // 7. Multi-Service Check (Step 1 has 2 services)
-  const isMultiService = mainServices.length >= 2;
-  if (isMultiService) {
-    const s1 = mainServices[0].toLowerCase();
-    const s2 = mainServices[1].toLowerCase();
-    const p1 = `MI INFOTECH handled our ${s1} and ${s2} ${locPhrase}.`;
-    const p2 = workClause 
-      ? `The work included ${workClause}, with everything tested before handover.` 
-      : "The work was completed neatly and all systems were tested properly.";
-    const p3 = "Professional service and clear communication.";
+    const p1 = `Used MIINFOTECH ${locPhrase} for ${servicePhrase}.`;
+    const p2 = workClause ? `The team handled ${workClause}.` : "The work was completed.";
+    const p3 = "Basic testing was carried out before handover.";
     return [p1, p2, customNote, p3].filter(Boolean).join(" ");
   }
 
-  // 8. Dynamic 7-Style Rotation Engine (21 Variations)
-  // Ensures variety across multiple customers with identical selections
-  const cycleIndex = variationIndex % 21;
+  // 6. Experience Clause (Factual only, no invented claims)
+  const experienceClause = getFactualExperienceClause(rawExperiences, tone, variationIndex);
+
+  // 7. Tone-Aware & Variation-Aware Review Generation
   let reviewText = "";
 
-  switch (cycleIndex) {
-    // Style 1: Service-focused
-    case 0: {
-      const p1 = `MI INFOTECH completed our ${primaryServiceSEO} ${locPhrase} professionally.`;
-      const p2 = workClause ? `The team handled the ${workClause} and verified everything properly.` : workmanshipSentence;
-      const p3 = closingSentence;
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
+  if (tone === "concise") {
+    // Concise Tone: 35–55 words, direct, punchy
+    const cycle = variationIndex % 4;
+    switch (cycle) {
+      case 0: {
+        const p1 = `MIINFOTECH handled our ${servicePhrase} ${locPhrase}.`;
+        const p2 = workClause ? `They completed ${workClause} smoothly.` : "All work was completed cleanly.";
+        const p3 = "Everything was tested and verified properly before handover.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 1: {
+        const p1 = `Quick and dependable ${servicePhrase} by MIINFOTECH ${locPhrase}.`;
+        const p2 = workClause ? `Neat execution on ${workClause}, with full verification before handover.` : "Clean work with full verification before handover.";
+        reviewText = [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 2: {
+        const p1 = `Got our ${servicePhrase} done from MIINFOTECH ${locPhrase}.`;
+        const p2 = workClause ? `The technician took care of ${workClause} efficiently.` : "The work was handled efficiently.";
+        const p3 = "Everything was checked and confirmed working before leaving.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 3:
+      default: {
+        const p1 = `Dependable ${servicePhrase} from MIINFOTECH ${locPhrase}.`;
+        const p2 = workClause ? `They handled ${workClause} without delay and tested the setup thoroughly.` : "Everything was installed neatly and tested thoroughly.";
+        reviewText = [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
     }
-    case 7: {
-      const p1 = `Had our ${primaryServiceSEO} completed by MI INFOTECH ${locPhrase}.`;
-      const p2 = workClause ? `They handled the ${workClause} smoothly and tested the setup thoroughly.` : "Everything was completed neatly and tested before completion.";
-      const p3 = "Very satisfied with the service and support.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
+  } else if (tone === "technical") {
+    // Technical Tone: 45–65 words, methodical, setup & verification focused
+    const cycle = variationIndex % 4;
+    switch (cycle) {
+      case 0: {
+        const p1 = `MIINFOTECH completed our ${servicePhrase} ${locPhrase} systematically.`;
+        const p2 = workClause ? `The technician carried out ${workClause} with great attention to detail.` : "The technical setup was configured cleanly.";
+        const p3 = "All connections and settings were tested thoroughly before handover.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 1: {
+        const p1 = `Engaged MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
+        const p2 = workClause ? `They completed ${workClause} properly, followed by complete diagnosis and testing.` : "The installation was completed properly with full diagnostic testing.";
+        const p3 = "Everything was configured methodically.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 2: {
+        const p1 = `Very thorough technical work by MIINFOTECH ${locPhrase} on our ${servicePhrase}.`;
+        const p2 = workClause ? `The team handled ${workClause} and verified full functionality on-site.` : "The system was configured and verified on-site.";
+        const p3 = "Appreciate the structured testing and solid technical support.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 3:
+      default: {
+        const p1 = `Had our ${servicePhrase} attended to by MIINFOTECH ${locPhrase}.`;
+        const p2 = workClause ? `The technician executed ${workClause} cleanly, checking all hardware and software configurations.` : "The setup was carried out cleanly with careful verification.";
+        const p3 = "All equipment was tested before sign-off.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
     }
-    case 14: {
-      const p1 = `Contacted MI INFOTECH ${locPhrase} for ${primaryServiceSEO}.`;
-      const p2 = workClause ? `The technician completed the ${workClause} systematically and verified everything before leaving.` : "The technician arrived on time, completed the work systematically, and verified everything before leaving.";
-      const p3 = "Dependable local service.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
+  } else {
+    // Courteous Tone (Default): 45–65 words, warm, polite, customer-centric
+    const cycle = variationIndex % 4;
+    switch (cycle) {
+      case 0: {
+        const p1 = `MIINFOTECH helped us with our ${servicePhrase} ${locPhrase}.`;
+        const p2 = workClause ? `They handled ${workClause} professionally.` : "The service was carried out professionally.";
+        const p3 = "The service was clear and efficient, and everything was tested before leaving.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 1: {
+        const p1 = `Had a very good experience with MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
+        const p2 = workClause ? `The team took care of ${workClause} with great care.` : "The work was completed on time with great care.";
+        const p3 = "The team arrived on time and explained the setup clearly.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 2: {
+        const p1 = `Contacted MIINFOTECH ${locPhrase} for our ${servicePhrase}.`;
+        const p2 = workClause ? `They completed ${workClause} neatly and verified everything before leaving.` : "The technician completed the job neatly and verified everything before leaving.";
+        reviewText = [p1, p2, customNote, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
+      case 3:
+      default: {
+        const p1 = `Very pleased with the ${servicePhrase} provided by MIINFOTECH ${locPhrase}.`;
+        const p2 = workClause ? `They handled ${workClause} smoothly and answered all our questions patiently.` : "The team completed the work smoothly and answered all our questions.";
+        const p3 = "Everything was tested and verified before handover.";
+        reviewText = [p1, p2, customNote, p3, experienceClause].filter(Boolean).join(" ");
+        break;
+      }
     }
+  }
 
-    // Style 2: Technical-focused
-    case 1: {
-      const p1 = `Got our ${primaryServiceSEO} done from MI INFOTECH ${locPhrase}.`;
-      const p2 = workClause ? `The ${workClause} was handled properly and the system was tested before handover.` : workmanshipSentence;
-      const p3 = "Reliable technical workmanship.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 8: {
-      const p1 = `Very good technical work by MI INFOTECH ${locPhrase} for our ${primaryServiceSEO}.`;
-      const p2 = workClause ? `The ${workClause} was completed cleanly and tested thoroughly.` : "Neat wiring and clean mounting throughout.";
-      const p3 = "Appreciate the methodical work and clear demonstration.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 15: {
-      const p1 = `Engaged MI INFOTECH ${locPhrase} for ${primaryServiceSEO}.`;
-      const p2 = workClause ? `The ${workClause} was carried out cleanly with proper cable management and testing.` : "The work was carried out cleanly with proper cable management and thorough testing.";
-      const p3 = "Great technical expertise and smooth execution.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-
-    // Style 3: Experience-focused
-    case 2: {
-      const p1 = `Had our ${primaryServiceSEO} done by MI INFOTECH ${locPhrase}.`;
-      const p2 = workClause ? `The team explained the setup clearly, handled the ${workClause} neatly, and checked the system before leaving.` : "The team explained the setup clearly, completed the work neatly, and checked the system before leaving.";
-      const p3 = "Good service and helpful technicians.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 9: {
-      const p1 = `Called MI INFOTECH ${locPhrase} for ${primaryServiceSEO}.`;
-      const p2 = workClause ? `The team was very responsive, completed the ${workClause}, and walked us through the system.` : "The team was very responsive, walked us through the settings, and ensured everything was running smoothly.";
-      const p3 = "Very happy with the overall service experience.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 16: {
-      const p1 = `Great customer experience with MI INFOTECH ${locPhrase}.`;
-      const p2 = workClause ? `They attended to our ${primaryServiceSEO} promptly, completed the ${workClause}, and guided us through how it works.` : `They attended to our ${primaryServiceSEO} promptly and guided us through how the system works.`;
-      const p3 = "Highly recommended for reliable on-site service.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-
-    // Style 4: Local-service-focused
-    case 3: {
-      const p1 = `Reliable doorstep service by MI INFOTECH ${locPhrase} for ${primaryServiceSEO}.`;
-      const p2 = workClause ? `They completed the ${workClause} cleanly and verified the system.` : "The setup was completed quickly with clean wiring and testing.";
-      const p3 = "Good local tech support.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 10: {
-      const p1 = `Used MI INFOTECH for ${primaryServiceSEO} ${locPhrase}.`;
-      const p2 = workClause ? `The technician came over promptly, completed the ${workClause}, and checked full functionality.` : "The technician came over promptly, identified the requirement, and completed the job without delay.";
-      const p3 = "Dependable local support.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 17: {
-      const p1 = `For technical service ${locPhrase}, MI INFOTECH did a solid job with our ${primaryServiceSEO}.`;
-      const p2 = workClause ? `Neat execution on ${workClause}, on-time visit, and proper verification before handover.` : "Neat execution, on-time visit, and proper verification before handover.";
-      reviewText = [p1, p2, customNote].filter(Boolean).join(" ");
-      break;
-    }
-
-    // Style 5: Multi-service / Integrated
-    case 4: {
-      const p1 = `MI INFOTECH completed our ${primaryServiceSEO} ${locPhrase}.`;
-      const p2 = workClause ? `The ${workClause} was carried out neatly and the system was tested properly.` : "The work was completed neatly and the system was tested properly.";
-      const p3 = "Professional CCTV service and good communication throughout.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 11: {
-      const p1 = `MI INFOTECH handled our ${primaryServiceSEO} ${locPhrase}.`;
-      const p2 = workClause ? `The ${workClause} was configured properly, with everything tested before completion.` : "The setup and cabling were configured properly, with everything tested before completion.";
-      const p3 = "Clear communication and good workmanship.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 18: {
-      const p1 = `MI INFOTECH took care of our ${primaryServiceSEO} ${locPhrase}.`;
-      const p2 = workClause ? `The ${workClause} was completed neatly, tested thoroughly, and handed over with clear guidance.` : "Everything was installed neatly, tested thoroughly, and handed over with clear guidance.";
-      const p3 = "Great all-around support.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-
-    // Style 6: Very short natural review
-    case 5: {
-      const p1 = `Professional ${primaryServiceSEO} by MI INFOTECH ${locPhrase}.`;
-      const p2 = workClause ? `Neat execution of ${workClause}, proper testing and good support.` : "Neat setup, proper testing and good support.";
-      reviewText = [p1, p2, customNote].filter(Boolean).join(" ");
-      break;
-    }
-    case 12: {
-      const p1 = `Quick and reliable ${primaryServiceSEO} from MI INFOTECH ${locPhrase}.`;
-      const p2 = workClause ? `The technician did clean work on ${workClause} and verified everything before leaving.` : "The technician was punctual, did clean work, and verified everything before leaving.";
-      reviewText = [p1, p2, customNote].filter(Boolean).join(" ");
-      break;
-    }
-    case 19: {
-      const p1 = `Got our ${primaryServiceSEO} done by MI INFOTECH ${locPhrase}.`;
-      const p2 = workClause ? `Clean workmanship on ${workClause}, tested on-site, and hassle-free service.` : "Clean workmanship, tested on-site, and hassle-free service.";
-      reviewText = [p1, p2, customNote].filter(Boolean).join(" ");
-      break;
-    }
-
-    // Style 7: Detailed natural review
-    case 6: {
-      const p1 = `MI INFOTECH completed our ${primaryServiceSEO} ${locPhrase}.`;
-      const p2 = workClause ? `The team handled the ${workClause} neatly and verified the system carefully.` : "The installation was neat, all connections were secure, and the team explained the setup clearly.";
-      const p3 = "Very professional service and great support throughout.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 13: {
-      const p1 = `I am very pleased with the ${primaryServiceSEO} provided by MI INFOTECH ${locPhrase}.`;
-      const p2 = workClause 
-        ? `They handled the ${workClause} smoothly and ensured everything was tidy and secure.` 
-        : "The installation was neat, connections were secure, and all settings were verified properly.";
-      const p3 = "The team took the time to verify full functionality and answered all our questions.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
-    case 20:
-    default: {
-      const p1 = `MI INFOTECH completed our ${primaryServiceSEO} ${locPhrase}.`;
-      const p2 = workClause ? `The work included ${workClause}, completed with proper attention to detail and thorough testing before handover.` : "The work was completed on time, with proper attention to neat installation and thorough testing before handover.";
-      const p3 = "Great communication and dependable doorstep technical support.";
-      reviewText = [p1, p2, customNote, p3].filter(Boolean).join(" ");
-      break;
-    }
+  // 8. VALIDATION GUARD: Ensure all selected services are represented
+  const validation = validateReviewText(reviewText, rawServices);
+  if (!validation.isValid) {
+    // Auto-recover with guaranteed multi-service structure
+    reviewText = generateGuaranteedMultiServiceReview({
+      servicePhrase,
+      locPhrase,
+      workClause,
+      tone,
+      variationIndex,
+      rawExperiences,
+      customNote
+    });
   }
 
   return reviewText.replace(/\s+/g, " ").trim();

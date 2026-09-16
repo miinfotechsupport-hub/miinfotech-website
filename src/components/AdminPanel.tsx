@@ -5,6 +5,7 @@ import * as LucideIcons from "lucide-react";
 import MediaUploadZone from "./MediaUploadZone";
 import MediaGridSection from "./MediaGridSection";
 import QRCodeDisplay from "./QRCodeDisplay";
+import OwnerReplyAssistant from "./OwnerReplyAssistant";
 import { 
   REVIEW_SERVICE_CATEGORIES, 
   CustomerRelationship, 
@@ -102,6 +103,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [replyCustomerName, setReplyCustomerName] = useState<string>("");
   const [replyCustomerService, setReplyCustomerService] = useState<string>("CCTV Installation");
   const [replyDraft, setReplyDraft] = useState<string>("");
+  const [showOwnerReplyModal, setShowOwnerReplyModal] = useState<boolean>(false);
 
   // Trigger toast
   const addToast = (text: string, type: "success" | "error" = "success") => {
@@ -3016,6 +3018,21 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
                       </div>
                     )}
 
+                    {/* Dedicated Owner Reply Studio Button */}
+                    <div className="pt-3 border-t border-slate-850 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <p className="text-xs text-slate-400">
+                        Need to craft replies for verified reviews with tone choices or paste custom feedback?
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowOwnerReplyModal(true)}
+                        className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs py-2 px-3.5 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-md shadow-purple-950/40"
+                      >
+                        <LucideIcons.Sparkles className="w-3.5 h-3.5" />
+                        <span>Open AI Reply Studio</span>
+                      </button>
+                    </div>
+
                   </div>
 
                 </div>
@@ -3025,6 +3042,15 @@ Sitemap: ${SITE_URL}/sitemap.xml`}
 
         </div>
       </main>
+
+      {/* FULL-SCREEN OWNER REPLY STUDIO MODAL */}
+      {showOwnerReplyModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md overflow-y-auto p-4 sm:p-6">
+          <div className="max-w-4xl mx-auto">
+            <OwnerReplyAssistant onBack={() => setShowOwnerReplyModal(false)} />
+          </div>
+        </div>
+      )}
 
       {/* RENDER ADD / EDIT OVERLAY MODAL */}
       {modalType && (
