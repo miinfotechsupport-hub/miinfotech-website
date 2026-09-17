@@ -14,7 +14,7 @@ export default function TermsConditions() {
     {
       id: 2,
       title: "2. Business Information",
-      content: "MIInfotech is a professional, registered Service-Area Business (SAB) specializing in doorstep onsite IT infrastructure and security solutions. Founded and operated by Mohammed Ishtiaqh, we serve residential, retail, SME, and institutional customers in Hassan City, Karnataka, India, and surrounding outskirts. We operate strictly as an onsite mobile service provider, meaning we do not maintain a retail walk-in storefront; all hardware diagnostics, installations, and repairs are carried out at your designated doorstep or physical site. Standard business operating hours are from 9:00 AM to 9:00 PM, Monday through Sunday."
+      content: "MIINFOTECH is a professional, registered Service-Area Business (SAB) specializing in doorstep onsite IT infrastructure and security solutions. Founded and operated by Mohammed Ishtiaqh, we serve residential, retail, SME, and institutional customers in Hassan City, Karnataka, India, and surrounding outskirts. We operate strictly as an onsite mobile service provider, meaning we do not maintain a retail walk-in storefront; all hardware diagnostics, installations, and repairs are carried out at your designated doorstep or physical site. Standard business operating hours are from 9:30 AM to 8:00 PM, Monday through Saturday, and 10:00 AM to 3:00 PM on Sunday."
     },
     {
       id: 3,

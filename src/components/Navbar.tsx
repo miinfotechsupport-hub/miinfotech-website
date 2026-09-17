@@ -49,7 +49,7 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             <span className="text-slate-600">|</span>
             <span className="flex items-center gap-1">
               <Clock className="w-3.5 h-3.5 text-emerald-500" />
-              Service Hours: <span className="text-slate-200">{settings.opening_hours_mon_sat || "9:00 AM - 9:00 PM"}</span>
+              Service Hours: <span className="text-slate-200">{settings.opening_hours_mon_sat || "09:30 AM - 08:00 PM"}</span>
             </span>
           </div>
           <div className="flex items-center gap-4">

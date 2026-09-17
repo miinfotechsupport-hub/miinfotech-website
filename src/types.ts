@@ -435,8 +435,8 @@ export const PROJECTS_DATA: ProjectItem[] = [
     technicianNotes: "Structured office network cabling and server rack installation completed in Hassan Industrial Area. Tested gigabit performance verified.",
     featured: true,
     seoSlug: "commercial-cat6-cabling-server-rack-installation-hassan",
-    metaTitle: "Structured LAN Cabling & Server Rack Setup Hassan | MIInfotech",
-    metaDescription: "Structured office network cabling and server rack installation completed in Hassan Industrial Area by MIInfotech. Tested gigabit performance verified.",
+    metaTitle: "Structured LAN Cabling & Server Rack Setup Hassan | MIINFOTECH",
+    metaDescription: "Structured office network cabling and server rack installation completed in Hassan Industrial Area by MIINFOTECH. Tested gigabit performance verified.",
     schema: "{}",
     status: "published"
   },
@@ -463,8 +463,8 @@ export const PROJECTS_DATA: ProjectItem[] = [
     technicianNotes: "Conduit piping laid neatly across wards. Weatherproof junction boxes used. Mobile remote monitoring configured for 3 devices via Hik-Connect.",
     featured: true,
     seoSlug: "comprehensive-ip-cctv-surveillance-grid-installation-hassan",
-    metaTitle: "CCTV Security Installation in Kuvempu Nagar | MIInfotech",
-    metaDescription: "Professional 16-camera IP CCTV installation completed by MIInfotech in Kuvempu Nagar, Hassan. Featuring 4MP resolution and remote smartphone live view.",
+    metaTitle: "CCTV Security Installation in Kuvempu Nagar | MIINFOTECH",
+    metaDescription: "Professional 16-camera IP CCTV installation completed by MIINFOTECH in Kuvempu Nagar, Hassan. Featuring 4MP resolution and remote smartphone live view.",
     schema: "{}",
     status: "published"
   },
@@ -490,8 +490,8 @@ export const PROJECTS_DATA: ProjectItem[] = [
     technicianNotes: "Assembled 15 customer systems with genuine Windows licenses. Installed student-monitoring tools. Shared Ink Tank printer configured across local LAN.",
     featured: true,
     seoSlug: "15-station-college-computer-lab-setup-hassan",
-    metaTitle: "School Computer Lab Setup & Networking Hassan | MIInfotech",
-    metaDescription: "Complete school computer lab assembly and LAN sharing completed in Vidya Nagar, Hassan by MIInfotech. High-speed setups with administrative controls.",
+    metaTitle: "School Computer Lab Setup & Networking Hassan | MIINFOTECH",
+    metaDescription: "Complete school computer lab assembly and LAN sharing completed in Vidya Nagar, Hassan by MIINFOTECH. High-speed setups with administrative controls.",
     schema: "{}",
     status: "published"
   },
@@ -518,8 +518,8 @@ export const PROJECTS_DATA: ProjectItem[] = [
     technicianNotes: "Precision narrow beam paths aligned. Solid 320Mbps stable link. Fully weatherized cables.",
     featured: false,
     seoSlug: "long-range-4km-outdoor-p2p-wireless-bridge-hassan",
-    metaTitle: "Long-Range P2P Wireless Bridge Hassan | MIInfotech",
-    metaDescription: "Point-to-point wireless installation between main office and outskirts warehouse by MIInfotech. High-speed 4km LoS connection.",
+    metaTitle: "Long-Range P2P Wireless Bridge Hassan | MIINFOTECH",
+    metaDescription: "Point-to-point wireless installation between main office and outskirts warehouse by MIINFOTECH. High-speed 4km LoS connection.",
     schema: "{}",
     status: "published"
   }
@@ -532,7 +532,7 @@ export const REVIEWS_DATA: ReviewItem[] = [];
 export const FAQS_DATA: FAQItem[] = [
   {
     question: "How do I book Computer Repair in Hassan or Laptop Repair Near Me for doorstep service?",
-    answer: "Booking Computer Repair in Hassan or Laptop Repair Near Me with MIInfotech is fast and simple! Simply call or WhatsApp us at +91 9964761624. As an Onsite Service-Area Business, our experienced technician will visit your home, office, or shop in Hassan with diagnostic equipment and spare parts to fix your computer or laptop on the spot.",
+    answer: "Booking Computer Repair in Hassan or Laptop Repair Near Me with MIINFOTECH is fast and simple! Simply call or WhatsApp us at +91 9964761624. As an Onsite Service-Area Business, our experienced technician will visit your home, office, or shop in Hassan with diagnostic equipment and spare parts to fix your computer or laptop on the spot.",
     category: "General"
   },
   {
@@ -552,7 +552,7 @@ export const FAQS_DATA: FAQItem[] = [
   },
   {
     question: "Where can I get Printer Repair in Hassan or Printer Cartridge Refilling Near Me?",
-    answer: "MIInfotech provides expert onsite Printer Repair in Hassan for Epson EcoTank, HP Smart Tank, and Canon printers. We also offer fast Printer Cartridge Refilling in Hassan with premium micro-fine toner powder for LaserJet printers directly at your office or billing counter.",
+    answer: "MIINFOTECH provides expert onsite Printer Repair in Hassan for Epson EcoTank, HP Smart Tank, and Canon printers. We also offer fast Printer Cartridge Refilling in Hassan with premium micro-fine toner powder for LaserJet printers directly at your office or billing counter.",
     category: "Hardware"
   },
   {
@@ -586,7 +586,7 @@ export const BLOG_DATA: BlogItem[] = [
     content: `
 Hassan, with its beautiful green landscape, experiences heavy rains and high humidity levels during the monsoon season. While the weather is pleasant, it poses a significant threat to electronic devices—especially laptops. High humidity and moisture are the leading hidden causes of sudden motherboard short circuits and key failures in laptops.
 
-Here are 5 vital tips from **Mohammed Ishtiaqh**, founder of **MIInfotech**, to keep your laptop running smoothly during the rainy season:
+Here are 5 vital tips from **Mohammed Ishtiaqh**, founder of **MIINFOTECH**, to keep your laptop running smoothly during the rainy season:
 
 ### 1. Avoid placing laptops directly on damp floors or near windows
 Even when windows are closed, cold drafts and rain spray can cause moisture to condense on cold laptop surfaces. Always store your laptop on an elevated wooden desk.
@@ -603,7 +603,7 @@ Electrical current generates natural heat. If you leave a laptop shut down and u
 ### 5. Schedule professional internal cleaning
 Over time, your laptop's cooling fan accumulates dust, which behaves like a wet sponge when it absorbs moisture from the air. This damp dust sits on motherboard components, leading to corrosion. 
 
-*Need professional help?* Our **onsite laptop service in Hassan** covers deep internal cleaning, thermal paste replacement, and moisture extraction right at your doorstep. Contact **MIInfotech** on **+91 9964761624** today to schedule a checkup!
+*Need professional help?* Our **onsite laptop service in Hassan** covers deep internal cleaning, thermal paste replacement, and moisture extraction right at your doorstep. Contact **MIINFOTECH** on **+91 9964761624** today to schedule a checkup!
     `
   },
   {
@@ -635,7 +635,7 @@ IP cameras are essentially small computers. They offer smart features like:
 ### 4. Seamless Scalability
 Adding cameras to an analog DVR is painful; if your 8-channel DVR is full, you must buy a brand new 16-channel DVR to add a 9th camera. With IP cameras, you can easily plug new cameras into any local network switch and quickly register them to your Network Video Recorder (NVR) over the network.
 
-At **MIInfotech**, we plan, mount, and configure custom IP surveillance grids for homes and industries. We configure secure **mobile remote viewing** so you can monitor your property in Hassan from anywhere in the world. 
+At **MIINFOTECH**, we plan, mount, and configure custom IP surveillance grids for homes and industries. We configure secure **mobile remote viewing** so you can monitor your property in Hassan from anywhere in the world. 
 
 Contact Mohammed Ishtiaqh at **+91 9964761624** for a free onsite survey and a customized security quote.
     `
@@ -654,7 +654,7 @@ For small offices, schools, and hospitals in Hassan, IT hardware is the backbone
 
 Relying on ad-hoc emergency repair technicians when things break is highly risky. This 'break-fix' model is slow, expensive, and results in unpredictable downtime. 
 
-The professional solution is an **Annual Maintenance Contract (AMC)**. Here is how a custom IT AMC with **MIInfotech** protects your business:
+The professional solution is an **Annual Maintenance Contract (AMC)**. Here is how a custom IT AMC with **MIINFOTECH** protects your business:
 
 ### 1. Proactive Maintenance Over Emergency Panic
 Most computer failures are preventable. Under an AMC, we conduct scheduled monthly visits to perform essential system hygiene: deep vacuuming internal dust, replacing dried thermal paste, scanning for malware, clearing temporary cache files, and verifying hard drive health indicators. We resolve bottlenecks *before* they crash your system.
@@ -668,7 +668,7 @@ When a critical server or network switch drops, you cannot wait days for a techn
 ### 4. Automated Backup Safeguards
 Many businesses lose critical accounting and client records because backups were never verified. Our AMC services check and manage scheduled automated backups to safe local drives or secure cloud storage, guarding you against hardware failures or ransomware attacks.
 
-Our customized **IT AMCs in Hassan** cover desktops, laptops, printers, networking switches, UPS backups, and CCTV systems under a single contract. Let **Mohammed Ishtiaqh** and the MIInfotech team handle your technical worries while you focus on growing your business.
+Our customized **IT AMCs in Hassan** cover desktops, laptops, printers, networking switches, UPS backups, and CCTV systems under a single contract. Let **Mohammed Ishtiaqh** and the MIINFOTECH team handle your technical worries while you focus on growing your business.
 
 Call us on **+91 9964761624** or write to us at **miinfotech.support@gmail.com** to discuss a customized IT maintenance plan for your office today!
     `

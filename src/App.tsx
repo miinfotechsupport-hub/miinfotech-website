@@ -208,7 +208,7 @@ export default function App() {
 
   // Comprehensive, Dynamic SEO & Meta Manager
   useEffect(() => {
-    let title = "CCTV Installation & Computer Repair in Hassan | MIInfotech";
+    let title = "CCTV Installation & Computer Repair in Hassan | MIINFOTECH";
     let description = "Doorstep Computer Repair in Hassan & CCTV Installation in Hassan. Doorstep Laptop Repair, Printer Service, & IT support by Mohammed Ishtiaqh. Call +91 9964761624.";
     let keywords = "CCTV Installation in Hassan, CCTV Camera Installation in Hassan, CCTV Repair in Hassan, Computer Repair in Hassan, Computer Service Center in Hassan, Laptop Repair in Hassan, Printer Repair in Hassan, Computer Repair Near Me, Laptop Repair Near Me, Printer Repair Near Me, CCTV Installation Near Me";
     let canonicalUrl = SITE_URL;
@@ -225,7 +225,7 @@ export default function App() {
     if (selectedServiceId) {
       const serviceObj = SERVICES_DATA.find(s => s.id === selectedServiceId);
       if (serviceObj) {
-        title = `${serviceObj.name} in Hassan | ${serviceObj.tagline} | MIInfotech`;
+        title = `${serviceObj.name} in Hassan | ${serviceObj.tagline} | MIINFOTECH`;
         description = `${serviceObj.description} Diagnostic visits in Hassan start at ₹450 with quality warrantied parts.`;
         keywords = `${serviceObj.seoKeywords?.join(", ")}, Computer Repair in Hassan, CCTV Installation in Hassan, Laptop Repair in Hassan`;
         const path = SERVICE_ID_TO_PATH[selectedServiceId];
@@ -238,9 +238,9 @@ export default function App() {
     else if (selectedBlogSlug) {
       const activeBlog = blogsList.find(b => b.slug === selectedBlogSlug);
       if (activeBlog) {
-        title = `${activeBlog.title} | Tech Guide by MIInfotech Hassan`;
-        description = `${activeBlog.excerpt || "Read our technical diagnostics and IT advice."} Authored by Mohammed Ishtiaqh at MIInfotech Hassan.`;
-        keywords = `MIInfotech Blog, IT Tips Hassan, ${activeBlog.category} Hassan, ${activeBlog.title}`;
+        title = `${activeBlog.title} | Tech Guide by MIINFOTECH Hassan`;
+        description = `${activeBlog.excerpt || "Read our technical diagnostics and IT advice."} Authored by Mohammed Ishtiaqh at MIINFOTECH Hassan.`;
+        keywords = `MIINFOTECH Blog, IT Tips Hassan, ${activeBlog.category} Hassan, ${activeBlog.title}`;
         canonicalUrl = `${SITE_URL}/blog/${activeBlog.slug}`;
       }
     }
@@ -248,58 +248,58 @@ export default function App() {
     else if (selectedProjectSlug) {
       const activeProject = projectsList.find(p => p.seoSlug === selectedProjectSlug || (p.id && p.id.toString() === selectedProjectSlug));
       if (activeProject) {
-        title = activeProject.metaTitle || `${activeProject.title} in Hassan | MIInfotech`;
-        description = activeProject.metaDescription || `${activeProject.description?.substring(0, 150)}... Doorstep ${activeProject.category || "IT Service"} by MIInfotech in Hassan.`;
-        keywords = `${activeProject.title}, ${activeProject.category} Hassan, doorstep ${activeProject.category || "service"}, MIInfotech hassan`;
+        title = activeProject.metaTitle || `${activeProject.title} in Hassan | MIINFOTECH`;
+        description = activeProject.metaDescription || `${activeProject.description?.substring(0, 150)}... Doorstep ${activeProject.category || "IT Service"} by MIINFOTECH in Hassan.`;
+        keywords = `${activeProject.title}, ${activeProject.category} Hassan, doorstep ${activeProject.category || "service"}, MIINFOTECH hassan`;
         canonicalUrl = `${SITE_URL}/project/${activeProject.seoSlug}`;
       }
     }
     // 3. Fallback to active tab
     else {
       if (activeTab === "services") {
-        title = "IT Services & CCTV Setup Catalog in Hassan | MIInfotech";
+        title = "IT Services & CCTV Setup Catalog in Hassan | MIINFOTECH";
         description = "Browse our full catalog of onsite IT and security services in Hassan, Karnataka: Laptop repairs, WiFi setup, desktop formatting, network cabling, and biometric installations.";
         keywords = "Onsite IT services Hassan, computer service catalog, CCTV services Hassan, laptop repairs";
         canonicalUrl = `${SITE_URL}/services`;
       } else if (activeTab === "projects") {
-        title = "Real Completed Works & CCTV Projects in Hassan | MIInfotech";
+        title = "Real Completed Works & CCTV Projects in Hassan | MIINFOTECH";
         description = "Browse our portfolio of real completed onsite IT support, network cabling, and Hikvision CCTV camera installations in Hassan city and surrounding areas.";
         keywords = "completed projects, CCTV portfolio Hassan, IT case studies Hassan, real onsite work";
         canonicalUrl = `${SITE_URL}/projects`;
       } else if (activeTab === "blog") {
-        title = "MIInfotech Knowledge Hub | IT Diagnostics & Tech Guides";
+        title = "MIINFOTECH Knowledge Hub | IT Diagnostics & Tech Guides";
         description = "Expert guides, local SEO tech resources, and computer diagnostics written by founder Mohammed Ishtiaqh for businesses and residents in Hassan, Karnataka.";
         keywords = "tech blog Hassan, computer repair tips, IT guide Hassan, diagnostic tips";
         canonicalUrl = `${SITE_URL}/blog`;
       } else if (activeTab === "faqs") {
-        title = "Help & Frequently Asked Questions | MIInfotech Hassan";
+        title = "Help & Frequently Asked Questions | MIINFOTECH Hassan";
         description = "Find answers to frequently asked questions about doorstep PC repair pricing, service locations, turnaround time, and warranties in Hassan, Karnataka.";
         keywords = "IT FAQs Hassan, computer repair pricing Hassan, CCTV warranty";
         canonicalUrl = `${SITE_URL}/faqs`;
       } else if (activeTab === "contact") {
-        title = "Get a Free Onsite Estimate & Callout | MIInfotech Hassan";
+        title = "Get a Free Onsite Estimate & Callout | MIINFOTECH Hassan";
         description = "Book a doorstep diagnostics visit or CCTV quote in Hassan, Karnataka. Call +91 99647 61624 or fill out our quick estimate calculator.";
-        keywords = "contact MIInfotech, book computer repair Hassan, request CCTV quote";
+        keywords = "contact MIINFOTECH, book computer repair Hassan, request CCTV quote";
         canonicalUrl = `${SITE_URL}/contact`;
       } else if (activeTab === "terms") {
-        title = "Terms of Service & Onsite Warranty Policy | MIInfotech";
-        description = "Read the Terms and Conditions and warranty service guidelines for doorstep repairs and CCTV installation services provided by MIInfotech in Hassan.";
-        keywords = "terms and conditions, MIInfotech warranty, service agreement";
+        title = "Terms of Service & Onsite Warranty Policy | MIINFOTECH";
+        description = "Read the Terms and Conditions and warranty service guidelines for doorstep repairs and CCTV installation services provided by MIINFOTECH in Hassan.";
+        keywords = "terms and conditions, MIINFOTECH warranty, service agreement";
         canonicalUrl = `${SITE_URL}/terms`;
       } else if (activeTab === "gallery") {
-        title = "Onsite Project Gallery | MIInfotech Hassan";
+        title = "Onsite Project Gallery | MIINFOTECH Hassan";
         description = "Visual gallery of doorstep IT support, server rack installations, and CCTV camera projects completed in Hassan, Karnataka.";
         keywords = "IT project gallery Hassan, CCTV installation photos Hassan, server rack setup photos";
         canonicalUrl = `${SITE_URL}/gallery`;
       } else if (activeTab === "products") {
-        title = "IT Hardware & CCTV Products Catalog | MIInfotech Hassan";
+        title = "IT Hardware & CCTV Products Catalog | MIINFOTECH Hassan";
         description = "Browse CCTV cameras, Wi-Fi routers, SSDs, and IT hardware available for doorstep installation in Hassan, Karnataka.";
         keywords = "CCTV camera price Hassan, Wi-Fi router Hassan, SSD upgrade price Hassan, IT hardware catalog";
         canonicalUrl = `${SITE_URL}/products`;
       } else if (activeTab === "review") {
-        title = "Share Your Service Experience | MIInfotech Google Review Assistant";
-        description = "Share your genuine technical service experience with MIInfotech on Google.";
-        keywords = "MIInfotech review, customer feedback, Google review";
+        title = "Share Your Service Experience | MIINFOTECH Google Review Assistant";
+        description = "Share your genuine technical service experience with MIINFOTECH on Google.";
+        keywords = "MIINFOTECH review, customer feedback, Google review";
         canonicalUrl = `${SITE_URL}/review`;
       } else if (activeTab === "admin") {
         title = "Admin Portal | MIINFOTECH";
@@ -328,7 +328,7 @@ export default function App() {
     setMetaTag("name", "description", description);
     setMetaTag("name", "keywords", keywords);
     setMetaTag("name", "robots", activeTab === "admin" ? "noindex, nofollow" : activeTab === "review" ? "noindex, follow" : "index, follow");
-    setMetaTag("name", "author", "Mohammed Ishtiaqh (MIInfotech)");
+    setMetaTag("name", "author", "Mohammed Ishtiaqh (MIINFOTECH)");
 
     // Set Open Graph tags
     setMetaTag("property", "og:title", title);
@@ -497,7 +497,7 @@ export default function App() {
               <div className="max-w-7xl mx-auto px-4">
                 <div className="text-center max-w-2xl mx-auto mb-12 animate-fadeIn">
                   <span className="text-blue-500 font-semibold uppercase tracking-wider text-xs font-mono">Unmatched Local Service</span>
-                  <h2 className="font-sans text-3xl md:text-4xl font-extrabold text-white mt-1 tracking-tight">Why Choose MIInfotech</h2>
+                  <h2 className="font-sans text-3xl md:text-4xl font-extrabold text-white mt-1 tracking-tight">Why Choose MIINFOTECH</h2>
                   <p className="text-slate-400 text-xs sm:text-sm mt-1">Hassan's trusted doorstep computer repair, custom networking, and CCTV surveillance specialist.</p>
                 </div>
 
@@ -697,7 +697,7 @@ export default function App() {
                 <div className="space-y-12">
                   <div className="border-b border-slate-800 pb-6">
                     <span className="text-blue-500 font-semibold uppercase tracking-wider text-xs font-mono">Tech Tips & Expert Guides</span>
-                    <h1 className="text-3xl sm:text-4xl font-extrabold text-white mt-1 tracking-tight">MIInfotech Knowledge Center</h1>
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-white mt-1 tracking-tight">MIINFOTECH Knowledge Center</h1>
                     <p className="text-slate-400 text-sm mt-2">
                       Practical diagnostic guides and tech insights authored by **Mohammed Ishtiaqh** to help Hassan businesses make informed IT decisions.
                     </p>
@@ -773,7 +773,7 @@ export default function App() {
                           <div className="p-1 bg-slate-950 border border-slate-800 rounded text-slate-300 font-mono text-[10px]">
                             Author:
                           </div>
-                          <span className="text-xs text-white font-bold">Mohammed Ishtiaqh (Founder, MIInfotech)</span>
+                          <span className="text-xs text-white font-bold">Mohammed Ishtiaqh (Founder, MIINFOTECH)</span>
                         </div>
                       </div>
 
@@ -1028,7 +1028,7 @@ export default function App() {
           {/* Legal copyrights section */}
           <div className="border-t border-slate-900 pt-3 mt-4 md:pt-8 md:mt-12 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px]">
             <div>
-              &copy; {new Date().getFullYear()} MIInfotech. All rights reserved.
+              &copy; {new Date().getFullYear()} MIINFOTECH. All rights reserved.
               <span className="text-slate-600 font-mono ml-2">Built for Mohammed Ishtiaqh.</span>
             </div>
             

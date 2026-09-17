@@ -119,7 +119,7 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
                     <LogoIcon className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className="text-white font-sans font-bold text-lg">MI Infotech</h3>
+                    <h3 className="text-white font-sans font-bold text-lg">MIINFOTECH</h3>
                     <p className="text-xs text-slate-400 font-mono mt-0.5">Hassan, Karnataka</p>
                   </div>
                 </div>
@@ -137,8 +137,8 @@ export default function Hero({ onQuoteClick, onExploreServicesClick }: HeroProps
                 </div>
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
                   <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Operating Hours</span>
-                  <span className="text-xl sm:text-2xl font-extrabold text-white block mt-1 tracking-tight">9 AM – 9 PM</span>
-                  <span className="text-[10px] text-emerald-400 font-medium mt-0.5 block">Monday – Sunday</span>
+                  <span className="text-base sm:text-lg font-extrabold text-white block mt-1 tracking-tight leading-tight">{BUSINESS_ENTITY.openingHoursText.monSat}</span>
+                  <span className="text-[10px] text-emerald-400 font-medium mt-0.5 block">Mon–Sat (Sun: {BUSINESS_ENTITY.openingHoursText.sun})</span>
                 </div>
                 <div className="bg-slate-950/60 border border-slate-800/60 rounded-2xl p-4 text-left">
                   <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Direct Assistance</span>

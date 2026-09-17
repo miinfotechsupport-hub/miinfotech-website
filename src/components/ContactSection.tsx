@@ -111,13 +111,13 @@ export default function ContactSection({ showOnly }: { showOnly?: "contact" | "b
   };
 
   const workingHours = [
-    { day: "Monday", hours: "9:00 AM - 9:00 PM" },
-    { day: "Tuesday", hours: "9:00 AM - 9:00 PM" },
-    { day: "Wednesday", hours: "9:00 AM - 9:00 PM" },
-    { day: "Thursday", hours: "9:00 AM - 9:00 PM" },
-    { day: "Friday", hours: "9:00 AM - 9:00 PM" },
-    { day: "Saturday", hours: "9:00 AM - 9:00 PM" },
-    { day: "Sunday", hours: "9:00 AM - 9:00 PM (Emergency Support)" }
+    { day: "Monday", hours: BUSINESS_ENTITY.openingHoursText.monSat },
+    { day: "Tuesday", hours: BUSINESS_ENTITY.openingHoursText.monSat },
+    { day: "Wednesday", hours: BUSINESS_ENTITY.openingHoursText.monSat },
+    { day: "Thursday", hours: BUSINESS_ENTITY.openingHoursText.monSat },
+    { day: "Friday", hours: BUSINESS_ENTITY.openingHoursText.monSat },
+    { day: "Saturday", hours: BUSINESS_ENTITY.openingHoursText.monSat },
+    { day: "Sunday", hours: `${BUSINESS_ENTITY.openingHoursText.sun} (Emergency & Scheduled Onsite)` }
   ];
 
   const categories = [

@@ -98,12 +98,12 @@ const DEFAULT_SETTINGS = {
   social_linkedin: "https://linkedin.com/company/miinfotech",
   social_youtube: "",
   google_maps_iframe: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15584.093414902175!2d76.0894528!3d13.0071853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba53df0a28f7223%3A0xe21256333bf9e86c!2sHassan%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1710000000000!5m2!1sen!2sin",
-  footer_about: "MIInfotech is Hassan's premier doorstep IT service provider, specializing in expert computer repairs, high-resolution CCTV camera installations, and structured office networking support.",
-  copyright_text: "© 2026 MIInfotech. All Rights Reserved."
+  footer_about: "MIINFOTECH is Hassan's premier doorstep IT service provider, specializing in expert computer repairs, high-resolution CCTV camera installations, and structured office networking support.",
+  copyright_text: "© 2026 MIINFOTECH. All Rights Reserved."
 };
 
 const DEFAULT_SEO = {
-  homepage_title: "CCTV Installation & Computer Repair in Hassan | MIInfotech",
+  homepage_title: "CCTV Installation & Computer Repair in Hassan | MIINFOTECH",
   homepage_description: "Doorstep Computer Repair in Hassan & CCTV Installation in Hassan. Fast doorstep Laptop Repair, Printer Repair, & IT support by Mohammed Ishtiaqh. Call +91 9964761624.",
   homepage_keywords: "Computer Repair in Hassan, CCTV Installation in Hassan, CCTV Camera Installation in Hassan, Laptop Repair in Hassan, Printer Repair in Hassan, Computer Repair Near Me, Laptop Repair Near Me, CCTV Repair in Hassan, Computer Service Center in Hassan",
   og_image: `${SITE_URL}/images/miinfotech-logo.png`,
