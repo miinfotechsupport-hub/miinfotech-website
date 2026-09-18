@@ -31,6 +31,10 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   ];
 
   const handleNavClick = (id: string) => {
+    const targetPath = id === "home" ? "/" : `/${id}`;
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState(null, "", targetPath);
+    }
     setActiveTab(id);
     setIsMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });

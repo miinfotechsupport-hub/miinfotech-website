@@ -14,8 +14,8 @@ import { GoogleReviewsSection } from "./components/GoogleReviewsSection";
 const AdminPanel = lazy(() => import("./components/AdminPanel"));
 const ServiceLandingPage = lazy(() => import("./components/ServiceLandingPage"));
 const ReviewAssistant = lazy(() => import("./components/ReviewAssistant"));
-const TermsConditions = lazy(() => import("./components/TermsConditions"));
-const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
+import TermsConditions from "./components/TermsConditions";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 import { supabase, useSettings } from "./lib/supabase";
 import { SITE_URL } from "./lib/config";
 import { BUSINESS_ENTITY, generateLocalBusinessJsonLd } from "./lib/businessEntity";
@@ -74,11 +74,126 @@ const SERVICE_ID_TO_PATH: { [key: string]: string } = {
   "amc": "/it-support-amc-hassan",
 };
 
+// Robust, resilient route parser supporting clean pathnames, trailing slashes, hashes, and query params
+export function parseRouteFromLocation(): {
+  tab: string;
+  serviceId: string | null;
+  blogSlug: string | null;
+  projectSlug: string | null;
+} {
+  if (typeof window === "undefined") {
+    return { tab: "home", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+
+  // 1. Normalize pathname: lowercase, trim, and strip trailing slashes (except root "/")
+  let rawPath = window.location.pathname.toLowerCase().trim();
+  while (rawPath.length > 1 && rawPath.endsWith("/")) {
+    rawPath = rawPath.slice(0, -1);
+  }
+  const path = rawPath || "/";
+
+  // 2. Normalize hash: lowercase, trim, strip leading "#" and trailing slashes
+  let rawHash = window.location.hash.toLowerCase().trim();
+  if (rawHash.startsWith("#")) {
+    rawHash = rawHash.slice(1);
+  }
+  while (rawHash.length > 0 && rawHash.endsWith("/")) {
+    rawHash = rawHash.slice(0, -1);
+  }
+  const hash = rawHash;
+
+  // Exact check for Privacy Policy (/privacy-policy, /privacy, /privacy-policy/, #privacy-policy, #privacy)
+  if (
+    path === "/privacy-policy" ||
+    path === "/privacy" ||
+    hash === "privacy-policy" ||
+    hash === "privacy"
+  ) {
+    return { tab: "privacy", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+
+  // Exact check for Terms of Service (/terms-of-service, /terms, /terms-of-service/, #terms-of-service, #terms)
+  if (
+    path === "/terms-of-service" ||
+    path === "/terms" ||
+    hash === "terms-of-service" ||
+    hash === "terms"
+  ) {
+    return { tab: "terms", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+
+  // Service landing page routes
+  if (SERVICE_PATH_MAP[path]) {
+    return { tab: "services", serviceId: SERVICE_PATH_MAP[path], blogSlug: null, projectSlug: null };
+  }
+  if (hash.startsWith("service/")) {
+    const sId = hash.replace("service/", "");
+    return { tab: "services", serviceId: sId, blogSlug: null, projectSlug: null };
+  }
+
+  // Blog routes
+  if (path.startsWith("/blog/")) {
+    const slug = path.replace("/blog/", "");
+    return { tab: "blog", serviceId: null, blogSlug: slug, projectSlug: null };
+  }
+
+  // Project routes
+  if (path.startsWith("/project/")) {
+    const pSlug = path.replace("/project/", "");
+    return { tab: "projects", serviceId: null, blogSlug: null, projectSlug: pSlug };
+  }
+
+  // Standard tab routes
+  if (path === "/services" || hash === "services") {
+    return { tab: "services", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+  if (path === "/projects" || hash === "projects") {
+    return { tab: "projects", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+  if (path === "/blog" || hash === "blog") {
+    return { tab: "blog", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+  if (path === "/faqs" || hash === "faqs") {
+    return { tab: "faqs", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+  if (path === "/contact" || hash === "contact") {
+    return { tab: "contact", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+  if (path === "/gallery" || hash === "gallery") {
+    return { tab: "gallery", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+  if (path === "/products" || hash === "products") {
+    return { tab: "products", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+  if (path === "/review" || hash === "review") {
+    return { tab: "review", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+  if (path === "/admin" || hash === "admin" || hash.startsWith("admin")) {
+    return { tab: "admin", serviceId: null, blogSlug: null, projectSlug: null };
+  }
+
+  return { tab: "home", serviceId: null, blogSlug: null, projectSlug: null };
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>("home");
-  const [selectedBlogSlug, setSelectedBlogSlug] = useState<string | null>(null);
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  // Synchronous initialization based on current browser URL — ensures zero flash of wrong view on cold load
+  const initialRoute = parseRouteFromLocation();
+  const [activeTab, setActiveTab] = useState<string>(() => initialRoute.tab);
+  const [selectedBlogSlug, setSelectedBlogSlug] = useState<string | null>(() => initialRoute.blogSlug);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(() => initialRoute.serviceId);
   const settings = useSettings();
+
+  // Clean navigation helper that updates address bar, route state, and scrolls to top smoothly
+  const navigateTo = (targetPath: string) => {
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState(null, "", targetPath);
+    }
+    const route = parseRouteFromLocation();
+    setActiveTab(route.tab);
+    setSelectedServiceId(route.serviceId);
+    setSelectedBlogSlug(route.blogSlug);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const [blogsList, setBlogsList] = useState<any[]>(BLOG_DATA);
   const [projectsList, setProjectsList] = useState<any[]>([]);
@@ -134,73 +249,18 @@ export default function App() {
     };
   }, []);
 
-  // Synchronize path and hash routing with state for premium SEO deep-linking
+  // Synchronize browser navigation (back, forward, URL changes, popstate, hashchange) with application state
   useEffect(() => {
     const handleLocationChange = () => {
-      const path = window.location.pathname;
-      const hash = window.location.hash;
-
-      // 1. Check if the current pathname is a clean SEO-friendly service route
-      if (SERVICE_PATH_MAP[path]) {
-        setSelectedServiceId(SERVICE_PATH_MAP[path]);
-        setSelectedBlogSlug(null);
-        setActiveTab("services");
-        return;
-      }
-
-      // 1b. Check if the current pathname is a clean SEO-friendly blog route
-      if (path.startsWith("/blog/")) {
-        const slug = path.replace("/blog/", "");
-        setSelectedBlogSlug(slug);
-        setSelectedServiceId(null);
-        setActiveTab("blog");
-        return;
-      }
-
-      // 1c. Check if the current pathname is a clean SEO-friendly project route
-      if (path.startsWith("/project/")) {
-        setSelectedBlogSlug(null);
-        setSelectedServiceId(null);
-        setActiveTab("projects");
-        return;
-      }
-
-      // 2. Fallback to hash-based routing
-      if (hash.startsWith("#service/")) {
-        const id = hash.replace("#service/", "");
-        setSelectedServiceId(id);
-        setSelectedBlogSlug(null);
-      } else {
-        setSelectedServiceId(null);
-        if (hash === "#services" || path === "/services") {
-          setActiveTab("services");
-        } else if (hash === "#projects" || path === "/projects") {
-          setActiveTab("projects");
-        } else if (hash === "#blog" || path === "/blog") {
-          setActiveTab("blog");
-        } else if (hash === "#faqs" || path === "/faqs") {
-          setActiveTab("faqs");
-        } else if (hash === "#contact" || path === "/contact") {
-          setActiveTab("contact");
-        } else if (hash === "#terms" || hash === "#terms-of-service" || path === "/terms" || path === "/terms-of-service") {
-          setActiveTab("terms");
-        } else if (hash === "#privacy" || hash === "#privacy-policy" || path === "/privacy" || path === "/privacy-policy") {
-          setActiveTab("privacy");
-        } else if (hash === "#gallery" || path === "/gallery") {
-          setActiveTab("gallery");
-        } else if (hash === "#products" || path === "/products") {
-          setActiveTab("products");
-        } else if (hash === "#review" || path === "/review") {
-          setActiveTab("review");
-        } else if (hash === "#admin" || hash.startsWith("#admin") || path === "/admin") {
-          setActiveTab("admin");
-        } else {
-          setActiveTab("home");
-        }
-      }
+      const route = parseRouteFromLocation();
+      setActiveTab(route.tab);
+      setSelectedServiceId(route.serviceId);
+      setSelectedBlogSlug(route.blogSlug);
     };
 
+    // Run once on mount to guarantee state sync with any late URL normalization
     handleLocationChange();
+
     window.addEventListener("popstate", handleLocationChange);
     window.addEventListener("hashchange", handleLocationChange);
     return () => {
@@ -848,18 +908,14 @@ export default function App() {
         {/* VIEW 7: TERMS OF SERVICE VIEW */}
         {activeTab === "terms" && (
           <div className="animate-fadeIn pt-16">
-            <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-slate-400 font-mono text-xs">Loading Terms of Service...</div>}>
-              <TermsConditions />
-            </Suspense>
+            <TermsConditions />
           </div>
         )}
 
         {/* VIEW 7B: PRIVACY POLICY VIEW */}
         {activeTab === "privacy" && (
           <div className="animate-fadeIn pt-16">
-            <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-slate-400 font-mono text-xs">Loading Privacy Policy...</div>}>
-              <PrivacyPolicy />
-            </Suspense>
+            <PrivacyPolicy />
           </div>
         )}
 
@@ -929,11 +985,11 @@ export default function App() {
               <h4 className="text-white font-mono uppercase tracking-wider text-[11px] font-bold">Quick Navigation</h4>
               <ul className="space-y-1.5 md:space-y-2 font-medium">
                 {[
-                  { id: "home", label: "Home Base" },
-                  { id: "services", label: "Service Catalog" },
-                  { id: "projects", label: "Real Work Portfolio" },
-                  { id: "products", label: "Hardware & CCTV Catalog" },
-                  { id: "gallery", label: "Onsite Photo Gallery" },
+                  { id: "home", path: "/", label: "Home Base" },
+                  { id: "services", path: "/services", label: "Service Catalog" },
+                  { id: "projects", path: "/projects", label: "Real Work Portfolio" },
+                  { id: "products", path: "/products", label: "Hardware & CCTV Catalog" },
+                  { id: "gallery", path: "/gallery", label: "Onsite Photo Gallery" },
                   { id: "blog", path: "/blog", label: "Diagnostic Tips (Blog)" },
                   { id: "faqs", path: "/faqs", label: "Help & FAQs" },
                   { id: "review", path: "/review", label: "⭐ Share Service Review" },
@@ -946,11 +1002,7 @@ export default function App() {
                       href={l.path}
                       onClick={(e) => {
                         e.preventDefault();
-                        setActiveTab(l.id);
-                        setSelectedBlogSlug(null);
-                        window.history.pushState(null, "", l.path);
-                        window.dispatchEvent(new Event("popstate"));
-                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        navigateTo(l.path);
                       }} 
                       className="hover:text-blue-400 transition-colors cursor-pointer text-slate-400 text-left block"
                     >
@@ -1059,10 +1111,7 @@ export default function App() {
                 href="/terms-of-service"
                 onClick={(e) => {
                   e.preventDefault();
-                  setActiveTab("terms");
-                  window.history.pushState(null, "", "/terms-of-service");
-                  window.dispatchEvent(new Event("popstate"));
-                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  navigateTo("/terms-of-service");
                 }}
                 className="hover:text-blue-400 transition-colors cursor-pointer text-slate-400 font-medium"
               >
@@ -1073,10 +1122,7 @@ export default function App() {
                 href="/privacy-policy"
                 onClick={(e) => {
                   e.preventDefault();
-                  setActiveTab("privacy");
-                  window.history.pushState(null, "", "/privacy-policy");
-                  window.dispatchEvent(new Event("popstate"));
-                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  navigateTo("/privacy-policy");
                 }}
                 className="hover:text-emerald-400 transition-colors cursor-pointer text-slate-400 font-medium"
               >

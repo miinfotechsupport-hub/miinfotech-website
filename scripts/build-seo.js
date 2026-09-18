@@ -746,38 +746,111 @@ function generatePageHtml(templateHtml, routeInfo) {
       </div>
     </header>
     <main style="max-width:900px;margin:2rem auto;padding:0 1.5rem;font-family:system-ui,-apple-system,sans-serif;color:#1e293b;line-height:1.6;">
+  `;
+
+  if (routeInfo.path === "/privacy-policy" || routeInfo.path === "/privacy") {
+    crawlableBody += `
+      <article>
+        <h1 style="font-size:2.25rem;font-weight:800;color:#0f172a;margin-bottom:0.75rem;line-height:1.2;">Privacy Policy</h1>
+        <p style="font-size:0.875rem;color:#64748b;margin-bottom:1.5rem;font-family:monospace;">Effective Date: September 18, 2026 &nbsp;|&nbsp; Business: MIINFOTECH, Hassan, Karnataka</p>
+        <p style="font-size:1.05rem;color:#334155;margin-bottom:1.5rem;line-height:1.7;">This Privacy Policy describes how MIINFOTECH collects, protects, and uses customer information when you use our website (https://miinfotech.netlify.app/) or book our doorstep computer, laptop, networking, and CCTV services in Hassan, Karnataka.</p>
+
+        <section style="margin:2rem 0;padding:1.5rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.75rem;">
+          <h2 style="font-size:1.25rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem;">Google Cloud OAuth &amp; User Data Policy Compliance</h2>
+          <p style="font-size:0.95rem;color:#334155;line-height:1.6;margin-bottom:0.75rem;">MIINFOTECH strictly complies with the Google API Services User Data Policy, including Limited Use requirements. When you use Google Sign-In or Google Cloud OAuth features on our platform:</p>
+          <ul style="padding-left:1.5rem;font-size:0.925rem;color:#475569;line-height:1.7;">
+            <li>We only access authorized user profile scopes (such as name and email address) necessary for account authentication and service verification.</li>
+            <li>We NEVER sell, trade, or transfer Google user data to third parties.</li>
+            <li>We do NOT use Google user data for advertising, remarketing, or training generalized AI/ML models.</li>
+            <li>Google user data is stored securely and can be permanently deleted upon user request.</li>
+          </ul>
+        </section>
+
+        <section style="margin:2rem 0;">
+          <h2 style="font-size:1.25rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem;">Data Collection &amp; Technical Privacy</h2>
+          <p style="font-size:0.95rem;color:#475569;line-height:1.7;">We collect customer names, phone numbers, WhatsApp numbers, service addresses in Hassan, and device technical diagnostic details solely to carry out requested on-site technical services, provide quotations, and honor warranty records.</p>
+        </section>
+
+        <section style="margin:2rem 0;padding:1.5rem;background:#f1f5f9;border-radius:0.75rem;">
+          <h2 style="font-size:1.2rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem;">Privacy Officer &amp; Contact Inquiries</h2>
+          <p style="font-size:0.95rem;margin-bottom:0.4rem;"><strong>Business:</strong> MIINFOTECH</p>
+          <p style="font-size:0.95rem;margin-bottom:0.4rem;"><strong>Founder &amp; Privacy Officer:</strong> Mohammed Ishtiaqh</p>
+          <p style="font-size:0.95rem;margin-bottom:0.4rem;"><strong>Phone:</strong> <a href="tel:+919964761624" style="color:#2563eb;">+91 99647 61624</a></p>
+          <p style="font-size:0.95rem;margin-bottom:0.4rem;"><strong>Email:</strong> <a href="mailto:miinfotech.support@gmail.com" style="color:#2563eb;">miinfotech.support@gmail.com</a></p>
+          <p style="font-size:0.95rem;margin:0;"><strong>Location:</strong> Hassan City &amp; Outskirts, Karnataka 573201, India</p>
+        </section>
+      </article>
+    `;
+  } else if (routeInfo.path === "/terms-of-service" || routeInfo.path === "/terms") {
+    crawlableBody += `
+      <article>
+        <h1 style="font-size:2.25rem;font-weight:800;color:#0f172a;margin-bottom:0.75rem;line-height:1.2;">Terms of Service</h1>
+        <p style="font-size:0.875rem;color:#64748b;margin-bottom:1.5rem;font-family:monospace;">Effective Date: September 18, 2026 &nbsp;|&nbsp; Business: MIINFOTECH, Hassan, Karnataka</p>
+        <p style="font-size:1.05rem;color:#334155;margin-bottom:1.5rem;line-height:1.7;">These Terms of Service govern your use of the MIINFOTECH website (https://miinfotech.netlify.app/) and all onsite IT, computer, laptop, printer, networking, and CCTV services provided in Hassan, Karnataka, India.</p>
+
+        <section style="margin:1.5rem 0;">
+          <h2 style="font-size:1.25rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem;">1. Service-Area Business (SAB) Doorstep Model</h2>
+          <p style="font-size:0.95rem;color:#475569;line-height:1.7;">MIINFOTECH operates exclusively as an onsite Service-Area Business. We provide doorstep hardware diagnostics, repair, and security camera installations at the client's home, shop, or commercial facility across Hassan City and district.</p>
+        </section>
+
+        <section style="margin:1.5rem 0;">
+          <h2 style="font-size:1.25rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem;">2. Diagnostic Fees &amp; Visiting Charges</h2>
+          <p style="font-size:0.95rem;color:#475569;line-height:1.7;">Standard doorstep visiting and diagnostic fees are ₹450 within Hassan City limits and ₹1,200 for outer taluk locations. Diagnostic fees cover technician transit and hardware evaluation.</p>
+        </section>
+
+        <section style="margin:1.5rem 0;">
+          <h2 style="font-size:1.25rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem;">3. Service Warranty &amp; Hardware Terms</h2>
+          <p style="font-size:0.95rem;color:#475569;line-height:1.7;">MIINFOTECH provides a 15-day workmanship warranty on repair services. Hardware components (CPUs, SSDs, RAM, CCTV cameras, DVRs) carry their respective original manufacturer warranties. Physical or liquid damages are strictly excluded.</p>
+        </section>
+
+        <section style="margin:2rem 0;padding:1.5rem;background:#f1f5f9;border-radius:0.75rem;">
+          <h2 style="font-size:1.2rem;font-weight:700;color:#0f172a;margin-bottom:0.5rem;">Official Inquiries &amp; Contact</h2>
+          <p style="font-size:0.95rem;margin-bottom:0.4rem;"><strong>Business:</strong> MIINFOTECH</p>
+          <p style="font-size:0.95rem;margin-bottom:0.4rem;"><strong>Proprietor:</strong> Mohammed Ishtiaqh</p>
+          <p style="font-size:0.95rem;margin-bottom:0.4rem;"><strong>Phone / WhatsApp:</strong> <a href="tel:+919964761624" style="color:#2563eb;">+91 99647 61624</a></p>
+          <p style="font-size:0.95rem;margin-bottom:0.4rem;"><strong>Email:</strong> <a href="mailto:miinfotech.support@gmail.com" style="color:#2563eb;">miinfotech.support@gmail.com</a></p>
+          <p style="font-size:0.95rem;margin:0;"><strong>Jurisdiction:</strong> Hassan Courts, Karnataka, India</p>
+        </section>
+      </article>
+    `;
+  } else {
+    crawlableBody += `
       <article>
         <h1 style="font-size:2rem;font-weight:800;color:#0f172a;margin-bottom:1rem;line-height:1.25;">${routeInfo.title}</h1>
         <p style="font-size:1.1rem;color:#334155;margin-bottom:1.5rem;">${routeInfo.desc}</p>
-  `;
+    `;
 
-  if (routeInfo.faqs && routeInfo.faqs.length > 0) {
-    crawlableBody += `<section style="margin:2rem 0;"><h2 style="font-size:1.35rem;font-weight:700;color:#0f172a;">Frequently Asked Questions</h2>`;
-    routeInfo.faqs.forEach(f => {
-      crawlableBody += `
-        <div style="margin:1rem 0;padding:1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.5rem;">
-          <h3 style="font-size:1rem;font-weight:600;color:#1e293b;margin-bottom:0.5rem;">${f.q}</h3>
-          <p style="font-size:0.925rem;color:#475569;margin:0;">${f.a}</p>
-        </div>`;
-    });
-    crawlableBody += `</section>`;
+    if (routeInfo.faqs && routeInfo.faqs.length > 0) {
+      crawlableBody += `<section style="margin:2rem 0;"><h2 style="font-size:1.35rem;font-weight:700;color:#0f172a;">Frequently Asked Questions</h2>`;
+      routeInfo.faqs.forEach(f => {
+        crawlableBody += `
+          <div style="margin:1rem 0;padding:1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.5rem;">
+            <h3 style="font-size:1rem;font-weight:600;color:#1e293b;margin-bottom:0.5rem;">${f.q}</h3>
+            <p style="font-size:0.925rem;color:#475569;margin:0;">${f.a}</p>
+          </div>`;
+      });
+      crawlableBody += `</section>`;
+    }
+
+    crawlableBody += `
+        <section style="margin-top:2.5rem;padding:1.5rem;background:#f1f5f9;border-radius:0.75rem;">
+          <h2 style="font-size:1.2rem;font-weight:700;color:#0f172a;margin-bottom:0.75rem;">Service Area & Contact Details</h2>
+          <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Business:</strong> MIINFOTECH (Doorstep IT Support & CCTV Installation)</p>
+          <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Founder & Specialist:</strong> Mohammed Ishtiaqh</p>
+          <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Phone / WhatsApp:</strong> <a href="tel:+919964761624" style="color:#2563eb;">+91 99647 61624</a></p>
+          <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Coverage:</strong> Hassan City, Belur, Sakleshpur, Arasikere, Channarayapatna, Alur, Arkalgud, Holenarasipura</p>
+          <p style="margin-top:1rem;"><a href="https://wa.me/919964761624" style="display:inline-block;padding:0.6rem 1.25rem;background:#2563eb;color:#fff;text-decoration:none;border-radius:0.5rem;font-weight:600;">Book Doorstep Diagnostics on WhatsApp</a></p>
+        </section>
+      </article>
+    `;
   }
 
   crawlableBody += `
-      <section style="margin-top:2.5rem;padding:1.5rem;background:#f1f5f9;border-radius:0.75rem;">
-        <h2 style="font-size:1.2rem;font-weight:700;color:#0f172a;margin-bottom:0.75rem;">Service Area & Contact Details</h2>
-        <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Business:</strong> MIINFOTECH (Doorstep IT Support & CCTV Installation)</p>
-        <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Founder & Specialist:</strong> Mohammed Ishtiaqh</p>
-        <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Phone / WhatsApp:</strong> <a href="tel:+919964761624" style="color:#2563eb;">+91 99647 61624</a></p>
-        <p style="margin-bottom:0.5rem;font-size:0.95rem;"><strong>Coverage:</strong> Hassan City, Belur, Sakleshpur, Arasikere, Channarayapatna, Alur, Arkalgud, Holenarasipura</p>
-        <p style="margin-top:1rem;"><a href="https://wa.me/919964761624" style="display:inline-block;padding:0.6rem 1.25rem;background:#2563eb;color:#fff;text-decoration:none;border-radius:0.5rem;font-weight:600;">Book Doorstep Diagnostics on WhatsApp</a></p>
-      </section>
-    </article>
-  </main>
-  <footer style="padding:1.5rem;background:#030712;color:#9ca3af;font-size:0.875rem;text-align:center;margin-top:3rem;">
-    <p>© ${new Date().getFullYear()} MIINFOTECH — Official Google Business Profile, Instagram & Facebook Connected</p>
-    <p style="margin-top:0.5rem;font-size:0.75rem;"><a href="/terms-of-service" style="color:#60a5fa;text-decoration:underline;">Terms of Service</a> &nbsp;|&nbsp; <a href="/privacy-policy" style="color:#34d399;text-decoration:underline;">Privacy Policy</a></p>
-  </footer>
+    </main>
+    <footer style="padding:1.5rem;background:#030712;color:#9ca3af;font-size:0.875rem;text-align:center;margin-top:3rem;">
+      <p>© ${new Date().getFullYear()} MIINFOTECH — Official Google Business Profile, Instagram & Facebook Connected</p>
+      <p style="margin-top:0.5rem;font-size:0.75rem;"><a href="/terms-of-service" style="color:#60a5fa;text-decoration:underline;">Terms of Service</a> &nbsp;|&nbsp; <a href="/privacy-policy" style="color:#34d399;text-decoration:underline;">Privacy Policy</a></p>
+    </footer>
   `;
 
   if (html.includes('<div id="root"></div>')) {
