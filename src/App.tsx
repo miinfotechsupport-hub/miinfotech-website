@@ -15,6 +15,7 @@ const AdminPanel = lazy(() => import("./components/AdminPanel"));
 const ServiceLandingPage = lazy(() => import("./components/ServiceLandingPage"));
 const ReviewAssistant = lazy(() => import("./components/ReviewAssistant"));
 const TermsConditions = lazy(() => import("./components/TermsConditions"));
+const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
 import { supabase, useSettings } from "./lib/supabase";
 import { SITE_URL } from "./lib/config";
 import { BUSINESS_ENTITY, generateLocalBusinessJsonLd } from "./lib/businessEntity";
@@ -181,8 +182,10 @@ export default function App() {
           setActiveTab("faqs");
         } else if (hash === "#contact" || path === "/contact") {
           setActiveTab("contact");
-        } else if (hash === "#terms" || path === "/terms") {
+        } else if (hash === "#terms" || hash === "#terms-of-service" || path === "/terms" || path === "/terms-of-service") {
           setActiveTab("terms");
+        } else if (hash === "#privacy" || hash === "#privacy-policy" || path === "/privacy" || path === "/privacy-policy") {
+          setActiveTab("privacy");
         } else if (hash === "#gallery" || path === "/gallery") {
           setActiveTab("gallery");
         } else if (hash === "#products" || path === "/products") {
@@ -282,10 +285,15 @@ export default function App() {
         keywords = "contact MIINFOTECH, book computer repair Hassan, request CCTV quote";
         canonicalUrl = `${SITE_URL}/contact`;
       } else if (activeTab === "terms") {
-        title = "Terms of Service & Onsite Warranty Policy | MIINFOTECH";
-        description = "Read the Terms and Conditions and warranty service guidelines for doorstep repairs and CCTV installation services provided by MIINFOTECH in Hassan.";
-        keywords = "terms and conditions, MIINFOTECH warranty, service agreement";
-        canonicalUrl = `${SITE_URL}/terms`;
+        title = "Terms of Service & Onsite Warranty Policy | MIINFOTECH Hassan";
+        description = "Read the professional Terms of Service, operating policies, customer responsibilities, and warranty guidelines for doorstep IT repairs and CCTV installations by MIINFOTECH in Hassan, Karnataka.";
+        keywords = "terms of service, terms and conditions, MIINFOTECH warranty, service agreement, Hassan IT policies";
+        canonicalUrl = `${SITE_URL}/terms-of-service`;
+      } else if (activeTab === "privacy") {
+        title = "Privacy Policy & Google OAuth Compliance | MIINFOTECH Hassan";
+        description = "Read the official MIINFOTECH Privacy Policy. Learn how we safeguard customer data, handle service requests, and adhere to Google Cloud OAuth user data privacy standards.";
+        keywords = "privacy policy, MIINFOTECH privacy, Google OAuth compliance, data protection Hassan, IT service privacy";
+        canonicalUrl = `${SITE_URL}/privacy-policy`;
       } else if (activeTab === "gallery") {
         title = "Onsite Project Gallery | MIINFOTECH Hassan";
         description = "Visual gallery of doorstep IT support, server rack installations, and CCTV camera projects completed in Hassan, Karnataka.";
@@ -837,11 +845,20 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 7: TERMS & CONDITIONS VIEW */}
+        {/* VIEW 7: TERMS OF SERVICE VIEW */}
         {activeTab === "terms" && (
           <div className="animate-fadeIn pt-16">
-            <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-slate-400 font-mono text-xs">Loading Terms...</div>}>
+            <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-slate-400 font-mono text-xs">Loading Terms of Service...</div>}>
               <TermsConditions />
+            </Suspense>
+          </div>
+        )}
+
+        {/* VIEW 7B: PRIVACY POLICY VIEW */}
+        {activeTab === "privacy" && (
+          <div className="animate-fadeIn pt-16">
+            <Suspense fallback={<div className="min-h-[40vh] flex items-center justify-center text-slate-400 font-mono text-xs">Loading Privacy Policy...</div>}>
+              <PrivacyPolicy />
             </Suspense>
           </div>
         )}
@@ -917,23 +934,28 @@ export default function App() {
                   { id: "projects", label: "Real Work Portfolio" },
                   { id: "products", label: "Hardware & CCTV Catalog" },
                   { id: "gallery", label: "Onsite Photo Gallery" },
-                  { id: "blog", label: "Diagnostic Tips (Blog)" },
-                  { id: "faqs", label: "Help & FAQs" },
-                  { id: "review", label: "⭐ Share Service Review" },
-                  { id: "contact", label: "Contact & Quote Form" },
-                  { id: "terms", label: "Terms & Conditions" }
+                  { id: "blog", path: "/blog", label: "Diagnostic Tips (Blog)" },
+                  { id: "faqs", path: "/faqs", label: "Help & FAQs" },
+                  { id: "review", path: "/review", label: "⭐ Share Service Review" },
+                  { id: "contact", path: "/contact", label: "Contact & Quote Form" },
+                  { id: "terms", path: "/terms-of-service", label: "Terms of Service" },
+                  { id: "privacy", path: "/privacy-policy", label: "Privacy Policy" }
                 ].map((l) => (
                   <li key={l.id}>
-                    <button 
-                      onClick={() => {
+                    <a 
+                      href={l.path}
+                      onClick={(e) => {
+                        e.preventDefault();
                         setActiveTab(l.id);
                         setSelectedBlogSlug(null);
+                        window.history.pushState(null, "", l.path);
+                        window.dispatchEvent(new Event("popstate"));
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }} 
-                      className="hover:text-blue-400 transition-colors cursor-pointer text-slate-400 text-left"
+                      className="hover:text-blue-400 transition-colors cursor-pointer text-slate-400 text-left block"
                     >
                       {l.label}
-                    </button>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -1033,15 +1055,33 @@ export default function App() {
             </div>
             
             <div className="flex gap-4 items-center flex-wrap text-slate-500">
-              <button
-                onClick={() => {
+              <a
+                href="/terms-of-service"
+                onClick={(e) => {
+                  e.preventDefault();
                   setActiveTab("terms");
+                  window.history.pushState(null, "", "/terms-of-service");
+                  window.dispatchEvent(new Event("popstate"));
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
-                className="hover:text-blue-500 transition-colors cursor-pointer text-slate-400 font-medium"
+                className="hover:text-blue-400 transition-colors cursor-pointer text-slate-400 font-medium"
               >
-                Terms & Conditions
-              </button>
+                Terms of Service
+              </a>
+              <span className="text-slate-700">•</span>
+              <a
+                href="/privacy-policy"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveTab("privacy");
+                  window.history.pushState(null, "", "/privacy-policy");
+                  window.dispatchEvent(new Event("popstate"));
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="hover:text-emerald-400 transition-colors cursor-pointer text-slate-400 font-medium"
+              >
+                Privacy Policy
+              </a>
               <span className="text-slate-700">•</span>
               <span>Hassan, KA Local SEO Authority</span>
               <span className="text-slate-700">•</span>

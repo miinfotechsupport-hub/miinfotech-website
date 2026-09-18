@@ -334,10 +334,22 @@ const STATIC_ROUTES = [
     keywords: "cctv camera price hassan, wifi router hassan, ssd upgrade price"
   },
   {
+    path: "/terms-of-service",
+    title: "Terms of Service & Operating Conditions | MIInfotech Hassan",
+    desc: "Review the official Terms of Service, service booking guidelines, warranty policies, customer responsibilities, and payment terms for MIInfotech in Hassan, Karnataka.",
+    keywords: "terms of service, terms and conditions, miinfotech warranty policy, onsite service agreement, Hassan IT policies"
+  },
+  {
     path: "/terms",
     title: "Terms of Service & Onsite Warranty Policy | MIInfotech",
-    desc: "Read the Terms and Conditions and warranty service guidelines for doorstep repairs and CCTV installation services provided by MIInfotech in Hassan.",
-    keywords: "terms and conditions, miinfotech warranty policy, onsite service agreement"
+    desc: "Read the Terms of Service, conditions, and warranty guidelines for doorstep repairs and CCTV installation services provided by MIInfotech in Hassan.",
+    keywords: "terms and conditions, terms of service, miinfotech warranty policy, onsite service agreement"
+  },
+  {
+    path: "/privacy-policy",
+    title: "Privacy Policy & Google OAuth Compliance | MIInfotech Hassan",
+    desc: "Read the official MIInfotech Privacy Policy. Learn how we protect customer data, handle technical service requests, and comply with Google Cloud OAuth user data privacy requirements.",
+    keywords: "privacy policy, miinfotech privacy, Google OAuth compliance, data protection Hassan, IT service privacy"
   }
 ];
 
@@ -764,6 +776,7 @@ function generatePageHtml(templateHtml, routeInfo) {
   </main>
   <footer style="padding:1.5rem;background:#030712;color:#9ca3af;font-size:0.875rem;text-align:center;margin-top:3rem;">
     <p>© ${new Date().getFullYear()} MIINFOTECH — Official Google Business Profile, Instagram & Facebook Connected</p>
+    <p style="margin-top:0.5rem;font-size:0.75rem;"><a href="/terms-of-service" style="color:#60a5fa;text-decoration:underline;">Terms of Service</a> &nbsp;|&nbsp; <a href="/privacy-policy" style="color:#34d399;text-decoration:underline;">Privacy Policy</a></p>
   </footer>
   `;
 
